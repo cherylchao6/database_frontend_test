@@ -11,7 +11,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 
 const initialTeams = [
-  { id: 1, name: "Intake", href: "#", initial: "I", current: false },
+  { id: 1, name: "Intake", href: "/dashboard/intake", initial: "I", current: false },
   { id: 2, name: "Operations", href: "#", initial: "O", current: false },
   {
     id: 3,
@@ -44,6 +44,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
     );
     setSelectedTeam(teamName);
     setSidebarOpen(false);
+
   };
 
   return (

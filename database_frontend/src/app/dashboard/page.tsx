@@ -1,18 +1,33 @@
-// pages/test.tsx
+"use client"
 import React from "react";
-import Link from "next/link";
+import Button from "@/components/Button";
+import { useRouter } from 'next/navigation'
 
-const TestPage: React.FC = () => {
+
+const DashBoardPage: React.FC = () => {
+    const router = useRouter();
+
+    const handleClick = (endPoint: string) => {
+        router.push(`/dashboard/${endPoint}`);
+    };
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline text-orange-500">
-        Hello world!
-      </h1>
-      <p>
-        <Link href="/">Go back to the homepage</Link>
-      </p>
-    </div>
+    <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Welcome to JVN Databese System
+          </h2>
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
+           Start by selecting a team 
+          </p>
+          <div className="mt-10 flex items-center justify-center gap-x-6">
+            <Button text="Intake"  onClick={() => handleClick('intake')}/>
+            <Button text="Operations"  onClick={() => handleClick('operations')}/>
+            <Button text="Project Management"  onClick={() => handleClick('pm')}/>
+          </div>
+        </div>
+      </div>
   );
 };
 
-export default TestPage;
+export default DashBoardPage;
