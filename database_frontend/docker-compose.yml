@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    # Build from the Dockerfile in the current directory
+    build: .
+    # Map port 3000 of the container to port 3000 on the host
+    ports:
+      - "3000:3000"
+    # Map the working directory and node_modules to the container
+    volumes:
+      - .:/app
+      - /app/node_modules
+    # Environment variable to run in development mode
+    environment:
+      NODE_ENV: development
