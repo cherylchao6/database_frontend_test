@@ -8,7 +8,7 @@ Ensure you have the following installed:
 - **Node.js** (v18 or later)
 - **Docker** (for running with Docker)
 - **npm** (comes with Node.js)
-
+## cd into database_frontend folder first ! 
 ## Available Scripts
 
 The scripts are defined in the `package.json` file under `"scripts"`. Here's what each script does:
