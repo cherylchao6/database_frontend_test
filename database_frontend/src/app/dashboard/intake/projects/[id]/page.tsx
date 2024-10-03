@@ -693,7 +693,7 @@ const UpdateProjectPage = () => {
         {/* Client Contacts */}
         <div className="sm:col-span-3">
           <DynamicSearchListbox
-            label="Client Contact"
+            label="Client Contacts"
             assignedTo={clientContacts} // Pass an array when allowMultiple is true
             setAssignedTo={setClientContacts} // Modify to accept the array
             fetchOptions={fetchUsersFromApi}
