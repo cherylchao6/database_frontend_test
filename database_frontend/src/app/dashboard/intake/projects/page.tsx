@@ -11,8 +11,23 @@ const statusOptions = [
   // Add more options as needed
 ];
 
+interface Project {
+  projectId: string;
+  projectName: string;
+  waitingOn: string;
+  waitingFor: string;
+  status: string;
+  priority: string;
+  intakesFromStatus: string;
+  onOpsList: boolean; // Ensure this is boolean
+  lastComm: string;
+  projectSponsor: string;
+  dateAdded: string;
+  implemented: boolean; // Ensure this is boolean
+}
+
 // Dummy data for projects (declared globally)
-const projectData = [
+const projectData: Project[] = [
   {
     projectId: "MAG-001",
     projectName: "STGC",
@@ -322,7 +337,7 @@ const ProjectListPage = () => {
                             <input
                               type="checkbox"
                               checked={
-                                project[column.key as keyof typeof project]
+                                project[column.key as keyof Project] as boolean
                               }
                               readOnly
                               className="form-checkbox h-4 w-4 text-indigo-600"
