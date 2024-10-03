@@ -7,7 +7,6 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { on } from "events";
 
 interface ModalProps {
   open: boolean;

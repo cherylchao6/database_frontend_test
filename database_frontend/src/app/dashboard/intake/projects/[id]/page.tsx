@@ -63,16 +63,16 @@ interface ProjectData {
   estimatedCost: { cost: number; year: number }[];
 }
 
-const formatDateForInput = (dateString: string) => {
-  if (!dateString) return "";
-  const [day, month, year] = dateString.split(".");
-  return `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD' format
-};
+// const formatDateForInput = (dateString: string) => {
+//   if (!dateString) return "";
+//   const [day, month, year] = dateString.split(".");
+//   return `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD' format
+// };
 
-const formatDateForDisplay = (dateString: string) => {
-  const [year, month, day] = dateString.split("-");
-  return `${day}.${month}.${year}`; // Convert back to 'DD.MM.YYYY' format
-};
+// const formatDateForDisplay = (dateString: string) => {
+//   const [year, month, day] = dateString.split("-");
+//   return `${day}.${month}.${year}`; // Convert back to 'DD.MM.YYYY' format
+// };
 
 const fetchUsersFromApi = async (query: string) => {
   const response = await fetch(`${apiUrl}/users?name=${query}`);
@@ -299,6 +299,7 @@ const UpdateProjectPage = () => {
 
   const fetchProjectData = async (projectId: string) => {
     try {
+      console.log(projectId);
       // const response = await fetch(`/api/projects/${projectId}`); // Adjust this to match your API endpoint
       // if (!response.ok) {
       //   throw new Error("Failed to fetch project data");
@@ -316,15 +317,15 @@ const UpdateProjectPage = () => {
     }
   };
 
-  const handleDateChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    field: keyof ProjectData
-  ) => {
-    setProjectData((prevState) => ({
-      ...prevState!,
-      [field]: formatDateForDisplay(e.target.value), // Update the date in 'DD.MM.YYYY' format
-    }));
-  };
+  // const handleDateChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   field: keyof ProjectData
+  // ) => {
+  //   setProjectData((prevState) => ({
+  //     ...prevState!,
+  //     [field]: formatDateForDisplay(e.target.value), // Update the date in 'DD.MM.YYYY' format
+  //   }));
+  // };
 
   if (loading) {
     return (
