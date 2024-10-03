@@ -21,39 +21,6 @@ const labelClassName = "block text-m font-medium leading-6 text-gray-900";
 const inputClassName =
   "pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
 
-const people = [
-  {
-    id: 1,
-    name: "Wade Cooper",
-    avatar:
-      "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: 2,
-    name: "Arlene Mccoy",
-    avatar:
-      "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: 3,
-    name: "Devon Webb",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-  },
-  {
-    id: 4,
-    name: "Tom Cook",
-    avatar:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: 5,
-    name: "Tanya Fox",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-];
-
 interface Person {
   id: number;
   name: string;
@@ -86,8 +53,6 @@ interface ProjectData {
   locationName: string;
   address: string;
   rooms: { id: string; num: string }[];
-  room1Num: string;
-  room2Num: string;
   projectSponsor: string;
   ministry: string;
   division: string;
@@ -250,10 +215,6 @@ const UpdateProjectPage = () => {
       { cost: 44000, year: 2024 },
       { cost: 33300, year: 2025 },
     ], // Estimated cost
-    // estimatedCost: "5,000,000 USD", // Estimated cost
-    // estimatedFiscalYear: "2023", // Estimated Fiscal Year
-    // estimatedCost2: "2,000,000 USD", // Estimated Cost 2 (if exists)
-    // estimatedFiscalYear2: "2024", // Estimated Fiscal Year 2 (if exists)
   };
 
   const handleInputChange = (
