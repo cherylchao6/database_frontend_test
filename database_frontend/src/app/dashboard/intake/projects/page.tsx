@@ -334,7 +334,7 @@ const ProjectListPage = () => {
                       ))}
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                         <a
-                          href={`/dashboard/projects/${project.projectId}`}
+                          href={`/dashboard/intake/projects/${project.projectId}`}
                           className="text-indigo-600 hover:text-indigo-900"
                         >
                           Edit
