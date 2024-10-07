@@ -5,6 +5,13 @@ import { Hourglass } from "react-loader-spinner";
 import { XCircleIcon, BuildingLibraryIcon } from "@heroicons/react/24/outline";
 import DynamicSearchListbox from "@/components/DynamicSearchListbox";
 import Modal from "@/components/Modal";
+import { Person } from "@/types/intakes/person";
+import { Project } from "@/types/intakes/project";
+import FormInput from "@/components/FormInput";
+import FormSelect from "@/components/FormSelect";
+import FormDate from "@/components/FormDate";
+import FormCheckbox from "@/components/FormCheckbox";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 import {
@@ -17,62 +24,10 @@ import {
   fundingSourceOptions,
 } from "constants/intake/dropDownOptions";
 
-const labelClassName = "block text-m font-medium leading-6 text-gray-900";
-const inputClassName =
-  "pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
-
-interface Person {
-  id: number;
-  name: string;
-  avatar: string;
-}
-
-interface ProjectData {
-  projectId: string;
-  projectName: string;
-  projectDescription: string;
-  priority: string;
-  onOppList: boolean;
-  deadline: string;
-  firstContactDate: string;
-  alias: string;
-  status: string;
-  implemented: boolean;
-  waitingOnContact: string;
-  waitingFor: string;
-  assignedTo: Person;
-  clientMinistry: string;
-  folderName: string;
-  intakeFormStatus: string;
-  lastComm: string;
-  clientContacts: Person[];
-  assocReferenceNo: string;
-  fundingSource: string;
-  notes: string;
-  noteLog: { description: string; user: string; timestamp: string }[];
-  locationName: string;
-  address: string;
-  rooms: { id: string; num: string }[];
-  projectSponsor: string;
-  ministry: string;
-  division: string;
-  branchUnit: string;
-  requestedCompletionDate: string;
-  assignedToPM: string;
-  confirmed: boolean;
-  estimatedCost: { cost: number; year: number }[];
-}
-
-// const formatDateForInput = (dateString: string) => {
-//   if (!dateString) return "";
-//   const [day, month, year] = dateString.split(".");
-//   return `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD' format
-// };
-
-// const formatDateForDisplay = (dateString: string) => {
-//   const [year, month, day] = dateString.split("-");
-//   return `${day}.${month}.${year}`; // Convert back to 'DD.MM.YYYY' format
-// };
+// Convert to 'YYYY-MM-DD' format
+const formatTimestamp = (dateString: string) => {
+  return new Date(dateString).toISOString().split("T")[0];
+};
 
 const fetchUsersFromApi = async (query: string) => {
   const response = await fetch(`${apiUrl}/users?name=${query}`);
@@ -83,7 +38,7 @@ const fetchUsersFromApi = async (query: string) => {
 const UpdateProjectPage = () => {
   const pathname = usePathname();
   const id = pathname.split("/").pop(); // Extract project ID from route (e.g., MAG-001)
-  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const [projectData, setProjectData] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [assignedTo, setAssignedTo] = useState<Person[]>([]);
@@ -117,7 +72,7 @@ const UpdateProjectPage = () => {
     }
   }, [projectData?.assignedTo]);
 
-  const fakeData: ProjectData = {
+  const fakeData: Project = {
     projectId: id || "MAG-001", // Use the project ID from the URL
     projectName: "Super Fun Project", // Project Name
     projectDescription:
@@ -125,8 +80,8 @@ const UpdateProjectPage = () => {
     priority: "Low",
     onOppList: true, // This is for the "On Opp List?" checkbox
     implemented: false, // This is for the "In Implementation Phase?" checkbox
-    deadline: "2023-12-31", // As seen in your screenshot
-    firstContactDate: "2023-12-31", // First Contact Date
+    deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
+    firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
     status: "035 - Pre-Intake assess. complete", // Status field
     alias: "TEST-002", // Alias field
     waitingOnContact: "John Doe", // Waiting on con Contact(s)
@@ -140,7 +95,7 @@ const UpdateProjectPage = () => {
     clientMinistry: "Ministry of Infrastructure", // Client Ministry
     folderName: "Infra-Arizona-Docs", // Folder Name if exists
     intakeFormStatus: "Initial Discussion", // Intake from Status
-    lastComm: "2023-12-31", // Last Communication (Out Bound)
+    lastComm: "2024-11-03T10:30:00Z", // Last Communication (Out Bound)
     clientContacts: [
       {
         id: 3,
@@ -163,32 +118,32 @@ const UpdateProjectPage = () => {
       {
         description: "Initial contact made",
         user: "Jane Smith",
-        timestamp: "12.12.2022",
+        timestamp: "2024-12-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-11-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-10-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-09-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-08-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
     locationName: "Arizona Main Office", // Location Name
@@ -235,6 +190,7 @@ const UpdateProjectPage = () => {
         };
       });
     } else if (name === "notes") {
+      if (!value) return; // Prevent empty notes from being added
       setProjectData((prevState) => {
         if (!prevState) return null;
 
@@ -244,7 +200,7 @@ const UpdateProjectPage = () => {
             {
               description: value,
               user: "Cheryl Chao",
-              timestamp: new Date().toLocaleDateString(),
+              timestamp: new Date().toISOString(),
             },
             ...prevState.noteLog,
           ],
@@ -317,16 +273,6 @@ const UpdateProjectPage = () => {
     }
   };
 
-  // const handleDateChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   field: keyof ProjectData
-  // ) => {
-  //   setProjectData((prevState) => ({
-  //     ...prevState!,
-  //     [field]: formatDateForDisplay(e.target.value), // Update the date in 'DD.MM.YYYY' format
-  //   }));
-  // };
-
   if (loading) {
     return (
       <div className="mt-4 flex justify-center items-center min-h-screen flex-col">
@@ -362,343 +308,246 @@ const UpdateProjectPage = () => {
       <form className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         {/* Project ID */}
         <div className="sm:col-span-3">
-          <label htmlFor="projectId" className={labelClassName}>
-            Project ID
-          </label>
-          <div className="mt-2">
-            <input
-              id="projectId"
-              name="projectId"
-              type="text"
-              value={projectData?.projectId || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="projectId"
+            label="Project ID"
+            name="projectId"
+            type="text"
+            value={projectData?.projectId || ""}
+            onChange={handleInputChange}
+            placeholder="Enter project ID"
+          />
         </div>
+
         {/* Project Name */}
         <div className="sm:col-span-3">
-          <label htmlFor="projectName" className={labelClassName}>
-            Project Name
-          </label>
-          <div className="mt-2">
-            <input
-              id="projectName"
-              name="projectName"
-              type="text"
-              value={projectData?.projectName || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="projectName"
+            label="Project Name"
+            name="projectName"
+            type="text"
+            value={projectData?.projectName || ""}
+            onChange={handleInputChange}
+            placeholder="Enter project name"
+          />
         </div>
+
         {/* Project Short Description */}
         <div className="sm:col-span-6">
-          <label htmlFor="project-description" className={labelClassName}>
-            Project Short Description
-          </label>
-          <div className="mt-2">
-            <input
-              id="project-description"
-              name="project-description"
-              type="text"
-              value={projectData?.projectDescription || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="projectDescription"
+            label="Project Short Description"
+            name="projectDescription"
+            type="text"
+            value={projectData?.projectDescription || ""}
+            onChange={handleInputChange}
+            placeholder="Enter project short description"
+          />
         </div>
+
         {/* Priority */}
         <div className="sm:col-span-3">
-          <label htmlFor="priority" className={labelClassName}>
-            Priority
-          </label>
-          <div className="mt-2">
-            <select
-              id="priority"
-              name="priority"
-              value={projectData?.priority || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {priorityOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="priority"
+            name="priority"
+            value={projectData?.priority || ""}
+            onChange={handleInputChange}
+            options={priorityOptions}
+            label="Priority"
+          />
         </div>
+
         {/* On Opp. List? */}
         <div className="mt-8 flex items-center sm:col-span-3">
-          <label className={`${labelClassName} mr-2`}>On Opp. List ?</label>
-          <input
+          <FormCheckbox
             id="onOppList"
             name="onOppList"
-            type="checkbox"
+            label="On Opp. List ?"
             checked={projectData?.onOppList || false}
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
             onChange={handleInputChange}
           />
         </div>
+
         {/* Deadline */}
         <div className="sm:col-span-3">
-          <label htmlFor="deadline" className={labelClassName}>
-            Deadline
-          </label>
-          <div className="mt-2">
-            <input
-              id="deadline"
-              name="deadline"
-              type="date"
-              value={projectData?.deadline ?? ""}
-              className={`${inputClassName} pr-2`}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormDate
+            id="deadline"
+            label="Deadline"
+            name="deadline"
+            inputClassName="pr-2"
+            value={projectData?.deadline || ""}
+            onChange={handleInputChange}
+          />
         </div>
+
         {/* First Contact Date */}
         <div className="sm:col-span-3">
-          <label htmlFor="first-contact-date" className={labelClassName}>
-            First Contact Date
-          </label>
-          <div className="mt-2">
-            <input
-              id="first-contact-date"
-              name="first-contact-date"
-              type="date"
-              value={projectData?.firstContactDate ?? ""}
-              className={`${inputClassName} pr-2`}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormDate
+            id="firstContactDate"
+            label="First Contact Date"
+            name="firstContactDate"
+            inputClassName="pr-2"
+            value={projectData?.firstContactDate || ""}
+            onChange={handleInputChange}
+          />
         </div>
+
         {/* Status */}
         <div className="sm:col-span-3">
-          <label htmlFor="status" className={labelClassName}>
-            Status
-          </label>
-          <div className="mt-2">
-            <select
-              id="status"
-              name="status"
-              value={projectData?.status || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {statusOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="status"
+            name="status"
+            label="Status"
+            value={projectData?.status || ""}
+            onChange={handleInputChange}
+            options={statusOptions}
+          />
         </div>
+
         {/* implemented */}
         <div className="mt-8 flex items-center sm:col-span-3">
-          <label className={`${labelClassName} mr-2`}>
-            In Implementation Phase ?
-          </label>
-          <input
-            id="onOppList"
-            name="onOppList"
-            type="checkbox"
-            checked={projectData?.onOppList || false}
-            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+          <FormCheckbox
+            id="implemented"
+            name="implemented"
+            label="In Implementation Phase ?"
+            checked={projectData?.implemented || false}
             onChange={handleInputChange}
           />
         </div>
 
         {/* Alias */}
         <div className="sm:col-span-3">
-          <label htmlFor="alias" className={labelClassName}>
-            Alias
-          </label>
-          <div className="mt-2">
-            <input
-              id="alias"
-              name="alias"
-              type="text"
-              value={projectData?.alias || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="alias"
+            label="Alias"
+            name="alias"
+            type="text"
+            value={projectData?.alias || ""}
+            onChange={handleInputChange}
+            placeholder="Enter alias"
+          />
         </div>
         <div className="sm:col-span-3"></div>
 
         {/* Waiting On Contact(s) */}
         <div className="sm:col-span-3">
-          <label htmlFor="waitingOnContact" className={labelClassName}>
-            Waiting on Contact(s)
-          </label>
-          <div className="mt-2">
-            <select
-              id="waitingOnContact"
-              name="waitingOnContact"
-              value={projectData?.waitingOnContact || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {waitingOnContactOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="waitingOnContact"
+            name="waitingOnContact"
+            label="Waiting on Contact(s)"
+            value={projectData?.waitingOnContact || ""}
+            onChange={handleInputChange}
+            options={waitingOnContactOptions}
+          />
         </div>
+
         {/* Waiting For */}
         <div className="sm:col-span-3">
-          <label htmlFor="waitingFor" className={labelClassName}>
-            Waiting For
-          </label>
-          <div className="mt-2">
-            <select
-              id="waitingFor"
-              name="waitingFor"
-              value={projectData?.waitingFor || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {waitingForOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="waitingFor"
+            name="waitingFor"
+            label="Waiting For"
+            value={projectData?.waitingFor || ""}
+            onChange={handleInputChange}
+            options={waitingForOptions}
+          />
         </div>
+
         {/* Assigned To */}
         <div className="sm:col-span-3">
           <DynamicSearchListbox
             label="Assigned To"
             assignedTo={assignedTo}
             setAssignedTo={setAssignedTo}
-            fetchOptions={fetchUsersFromApi} // Pass the function to fetch options
+            fetchOptions={fetchUsersFromApi}
           />
         </div>
+
         {/* Client Ministry */}
         <div className="sm:col-span-3">
-          <label htmlFor="clientMinistry" className={labelClassName}>
-            Client Ministry
-          </label>
-          <div className="mt-2">
-            <select
-              id="clientMinistry"
-              name="clientMinistry"
-              value={projectData?.clientMinistry || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {clientMinistryOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="clientMinistry"
+            name="clientMinistry"
+            label="Client Ministry"
+            value={projectData?.clientMinistry || ""}
+            onChange={handleInputChange}
+            options={clientMinistryOptions}
+          />
         </div>
+
         {/* Folder Name */}
         <div className="sm:col-span-3">
-          <label htmlFor="folderName" className={labelClassName}>
-            Folder Name (if exist)
-          </label>
-          <div className="mt-2">
-            <input
-              id="folderName"
-              name="folderName"
-              type="text"
-              value={projectData?.folderName || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="folderName"
+            label="Folder Name (if exist)"
+            name="folderName"
+            type="text"
+            value={projectData?.folderName || ""}
+            onChange={handleInputChange}
+            placeholder="Enter folder name"
+          />
         </div>
+
         {/* Intake From Status */}
         <div className="sm:col-span-3">
-          <label htmlFor="intakeFormStatus" className={labelClassName}>
-            Intake From Status
-          </label>
-          <div className="mt-2">
-            <select
-              id="intakeFormStatus"
-              name="intakeFormStatus"
-              value={projectData?.intakeFormStatus || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {intakeFormStatusOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="intakeFormStatus"
+            name="intakeFormStatus"
+            label="Intake From Status"
+            value={projectData?.intakeFormStatus || ""}
+            onChange={handleInputChange}
+            options={intakeFormStatusOptions}
+          />
         </div>
+
         {/* Last Communication (Out Bound) */}
         <div className="sm:col-span-3">
-          <label htmlFor="lastComm" className={labelClassName}>
-            Last Comm. (Outbound)
-          </label>
-          <div className="mt-2">
-            <input
-              id="lastComm"
-              name="lastComm"
-              type="date"
-              value={projectData?.lastComm || ""}
-              className={`${inputClassName} pr-2`}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormDate
+            id="lastComm"
+            label="Last Comm. (Outbound)"
+            name="lastComm"
+            inputClassName="pr-2"
+            value={projectData?.lastComm || ""}
+            onChange={handleInputChange}
+          />
         </div>
+
         {/* Client Contacts */}
         <div className="sm:col-span-3">
           <DynamicSearchListbox
             label="Client Contacts"
-            assignedTo={clientContacts} // Pass an array when allowMultiple is true
-            setAssignedTo={setClientContacts} // Modify to accept the array
+            assignedTo={clientContacts}
+            setAssignedTo={setClientContacts}
             fetchOptions={fetchUsersFromApi}
-            allowMultiple={true} // Multiple selection enabled
+            allowMultiple={true}
           />
         </div>
+
         {/* Assoc Reference No. (if exist) */}
         <div className="sm:col-span-3">
-          <label htmlFor="assocReferenceNo" className={labelClassName}>
-            Assoc Reference No. (if exist)
-          </label>
-          <div className="mt-2">
-            <input
-              id="assocReferenceNo"
-              name="assocReferenceNo"
-              type="text"
-              value={projectData?.assocReferenceNo || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="assocReferenceNo"
+            label="Assoc Reference No. (if exist)"
+            name="assocReferenceNo"
+            type="text"
+            value={projectData?.assocReferenceNo || ""}
+            onChange={handleInputChange}
+            placeholder="Enter reference number"
+          />
         </div>
+
         {/* Funding Source */}
         <div className="sm:col-span-3">
-          <label htmlFor="fundingSource" className={labelClassName}>
-            Funding Source
-          </label>
-          <div className="mt-2">
-            <select
-              id="fundingSource"
-              name="fundingSource"
-              value={projectData?.fundingSource || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            >
-              {fundingSourceOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FormSelect
+            id="fundingSource"
+            name="fundingSource"
+            label="Funding Source"
+            value={projectData?.fundingSource || ""}
+            onChange={handleInputChange}
+            options={fundingSourceOptions}
+          />
         </div>
+
         {/* Note Log */}
         <div className="sm:col-span-6">
           <h3 className="">Note Logs</h3>
@@ -727,7 +576,7 @@ const UpdateProjectPage = () => {
                       {note.user}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {note.timestamp}
+                      {formatTimestamp(note.timestamp)}
                     </td>
                   </tr>
                 ))}
@@ -775,36 +624,28 @@ const UpdateProjectPage = () => {
 
         {/* Location Name */}
         <div className="sm:col-span-3">
-          <label htmlFor="locationName" className={labelClassName}>
-            Location Name
-          </label>
-          <div className="mt-2">
-            <input
-              id="locationName"
-              name="locationName"
-              type="text"
-              value={projectData?.locationName || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="locationName"
+            label="Location Name"
+            name="locationName"
+            type="text"
+            value={projectData?.locationName || ""}
+            onChange={handleInputChange}
+            placeholder="Enter location name"
+          />
         </div>
 
         {/* Address */}
         <div className="sm:col-span-3">
-          <label htmlFor="address" className={labelClassName}>
-            Address
-          </label>
-          <div className="mt-2">
-            <input
-              id="address"
-              name="address"
-              type="text"
-              value={projectData?.address || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="address"
+            label="Address"
+            name="address"
+            type="text"
+            value={projectData?.address || ""}
+            onChange={handleInputChange}
+            placeholder="Enter address"
+          />
         </div>
 
         {/* Rooms */}
@@ -835,91 +676,78 @@ const UpdateProjectPage = () => {
 
         {/* Project Sponsor */}
         <div className="sm:col-span-3">
-          <label htmlFor="projectSponsor" className={labelClassName}>
-            Project Sponsor
-          </label>
-          <div className="mt-2">
-            <input
-              id="projectSponsor"
-              name="projectSponsor"
-              type="text"
-              value={projectData?.projectSponsor || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="projectSponsor"
+            label="Project Sponsor"
+            name="projectSponsor"
+            type="text"
+            value={projectData?.projectSponsor || ""}
+            onChange={handleInputChange}
+            placeholder="Enter project sponsor"
+          />
         </div>
 
         {/* Ministry */}
         <div className="sm:col-span-3">
-          <label htmlFor="ministry" className={labelClassName}>
-            Ministry
-          </label>
-          <div className="mt-2">
-            <input
-              id="ministry"
-              name="ministry"
-              type="text"
-              value={projectData?.ministry || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="ministry"
+            label="Ministry"
+            name="ministry"
+            type="text"
+            value={projectData?.ministry || ""}
+            onChange={handleInputChange}
+            placeholder="Enter ministry"
+          />
         </div>
 
         {/* Division */}
         <div className="sm:col-span-3">
-          <label htmlFor="division" className={labelClassName}>
-            Division
-          </label>
-          <div className="mt-2">
-            <input
-              id="division"
-              name="division"
-              type="text"
-              value={projectData?.division || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="division"
+            label="Division"
+            name="division"
+            type="text"
+            value={projectData?.division || ""}
+            onChange={handleInputChange}
+            placeholder="Enter division"
+          />
         </div>
 
         {/* Branch/Unit */}
         <div className="sm:col-span-3">
-          <label htmlFor="branchUnit" className={labelClassName}>
-            Branch/Unit
-          </label>
-          <div className="mt-2">
-            <input
-              id="branchUnit"
-              name="branchUnit"
-              type="text"
-              value={projectData?.branchUnit || ""}
-              className={inputClassName}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormInput
+            id="branchUnit"
+            label="Branch/Unit"
+            name="branchUnit"
+            type="text"
+            value={projectData?.branchUnit || ""}
+            onChange={handleInputChange}
+            placeholder="Enter branch/unit"
+          />
         </div>
 
         {/* Requested Completion Date */}
         <div className="sm:col-span-3">
-          <label htmlFor="requestedCompletionDate" className={labelClassName}>
-            Requested Completion Date
-          </label>
-          <div className="mt-2">
-            <input
-              id="requestedCompletionDate"
-              name="requestedCompletionDate"
-              type="date"
-              value={projectData?.requestedCompletionDate || ""}
-              className={`${inputClassName} pr-2`}
-              onChange={handleInputChange}
-            />
-          </div>
+          <FormDate
+            id="requestedCompletionDate"
+            label="Requested Completion Date"
+            name="requestedCompletionDate"
+            inputClassName="pr-2"
+            value={projectData?.requestedCompletionDate || ""}
+            onChange={handleInputChange}
+          />
         </div>
 
         {/* Assigned to PM */}
-        <div className="sm:col-span-3"></div>
+        <div className="mt-8 flex items-center sm:col-span-3">
+          <FormCheckbox
+            id="assignedToPM"
+            name="assignedToPM"
+            label="Assigned to PM"
+            checked={projectData?.assignedToPM ? true : false}
+            onChange={handleInputChange}
+          />
+        </div>
 
         {/* Estimated Cost */}
         <div className="sm:col-span-6">
@@ -956,6 +784,7 @@ const UpdateProjectPage = () => {
             </a>
           </div>
         </div>
+
         {/* Create New Cost Modal */}
         <Modal
           open={createCostOpen}
@@ -1026,12 +855,12 @@ const UpdateProjectPage = () => {
             </div>
           }
           confirmLabel="Save"
-          confirmAction={handleSaveCost} // Save the cost and year
+          confirmAction={handleSaveCost}
           cancelLabel="Cancel"
           cancelAction={() => {
             setCostInputError(null);
             setCost({ cost: null, year: null });
-          }} // Clear the error message and reset the cost and year
+          }}
         />
       </form>
 
