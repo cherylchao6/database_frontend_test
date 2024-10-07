@@ -16,7 +16,7 @@ const FormInput: React.FC<FormInputProps> = ({
   return (
     <div>
       {label && (
-        <label className="block font-medium leading-6 text-gray-900">
+        <label className="block font-medium leading-6 text-gray-900 mb-2">
           {label}
         </label>
       )}
