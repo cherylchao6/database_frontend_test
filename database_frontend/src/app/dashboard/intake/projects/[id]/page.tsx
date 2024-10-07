@@ -5,6 +5,9 @@ import { Hourglass } from "react-loader-spinner";
 import { XCircleIcon, BuildingLibraryIcon } from "@heroicons/react/24/outline";
 import DynamicSearchListbox from "@/components/DynamicSearchListbox";
 import Modal from "@/components/Modal";
+import { Person } from "@/types/intakes/person";
+import { Project } from "@/types/intakes/project";
+import FormInput from "@/components/FormInput";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 import {
@@ -21,58 +24,10 @@ const labelClassName = "block text-m font-medium leading-6 text-gray-900";
 const inputClassName =
   "pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
 
-interface Person {
-  id: number;
-  name: string;
-  avatar: string;
-}
-
-interface ProjectData {
-  projectId: string;
-  projectName: string;
-  projectDescription: string;
-  priority: string;
-  onOppList: boolean;
-  deadline: string;
-  firstContactDate: string;
-  alias: string;
-  status: string;
-  implemented: boolean;
-  waitingOnContact: string;
-  waitingFor: string;
-  assignedTo: Person;
-  clientMinistry: string;
-  folderName: string;
-  intakeFormStatus: string;
-  lastComm: string;
-  clientContacts: Person[];
-  assocReferenceNo: string;
-  fundingSource: string;
-  notes: string;
-  noteLog: { description: string; user: string; timestamp: string }[];
-  locationName: string;
-  address: string;
-  rooms: { id: string; num: string }[];
-  projectSponsor: string;
-  ministry: string;
-  division: string;
-  branchUnit: string;
-  requestedCompletionDate: string;
-  assignedToPM: string;
-  confirmed: boolean;
-  estimatedCost: { cost: number; year: number }[];
-}
-
-// const formatDateForInput = (dateString: string) => {
-//   if (!dateString) return "";
-//   const [day, month, year] = dateString.split(".");
-//   return `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD' format
-// };
-
-// const formatDateForDisplay = (dateString: string) => {
-//   const [year, month, day] = dateString.split("-");
-//   return `${day}.${month}.${year}`; // Convert back to 'DD.MM.YYYY' format
-// };
+// Convert to 'YYYY-MM-DD' format
+const formatTimestamp = (dateString: string) => {
+  return new Date(dateString).toISOString().split("T")[0];
+};
 
 const fetchUsersFromApi = async (query: string) => {
   const response = await fetch(`${apiUrl}/users?name=${query}`);
@@ -83,7 +38,7 @@ const fetchUsersFromApi = async (query: string) => {
 const UpdateProjectPage = () => {
   const pathname = usePathname();
   const id = pathname.split("/").pop(); // Extract project ID from route (e.g., MAG-001)
-  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const [projectData, setProjectData] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [assignedTo, setAssignedTo] = useState<Person[]>([]);
@@ -117,7 +72,7 @@ const UpdateProjectPage = () => {
     }
   }, [projectData?.assignedTo]);
 
-  const fakeData: ProjectData = {
+  const fakeData: Project = {
     projectId: id || "MAG-001", // Use the project ID from the URL
     projectName: "Super Fun Project", // Project Name
     projectDescription:
@@ -125,8 +80,8 @@ const UpdateProjectPage = () => {
     priority: "Low",
     onOppList: true, // This is for the "On Opp List?" checkbox
     implemented: false, // This is for the "In Implementation Phase?" checkbox
-    deadline: "2023-12-31", // As seen in your screenshot
-    firstContactDate: "2023-12-31", // First Contact Date
+    deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
+    firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
     status: "035 - Pre-Intake assess. complete", // Status field
     alias: "TEST-002", // Alias field
     waitingOnContact: "John Doe", // Waiting on con Contact(s)
@@ -140,7 +95,7 @@ const UpdateProjectPage = () => {
     clientMinistry: "Ministry of Infrastructure", // Client Ministry
     folderName: "Infra-Arizona-Docs", // Folder Name if exists
     intakeFormStatus: "Initial Discussion", // Intake from Status
-    lastComm: "2023-12-31", // Last Communication (Out Bound)
+    lastComm: "2024-11-03T10:30:00Z", // Last Communication (Out Bound)
     clientContacts: [
       {
         id: 3,
@@ -163,32 +118,32 @@ const UpdateProjectPage = () => {
       {
         description: "Initial contact made",
         user: "Jane Smith",
-        timestamp: "12.12.2022",
+        timestamp: "2024-12-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-11-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-10-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-09-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-08-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
         user: "John Doe",
-        timestamp: "13.12.2022",
+        timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
     locationName: "Arizona Main Office", // Location Name
@@ -235,6 +190,7 @@ const UpdateProjectPage = () => {
         };
       });
     } else if (name === "notes") {
+      if (!value) return; // Prevent empty notes from being added
       setProjectData((prevState) => {
         if (!prevState) return null;
 
@@ -244,7 +200,7 @@ const UpdateProjectPage = () => {
             {
               description: value,
               user: "Cheryl Chao",
-              timestamp: new Date().toLocaleDateString(),
+              timestamp: new Date().toISOString(),
             },
             ...prevState.noteLog,
           ],
@@ -317,16 +273,6 @@ const UpdateProjectPage = () => {
     }
   };
 
-  // const handleDateChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   field: keyof ProjectData
-  // ) => {
-  //   setProjectData((prevState) => ({
-  //     ...prevState!,
-  //     [field]: formatDateForDisplay(e.target.value), // Update the date in 'DD.MM.YYYY' format
-  //   }));
-  // };
-
   if (loading) {
     return (
       <div className="mt-4 flex justify-center items-center min-h-screen flex-col">
@@ -362,18 +308,24 @@ const UpdateProjectPage = () => {
       <form className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         {/* Project ID */}
         <div className="sm:col-span-3">
-          <label htmlFor="projectId" className={labelClassName}>
-            Project ID
-          </label>
           <div className="mt-2">
-            <input
+            <FormInput
+              id="projectId"
+              label="Project ID"
+              name="projectId"
+              type="text"
+              value={projectData?.projectId || ""}
+              onChange={handleInputChange}
+              placeholder="Enter project ID" // 這樣可以加入 placeholder
+            />
+            {/* <input
               id="projectId"
               name="projectId"
               type="text"
               value={projectData?.projectId || ""}
               className={inputClassName}
               onChange={handleInputChange}
-            />
+            /> */}
           </div>
         </div>
         {/* Project Name */}
@@ -451,7 +403,11 @@ const UpdateProjectPage = () => {
               id="deadline"
               name="deadline"
               type="date"
-              value={projectData?.deadline ?? ""}
+              value={
+                projectData?.deadline
+                  ? formatTimestamp(projectData.deadline)
+                  : ""
+              }
               className={`${inputClassName} pr-2`}
               onChange={handleInputChange}
             />
@@ -467,7 +423,11 @@ const UpdateProjectPage = () => {
               id="first-contact-date"
               name="first-contact-date"
               type="date"
-              value={projectData?.firstContactDate ?? ""}
+              value={
+                projectData?.firstContactDate
+                  ? formatTimestamp(projectData.firstContactDate)
+                  : ""
+              }
               className={`${inputClassName} pr-2`}
               onChange={handleInputChange}
             />
@@ -646,7 +606,11 @@ const UpdateProjectPage = () => {
               id="lastComm"
               name="lastComm"
               type="date"
-              value={projectData?.lastComm || ""}
+              value={
+                projectData?.lastComm
+                  ? formatTimestamp(projectData.lastComm)
+                  : ""
+              }
               className={`${inputClassName} pr-2`}
               onChange={handleInputChange}
             />
@@ -727,7 +691,7 @@ const UpdateProjectPage = () => {
                       {note.user}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {note.timestamp}
+                      {formatTimestamp(note.timestamp)}
                     </td>
                   </tr>
                 ))}
