@@ -8,7 +8,7 @@ export interface Project {
   onOppList: boolean;
   deadline: string;
   firstContactDate: string;
-  alias: string;
+  alias?: string;
   status: string;
   implemented: boolean;
   waitingOnContact: string;
@@ -21,17 +21,16 @@ export interface Project {
   clientContacts: Person[];
   assocReferenceNo: string;
   fundingSource: string;
-  notes: string;
   noteLog: { description: string; user: string; timestamp: string }[];
-  locationName: string;
-  address: string;
-  rooms: { id: string; num: string }[];
-  projectSponsor: string;
-  ministry: string;
-  division: string;
-  branchUnit: string;
-  requestedCompletionDate: string;
-  assignedToPM: string;
-  confirmed: boolean;
-  estimatedCost: { cost: number; year: number }[];
+  locationName?: string;
+  address?: string;
+  rooms?: { id: string; num: string }[];
+  projectSponsor?: string;
+  ministry?: string;
+  division?: string;
+  branchUnit?: string;
+  requestedCompletionDate?: string;
+  assignedToPM?: string;
+  confirmed?: boolean;
+  estimatedCost?: { cost: number; year: number }[];
 }

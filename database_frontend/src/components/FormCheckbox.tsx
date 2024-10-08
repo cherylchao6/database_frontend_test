@@ -3,6 +3,7 @@ import React from "react";
 interface FormCheckboxProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
+  checked?: boolean;
   inputClassName?: string; // Optional prop for extending class names
 }
 
