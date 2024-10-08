@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DynamicSearchListbox from "@/components/DynamicSearchListbox";
 import { Person } from "@/types/intakes/person";
 import { Project } from "@/types/intakes/project";
