@@ -31,7 +31,6 @@ const formatTimestamp = (dateString: string) => {
 
 const fetchUsersFromApi = async (query: string) => {
   const response = await fetch(`${apiUrl}/users?name=${query}`);
-  console.log(response);
   return await response.json(); // Returns the people data
 };
 
@@ -126,8 +125,6 @@ const UpdateProjectPage = () => {
     ], // Client Contact field
     assocReferenceNo: "REF-2022-001", // Associated Reference No. if exists
     fundingSource: "State Budget", // Funding Source
-    notes:
-      "Project will span multiple fiscal years, pending approval from stakeholders.", // Notes field
     noteLog: [
       {
         description: "Initial contact made",
@@ -266,8 +263,8 @@ const UpdateProjectPage = () => {
         return {
           ...prevState,
           estimatedCost: [
-            { cost: parsedCost, year: parsedYear }, // Use the number values
-            ...prevState.estimatedCost,
+            { cost: parsedCost, year: parsedYear },
+            ...(prevState.estimatedCost || []),
           ],
         };
       });
@@ -706,16 +703,17 @@ const UpdateProjectPage = () => {
             * Please click on each room to view solution profile.
           </p>
           <div className="flex space-x-4 mt-3">
-            {projectData?.rooms.map((room) => (
-              <a
-                key={room.id}
-                href={`/room/${room.id}`}
-                className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
-              >
-                <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
-                Room {room.num}
-              </a>
-            ))}
+            {projectData?.rooms?.length &&
+              projectData.rooms.map((room) => (
+                <a
+                  key={room.id}
+                  href={`/room/${room.id}`}
+                  className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+                >
+                  <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
+                  Room {room.num}
+                </a>
+              ))}
             <a
               href="#"
               className="flex items-center px-3 p-2 text-sm font-medium  bg-gray-800 rounded-xl hover:bg-gray-600 text-white"
@@ -820,16 +818,20 @@ const UpdateProjectPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {projectData?.estimatedCost.map((data, index) => (
-                  <tr key={index}>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      {data.year}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      ${data.cost}
-                    </td>
-                  </tr>
-                ))}
+                {projectData?.estimatedCost?.length && (
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {projectData.estimatedCost.map((data, index) => (
+                      <tr key={index}>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                          {data.year}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                          ${data.cost}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                )}
               </tbody>
             </table>
           </div>
