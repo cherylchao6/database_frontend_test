@@ -16,6 +16,7 @@ const FormDate: React.FC<FormDateProps> = ({
   label,
   inputClassName = "",
   value,
+  required,
   ...props
 }) => {
   const baseClassName =
@@ -29,6 +30,7 @@ const FormDate: React.FC<FormDateProps> = ({
       {label && (
         <label className="block font-medium leading-6 text-gray-900 mb-2">
           {label}
+          {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <input

@@ -13,6 +13,7 @@ interface DynamicSearchDropdownProps {
   setAssignedTo: (value: Person[]) => void;
   fetchOptions: (query: string) => Promise<Person[]>; // API fetch function passed as a prop
   allowMultiple?: boolean; // New prop to allow multiple selection
+  required?: boolean;
 }
 
 const DynamicSearchDropdown = ({
@@ -21,6 +22,7 @@ const DynamicSearchDropdown = ({
   setAssignedTo,
   fetchOptions,
   allowMultiple = false,
+  required,
 }: DynamicSearchDropdownProps) => {
   const [people, setPeople] = useState<Person[]>([]); // Options from API
   const [searchQuery, setSearchQuery] = useState(""); // Search input value
@@ -85,6 +87,7 @@ const DynamicSearchDropdown = ({
     <div className="relative sm:col-span-3">
       <label className="block font-medium leading-6 text-gray-900">
         {label}
+        {required && <span className="text-red-500">*</span>}
       </label>
 
       {/* Search input field - always show if allowMultiple is true */}

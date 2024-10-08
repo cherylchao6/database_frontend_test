@@ -40,7 +40,7 @@ const UpdateProjectPage = () => {
   const id = pathname.split("/").pop(); // Extract project ID from route (e.g., MAG-001)
   const [projectData, setProjectData] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null); // for error handling
   const [assignedTo, setAssignedTo] = useState<Person[]>([]);
   const [clientContacts, setClientContacts] = useState<Person[]>(
     projectData?.clientContacts ?? []
@@ -56,6 +56,13 @@ const UpdateProjectPage = () => {
     year: null,
   });
   const [costInputError, setCostInputError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false); // Track if the form has been submitted
+
+  // Store initial values separately
+  const [initialProjectData, setInitialProjectData] = useState({
+    projectId: "",
+    projectName: "",
+  });
 
   // Fetch project data based on the project ID from the URL
   useEffect(() => {
@@ -67,11 +74,18 @@ const UpdateProjectPage = () => {
   useEffect(() => {
     if (projectData?.assignedTo) {
       setAssignedTo([projectData.assignedTo]);
+
+      // Set initial project data
+      setInitialProjectData({
+        projectId: projectData.projectId,
+        projectName: projectData.projectName,
+      });
     } else {
       setAssignedTo([]);
     }
   }, [projectData?.assignedTo]);
 
+  // Mock up project data
   const fakeData: Project = {
     projectId: id || "MAG-001", // Use the project ID from the URL
     projectName: "Super Fun Project", // Project Name
@@ -172,6 +186,7 @@ const UpdateProjectPage = () => {
     ], // Estimated cost
   };
 
+  ////////////////////////////// Function var to validate input change
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -207,6 +222,13 @@ const UpdateProjectPage = () => {
         };
       });
     } else {
+      //////// Todo: Add error message for "projectId", "projectName", "location", "room", "projectSponsor", "branchUnit"
+      if (name === "projectId" && value.trim() === "") {
+        setError("Project ID is required.");
+      } else if (name === "projectId") {
+        setError(null); // Clear error message when input is valid
+      }
+
       // Handle other input types (text, textarea, select)
       setProjectData((prevState) => {
         if (!prevState) return null;
@@ -282,7 +304,14 @@ const UpdateProjectPage = () => {
     );
   }
 
-  if (error) {
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true); // Set submitted to true on form submission}
+  };
+
+  // Error message when user submits an empty project ID
+  if (error && isSubmitted) {
     return (
       <div className="rounded-md bg-red-50 p-4 mt-4">
         <div className="flex">
@@ -305,18 +334,28 @@ const UpdateProjectPage = () => {
           Project Intake Update
         </h1>
       </div>
-      <form className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+      {/* The current project ID and name  that user are viewing */}
+      <div className="mt-5 max-w-2xl  ">
+        <h2 className="text-3xl font-semibold text-slate-900">
+          {initialProjectData.projectId} - {initialProjectData.projectName}
+        </h2>
+      </div>
+
+      <form className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         {/* Project ID */}
         <div className="sm:col-span-3">
           <FormInput
             id="projectId"
-            label="Project ID"
             name="projectId"
             type="text"
+            label="Project ID"
             value={projectData?.projectId || ""}
             onChange={handleInputChange}
             placeholder="Enter project ID"
+            required // Mark as required (add red star)
           />
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
 
         {/* Project Name */}
@@ -329,6 +368,7 @@ const UpdateProjectPage = () => {
             value={projectData?.projectName || ""}
             onChange={handleInputChange}
             placeholder="Enter project name"
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -339,6 +379,7 @@ const UpdateProjectPage = () => {
             label="Project Short Description"
             name="projectDescription"
             type="text"
+            required // Mark as required (add red star)
             value={projectData?.projectDescription || ""}
             onChange={handleInputChange}
             placeholder="Enter project short description"
@@ -389,6 +430,7 @@ const UpdateProjectPage = () => {
             inputClassName="pr-2"
             value={projectData?.firstContactDate || ""}
             onChange={handleInputChange}
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -460,6 +502,7 @@ const UpdateProjectPage = () => {
             assignedTo={assignedTo}
             setAssignedTo={setAssignedTo}
             fetchOptions={fetchUsersFromApi}
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -472,6 +515,7 @@ const UpdateProjectPage = () => {
             value={projectData?.clientMinistry || ""}
             onChange={handleInputChange}
             options={clientMinistryOptions}
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -520,6 +564,7 @@ const UpdateProjectPage = () => {
             setAssignedTo={setClientContacts}
             fetchOptions={fetchUsersFromApi}
             allowMultiple={true}
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -632,6 +677,7 @@ const UpdateProjectPage = () => {
             value={projectData?.locationName || ""}
             onChange={handleInputChange}
             placeholder="Enter location name"
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -645,12 +691,17 @@ const UpdateProjectPage = () => {
             value={projectData?.address || ""}
             onChange={handleInputChange}
             placeholder="Enter address"
+            required // Mark as required (add red star)
           />
         </div>
 
         {/* Rooms */}
         <div className="sm:col-span-6">
-          <h3 className="">Rooms</h3>
+          <div className="flex">
+            <h3 className="">Rooms</h3>
+            <span className="text-sm text-red-500">*</span>
+          </div>
+
           <p id="email-error" className="mt-2 text-sm text-red-600">
             * Please click on each room to view solution profile.
           </p>
@@ -667,7 +718,7 @@ const UpdateProjectPage = () => {
             ))}
             <a
               href="#"
-              className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+              className="flex items-center px-3 p-2 text-sm font-medium  bg-gray-800 rounded-xl hover:bg-gray-600 text-white"
             >
               + Add Room
             </a>
@@ -684,6 +735,7 @@ const UpdateProjectPage = () => {
             value={projectData?.projectSponsor || ""}
             onChange={handleInputChange}
             placeholder="Enter project sponsor"
+            required // Mark as required (add red star)
           />
         </div>
 
@@ -697,6 +749,7 @@ const UpdateProjectPage = () => {
             value={projectData?.ministry || ""}
             onChange={handleInputChange}
             placeholder="Enter ministry"
+            required
           />
         </div>
 
@@ -710,6 +763,7 @@ const UpdateProjectPage = () => {
             value={projectData?.division || ""}
             onChange={handleInputChange}
             placeholder="Enter division"
+            required
           />
         </div>
 
@@ -723,6 +777,7 @@ const UpdateProjectPage = () => {
             value={projectData?.branchUnit || ""}
             onChange={handleInputChange}
             placeholder="Enter branch/unit"
+            required
           />
         </div>
 
@@ -884,7 +939,13 @@ const UpdateProjectPage = () => {
           </button>
         </div>
         <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <button
+            className="mr-2 inline-flex items-center px-4 py-2
+           border border-transparent text-sm font-medium rounded-md shadow-sm
+            text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none 
+            focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            onClick={handleSubmit}
+          >
             Save
           </button>
         </div>

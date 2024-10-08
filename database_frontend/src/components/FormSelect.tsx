@@ -11,6 +11,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
   label,
   selectClassName = "",
   options,
+  required,
   ...props
 }) => {
   const baseClassName =
@@ -21,6 +22,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
       {label && (
         <label className="block font-medium leading-6 text-gray-900 mb-2">
           {label}
+          {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <select className={`${baseClassName} ${selectClassName}`} {...props}>

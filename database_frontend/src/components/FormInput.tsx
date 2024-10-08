@@ -8,6 +8,7 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const FormInput: React.FC<FormInputProps> = ({
   label,
   inputClassName = "",
+  required,
   ...props
 }) => {
   const baseClassName =
@@ -18,6 +19,7 @@ const FormInput: React.FC<FormInputProps> = ({
       {label && (
         <label className="block font-medium leading-6 text-gray-900 mb-2">
           {label}
+          {required && <span className="text-red-500">*</span>}
         </label>
       )}
       <input className={`${baseClassName} ${inputClassName}`} {...props} />
