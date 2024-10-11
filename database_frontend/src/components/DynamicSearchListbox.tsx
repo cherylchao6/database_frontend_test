@@ -22,6 +22,8 @@ const DynamicSearchDropdown = ({
   fetchOptions,
   allowMultiple = false,
 }: DynamicSearchDropdownProps) => {
+  console.log("DynamicSearchDropdown");
+  console.log("assignedTo", assignedTo);
   const [people, setPeople] = useState<Person[]>([]); // Options from API
   const [searchQuery, setSearchQuery] = useState(""); // Search input value
   const [loading, setLoading] = useState(false); // Loading state
