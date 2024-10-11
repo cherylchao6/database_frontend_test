@@ -11,6 +11,8 @@ import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormDate from "@/components/FormDate";
 import FormCheckbox from "@/components/FormCheckbox";
+import { errorEmptyMessages } from "@/constants/intake/errorMessages";
+import { alphanumericFields } from "@/constants/intake/alphanumericFields";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -34,12 +36,13 @@ const fetchUsersFromApi = async (query: string) => {
   return await response.json(); // Returns the people data
 };
 
+///////////////////////////////////////////// Project Update Page Component ////////////////////////////////////////////////////////////
 const UpdateProjectPage = () => {
   const pathname = usePathname();
   const id = pathname.split("/").pop(); // Extract project ID from route (e.g., MAG-001)
   const [projectData, setProjectData] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // for error handling
+  const [error, setError] = useState<{ [key: string]: string | null }>({});
   const [assignedTo, setAssignedTo] = useState<Person[]>([]);
   const [clientContacts, setClientContacts] = useState<Person[]>(
     projectData?.clientContacts ?? []
@@ -219,12 +222,12 @@ const UpdateProjectPage = () => {
         };
       });
     } else {
-      //////// Todo: Add error message for "projectId", "projectName", "location", "room", "projectSponsor", "branchUnit"
-      if (name === "projectId" && value.trim() === "") {
-        setError("Project ID is required.");
-      } else if (name === "projectId") {
-        setError(null); // Clear error message when input is valid
-      }
+      // Create a new error object to store the error messages
+      const newError = { ...error };
+
+      // Validate the field dynamically
+      newError[name] = validateField(name, value);
+      setError(newError);
 
       // Handle other input types (text, textarea, select)
       setProjectData((prevState) => {
@@ -236,6 +239,38 @@ const UpdateProjectPage = () => {
         };
       });
     }
+  };
+
+  ////////////////////////////// Function to validate input field in different scenarios ///////////////////////////////
+  const validateField = (name: string, value: string) => {
+    // Validate empty field
+    if (errorEmptyMessages[name] && value.trim() === "") {
+      return errorEmptyMessages[name] || "*This field is required.";
+    }
+
+    // Validate  Non-Alphanumeric Characters
+    if (alphanumericFields.includes(name) && !/^[a-zA-Z0-9-]*$/.test(value)) {
+      return "This field must contain only letters, numbers, and dashes.";
+    }
+
+    // Get the current date
+    const currentDate = new Date();
+    const selectedDate = new Date(value);
+
+    if (name === "firstContactDate" && selectedDate > currentDate) {
+      return "First contact date cannot be in the future.";
+    } else if (
+      (name === "deadline" || name === "requestedCompletionDate") &&
+      selectedDate < currentDate
+    ) {
+      const errorMessage =
+        name === "deadline"
+          ? "Deadline must be in the future."
+          : "Requested completion date must be in the future.";
+      return errorMessage;
+    }
+
+    return null; // Clear error if the value is valid
   };
 
   const handleSaveCost = () => {
@@ -284,9 +319,9 @@ const UpdateProjectPage = () => {
       setLoading(false);
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message);
+        setError({ general: err.message });
       } else {
-        setError("An unknown error occurred");
+        setError({ general: "An unknown error occurred" });
       }
       setLoading(false);
     }
@@ -317,7 +352,7 @@ const UpdateProjectPage = () => {
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-semibold text-red-700">Error</h3>
-            <p className="text-sm text-red-700">{error}</p>
+            <p className="text-sm text-red-700">{error.general}</p>
           </div>
         </div>
       </div>
@@ -325,634 +360,666 @@ const UpdateProjectPage = () => {
   }
 
   return (
-    <div className="">
-      <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-4xl font-semibold text-slate-900">
-          Project Intake Update
-        </h1>
-      </div>
-
-      {/* The current project ID and name  that user are viewing */}
-      <div className="mt-5 max-w-2xl  ">
-        <h2 className="text-3xl font-semibold text-slate-900">
-          {initialProjectData.projectId} - {initialProjectData.projectName}
-        </h2>
-      </div>
-
-      <form className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-        {/* Project ID */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="projectId"
-            name="projectId"
-            type="text"
-            label="Project ID"
-            value={projectData?.projectId || ""}
-            onChange={handleInputChange}
-            placeholder="Enter project ID"
-            required // Mark as required (add red star)
-          />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+    <section>
+      <div>
+        <div className="mx-auto max-w-2xl text-center  ">
+          <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">
+            Project Intake Update
+          </h1>
         </div>
 
-        {/* Project Name */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="projectName"
-            label="Project Name"
-            name="projectName"
-            type="text"
-            value={projectData?.projectName || ""}
-            onChange={handleInputChange}
-            placeholder="Enter project name"
-            required // Mark as required (add red star)
-          />
+        {/* The current project ID and name  that user are viewing */}
+        <div className="mt-5 max-w-2xl  ">
+          <h2 className="text-3xl font-semibold text-slate-900 dark:text-white">
+            {initialProjectData.projectId} - {initialProjectData.projectName}
+          </h2>
         </div>
 
-        {/* Project Short Description */}
-        <div className="sm:col-span-6">
-          <FormInput
-            id="projectDescription"
-            label="Project Short Description"
-            name="projectDescription"
-            type="text"
-            required // Mark as required (add red star)
-            value={projectData?.projectDescription || ""}
-            onChange={handleInputChange}
-            placeholder="Enter project short description"
-          />
-        </div>
+        <form className="mt-5 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          {/* Project ID */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="projectId"
+              name="projectId"
+              type="text"
+              label="Project ID"
+              value={projectData?.projectId || ""}
+              onChange={handleInputChange}
+              placeholder="Enter project ID"
+              required // Mark as required (add red star)
+            />
+            {error.projectId && (
+              <p className="text-red-500 text-sm">{error.projectId}</p>
+            )}
+          </div>
 
-        {/* Priority */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="priority"
-            name="priority"
-            value={projectData?.priority || ""}
-            onChange={handleInputChange}
-            options={priorityOptions}
-            label="Priority"
-          />
-        </div>
+          {/* Project Name */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="projectName"
+              label="Project Name"
+              name="projectName"
+              type="text"
+              value={projectData?.projectName || ""}
+              onChange={handleInputChange}
+              placeholder="Enter project name"
+              required // Mark as required (add red star)
+            />
+            {error.projectName && (
+              <p className="text-red-500 text-sm">{error.projectName}</p>
+            )}
+          </div>
 
-        {/* On Opp. List? */}
-        <div className="mt-8 flex items-center sm:col-span-3">
-          <FormCheckbox
-            id="onOppList"
-            name="onOppList"
-            label="On Opp. List ?"
-            checked={projectData?.onOppList || false}
-            onChange={handleInputChange}
-          />
-        </div>
+          {/* Project Short Description */}
+          <div className="sm:col-span-6">
+            <FormInput
+              id="projectDescription"
+              label="Project Short Description"
+              name="projectDescription"
+              type="text"
+              value={projectData?.projectDescription || ""}
+              onChange={handleInputChange}
+              placeholder="Enter project short description"
+            />
+            {error.projectDescription && (
+              <p className="text-red-500 text-sm">{error.projectDescription}</p>
+            )}
+          </div>
 
-        {/* Deadline */}
-        <div className="sm:col-span-3">
-          <FormDate
-            id="deadline"
-            label="Deadline"
-            name="deadline"
-            inputClassName="pr-2"
-            value={projectData?.deadline || ""}
-            onChange={handleInputChange}
-          />
-        </div>
+          {/* Priority */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="priority"
+              name="priority"
+              value={projectData?.priority || ""}
+              onChange={handleInputChange}
+              options={priorityOptions}
+              label="Priority"
+            />
+          </div>
 
-        {/* First Contact Date */}
-        <div className="sm:col-span-3">
-          <FormDate
-            id="firstContactDate"
-            label="First Contact Date"
-            name="firstContactDate"
-            inputClassName="pr-2"
-            value={projectData?.firstContactDate || ""}
-            onChange={handleInputChange}
-            required // Mark as required (add red star)
-          />
-        </div>
+          {/* On Opp. List? */}
+          <div className="mt-8 flex items-center sm:col-span-3">
+            <FormCheckbox
+              id="onOppList"
+              name="onOppList"
+              label="On Opp. List ?"
+              checked={projectData?.onOppList || false}
+              onChange={handleInputChange}
+            />
+          </div>
 
-        {/* Status */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="status"
-            name="status"
-            label="Status"
-            value={projectData?.status || ""}
-            onChange={handleInputChange}
-            options={statusOptions}
-          />
-        </div>
+          {/* Deadline */}
+          <div className="sm:col-span-3">
+            <FormDate
+              id="deadline"
+              label="Deadline"
+              name="deadline"
+              inputClassName="pr-2"
+              value={projectData?.deadline || ""}
+              onChange={handleInputChange}
+            />
+            {error.deadline && (
+              <p className="text-red-500 text-sm">{error.deadline}</p>
+            )}
+          </div>
 
-        {/* implemented */}
-        <div className="mt-8 flex items-center sm:col-span-3">
-          <FormCheckbox
-            id="implemented"
-            name="implemented"
-            label="In Implementation Phase ?"
-            checked={projectData?.implemented || false}
-            onChange={handleInputChange}
-          />
-        </div>
+          {/* First Contact Date */}
+          <div className="sm:col-span-3">
+            <FormDate
+              id="firstContactDate"
+              label="First Contact Date"
+              name="firstContactDate"
+              inputClassName="pr-2"
+              value={projectData?.firstContactDate || ""}
+              onChange={handleInputChange}
+              required // Mark as required (add red star)
+            />
+            {error.firstContactDate && (
+              <p className="text-red-500 text-sm">{error.firstContactDate}</p>
+            )}
+          </div>
 
-        {/* Alias */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="alias"
-            label="Alias"
-            name="alias"
-            type="text"
-            value={projectData?.alias || ""}
-            onChange={handleInputChange}
-            placeholder="Enter alias"
-          />
-        </div>
-        <div className="sm:col-span-3"></div>
+          {/* Status */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="status"
+              name="status"
+              label="Status"
+              value={projectData?.status || ""}
+              onChange={handleInputChange}
+              options={statusOptions}
+            />
+          </div>
 
-        {/* Waiting On Contact(s) */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="waitingOnContact"
-            name="waitingOnContact"
-            label="Waiting on Contact(s)"
-            value={projectData?.waitingOnContact || ""}
-            onChange={handleInputChange}
-            options={waitingOnContactOptions}
-          />
-        </div>
+          {/* Implemented */}
+          <div className="mt-8 flex items-center sm:col-span-3">
+            <FormCheckbox
+              id="implemented"
+              name="implemented"
+              label="In Implementation Phase ?"
+              checked={projectData?.implemented || false}
+              onChange={handleInputChange}
+            />
+          </div>
 
-        {/* Waiting For */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="waitingFor"
-            name="waitingFor"
-            label="Waiting For"
-            value={projectData?.waitingFor || ""}
-            onChange={handleInputChange}
-            options={waitingForOptions}
-          />
-        </div>
+          {/* Alias */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="alias"
+              label="Alias"
+              name="alias"
+              type="text"
+              value={projectData?.alias || ""}
+              onChange={handleInputChange}
+              placeholder="Enter alias"
+            />
+          </div>
+          <div className="sm:col-span-3"></div>
 
-        {/* Assigned To */}
-        <div className="sm:col-span-3">
-          <DynamicSearchListbox
-            label="Assigned To"
-            assignedTo={assignedTo}
-            setAssignedTo={setAssignedTo}
-            fetchOptions={fetchUsersFromApi}
-            required // Mark as required (add red star)
-          />
-        </div>
+          {/* Waiting On Contact(s) */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="waitingOnContact"
+              name="waitingOnContact"
+              label="Waiting on Contact(s)"
+              value={projectData?.waitingOnContact || ""}
+              onChange={handleInputChange}
+              options={waitingOnContactOptions}
+            />
+          </div>
 
-        {/* Client Ministry */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="clientMinistry"
-            name="clientMinistry"
-            label="Client Ministry"
-            value={projectData?.clientMinistry || ""}
-            onChange={handleInputChange}
-            options={clientMinistryOptions}
-            required // Mark as required (add red star)
-          />
-        </div>
+          {/* Waiting For */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="waitingFor"
+              name="waitingFor"
+              label="Waiting For"
+              value={projectData?.waitingFor || ""}
+              onChange={handleInputChange}
+              options={waitingForOptions}
+            />
+          </div>
 
-        {/* Folder Name */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="folderName"
-            label="Folder Name (if exist)"
-            name="folderName"
-            type="text"
-            value={projectData?.folderName || ""}
-            onChange={handleInputChange}
-            placeholder="Enter folder name"
-          />
-        </div>
+          {/* Assigned To */}
+          <div className="sm:col-span-3">
+            <DynamicSearchListbox
+              label="Assigned To"
+              assignedTo={assignedTo}
+              setAssignedTo={setAssignedTo}
+              fetchOptions={fetchUsersFromApi}
+              required // Mark as required (add red star)
+            />
+          </div>
 
-        {/* Intake From Status */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="intakeFormStatus"
-            name="intakeFormStatus"
-            label="Intake From Status"
-            value={projectData?.intakeFormStatus || ""}
-            onChange={handleInputChange}
-            options={intakeFormStatusOptions}
-          />
-        </div>
+          {/* Client Ministry */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="clientMinistry"
+              name="clientMinistry"
+              label="Client Ministry"
+              value={projectData?.clientMinistry || ""}
+              onChange={handleInputChange}
+              options={clientMinistryOptions}
+              required
+            />
+          </div>
 
-        {/* Last Communication (Out Bound) */}
-        <div className="sm:col-span-3">
-          <FormDate
-            id="lastComm"
-            label="Last Comm. (Outbound)"
-            name="lastComm"
-            inputClassName="pr-2"
-            value={projectData?.lastComm || ""}
-            onChange={handleInputChange}
-          />
-        </div>
+          {/* Folder Name */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="folderName"
+              label="Folder Name (if exist)"
+              name="folderName"
+              type="text"
+              value={projectData?.folderName || ""}
+              onChange={handleInputChange}
+              placeholder="Enter folder name"
+            />
+          </div>
 
-        {/* Client Contacts */}
-        <div className="sm:col-span-3">
-          <DynamicSearchListbox
-            label="Client Contacts"
-            assignedTo={clientContacts}
-            setAssignedTo={setClientContacts}
-            fetchOptions={fetchUsersFromApi}
-            allowMultiple={true}
-            required // Mark as required (add red star)
-          />
-        </div>
+          {/* Intake From Status */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="intakeFormStatus"
+              name="intakeFormStatus"
+              label="Intake From Status"
+              value={projectData?.intakeFormStatus || ""}
+              onChange={handleInputChange}
+              options={intakeFormStatusOptions}
+            />
+          </div>
 
-        {/* Assoc Reference No. (if exist) */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="assocReferenceNo"
-            label="Assoc Reference No. (if exist)"
-            name="assocReferenceNo"
-            type="text"
-            value={projectData?.assocReferenceNo || ""}
-            onChange={handleInputChange}
-            placeholder="Enter reference number"
-          />
-        </div>
+          {/* Last Communication (Out Bound) */}
+          <div className="sm:col-span-3">
+            <FormDate
+              id="lastComm"
+              label="Last Comm. (Outbound)"
+              name="lastComm"
+              inputClassName="pr-2"
+              value={projectData?.lastComm || ""}
+              onChange={handleInputChange}
+            />
+          </div>
 
-        {/* Funding Source */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="fundingSource"
-            name="fundingSource"
-            label="Funding Source"
-            value={projectData?.fundingSource || ""}
-            onChange={handleInputChange}
-            options={fundingSourceOptions}
-          />
-        </div>
+          {/* Client Contacts */}
+          <div className="sm:col-span-3">
+            <DynamicSearchListbox
+              label="Client Contacts"
+              assignedTo={clientContacts}
+              setAssignedTo={setClientContacts}
+              fetchOptions={fetchUsersFromApi}
+              allowMultiple={true}
+              required // Mark as required (add red star)
+            />
+          </div>
 
-        {/* Note Log */}
-        <div className="sm:col-span-6">
-          <h3 className="">Note Logs</h3>
-          <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Description
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    User
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Timestamp
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {projectData?.noteLog.map((note, index) => (
-                  <tr key={index}>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      {note.description}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      {note.user}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {formatTimestamp(note.timestamp)}
-                    </td>
+          {/* Assoc Reference No. (if exist) */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="assocReferenceNo"
+              label="Assoc Reference No. (if exist)"
+              name="assocReferenceNo"
+              type="text"
+              value={projectData?.assocReferenceNo || ""}
+              onChange={handleInputChange}
+              placeholder="Enter reference number"
+            />
+          </div>
+
+          {/* Funding Source */}
+          <div className="sm:col-span-3">
+            <FormSelect
+              id="fundingSource"
+              name="fundingSource"
+              label="Funding Source"
+              value={projectData?.fundingSource || ""}
+              onChange={handleInputChange}
+              options={fundingSourceOptions}
+            />
+          </div>
+
+          {/* Note Log */}
+          <div className="sm:col-span-6 ">
+            <h3 className="dark:text-white">Note Logs</h3>
+            <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm ">
+              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-200 ">
+                <thead className="bg-gray-100 dark:bg-slate-700">
+                  <tr>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                      Description
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white ">
+                      User
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white ">
+                      Timestamp
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
-            <a href="#" onClick={() => setCreateNoteOpen(true)}>
-              + Add Notes
-            </a>
-          </div>
-        </div>
-
-        {/* Create New Notes Modal */}
-        <Modal
-          open={createNoteOpen}
-          onClose={setCreateNoteOpen}
-          title="Create Note"
-          content={
-            <div>
-              <div className="mt-1">
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows={4}
-                  className="block w-full p-2 rounded-md border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="Write something..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </div>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900">
+                  {projectData?.noteLog.map((note, index) => (
+                    <tr key={index}>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                        {note.description}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                        {note.user}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">
+                        {formatTimestamp(note.timestamp)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          } // Pass the JSX as content
-          confirmLabel="Save"
-          confirmAction={() => {
-            handleInputChange({
-              target: { name: "notes", value: notes },
-            } as any);
-            setNotes("");
-            setCreateNoteOpen(false); // Close modal after saving
-          }}
-          cancelLabel="Cancel"
-          cancelAction={() => setNotes("")}
-        />
-
-        {/* Location Name */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="locationName"
-            label="Location Name"
-            name="locationName"
-            type="text"
-            value={projectData?.locationName || ""}
-            onChange={handleInputChange}
-            placeholder="Enter location name"
-            required // Mark as required (add red star)
-          />
-        </div>
-
-        {/* Address */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="address"
-            label="Address"
-            name="address"
-            type="text"
-            value={projectData?.address || ""}
-            onChange={handleInputChange}
-            placeholder="Enter address"
-            required // Mark as required (add red star)
-          />
-        </div>
-
-        {/* Rooms */}
-        <div className="sm:col-span-6">
-          <div className="flex">
-            <h3 className="">Rooms</h3>
-            <span className="text-sm text-red-500">*</span>
+            <div className="mt-4 text-right text-sky-500 hover:text-sky-700 ">
+              <a href="#" onClick={() => setCreateNoteOpen(true)}>
+                + Add Notes
+              </a>
+            </div>
           </div>
 
-          <p id="email-error" className="mt-2 text-sm text-red-600">
-            * Please click on each room to view solution profile.
-          </p>
-          <div className="flex space-x-4 mt-3">
-            {projectData?.rooms?.length &&
-              projectData.rooms.map((room) => (
-                <a
-                  key={room.id}
-                  href={`/room/${room.id}`}
-                  className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
-                >
-                  <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
-                  Room {room.num}
-                </a>
-              ))}
-            <a
-              href="#"
-              className="flex items-center px-3 p-2 text-sm font-medium  bg-gray-800 rounded-xl hover:bg-gray-600 text-white"
-            >
-              + Add Room
-            </a>
-          </div>
-        </div>
-
-        {/* Project Sponsor */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="projectSponsor"
-            label="Project Sponsor"
-            name="projectSponsor"
-            type="text"
-            value={projectData?.projectSponsor || ""}
-            onChange={handleInputChange}
-            placeholder="Enter project sponsor"
-            required // Mark as required (add red star)
-          />
-        </div>
-
-        {/* Ministry */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="ministry"
-            label="Ministry"
-            name="ministry"
-            type="text"
-            value={projectData?.ministry || ""}
-            onChange={handleInputChange}
-            placeholder="Enter ministry"
-            required
-          />
-        </div>
-
-        {/* Division */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="division"
-            label="Division"
-            name="division"
-            type="text"
-            value={projectData?.division || ""}
-            onChange={handleInputChange}
-            placeholder="Enter division"
-            required
-          />
-        </div>
-
-        {/* Branch/Unit */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="branchUnit"
-            label="Branch/Unit"
-            name="branchUnit"
-            type="text"
-            value={projectData?.branchUnit || ""}
-            onChange={handleInputChange}
-            placeholder="Enter branch/unit"
-            required
-          />
-        </div>
-
-        {/* Requested Completion Date */}
-        <div className="sm:col-span-3">
-          <FormDate
-            id="requestedCompletionDate"
-            label="Requested Completion Date"
-            name="requestedCompletionDate"
-            inputClassName="pr-2"
-            value={projectData?.requestedCompletionDate || ""}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        {/* Assigned to PM */}
-        <div className="mt-8 flex items-center sm:col-span-3">
-          <FormCheckbox
-            id="assignedToPM"
-            name="assignedToPM"
-            label="Assigned to PM"
-            checked={projectData?.assignedToPM ? true : false}
-            onChange={handleInputChange}
-          />
-        </div>
-
-        {/* Estimated Cost */}
-        <div className="sm:col-span-6">
-          <h3 className="">Estimated Cost/Fiscal</h3>
-          <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Year
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Cost
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {projectData?.estimatedCost?.length && (
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {projectData.estimatedCost.map((data, index) => (
-                      <tr key={index}>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                          {data.year}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                          ${data.cost}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
-            <a href="#" onClick={() => setCreateCostOpen(true)}>
-              + Add Estimated Cost/Fiscal
-            </a>
-          </div>
-        </div>
-
-        {/* Create New Cost Modal */}
-        <Modal
-          open={createCostOpen}
-          onClose={() => {
-            if (!error) {
-              setCreateCostOpen(false); // Only close the modal if there's no error
-            } else {
-              setCostInputError(null);
-            }
-          }}
-          title="Create Cost/Fiscal"
-          content={
-            <div>
-              {/* Error Message */}
-              {costInputError && (
-                <div className="text-red-500 text-sm mb-2">
-                  {costInputError}
+          {/* Create New Notes Modal */}
+          <Modal
+            open={createNoteOpen}
+            onClose={setCreateNoteOpen}
+            title="Create Note"
+            content={
+              <div className="dark:bg-slate-800">
+                <div className="mt-1">
+                  <textarea
+                    id="notes"
+                    name="notes"
+                    rows={4}
+                    className="block w-full p-2 rounded-md border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm 
+                    dark:bg-slate-800 dark:text-white"
+                    placeholder="Write something..."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
                 </div>
-              )}
-
-              {/* Cost Input */}
-              <div className="mt-4">
-                <label
-                  htmlFor="cost"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Cost
-                </label>
-                <input
-                  id="cost"
-                  name="cost"
-                  type="number"
-                  value={cost.cost ?? ""}
-                  onChange={(e) =>
-                    setCost((prev) => ({
-                      ...prev,
-                      cost: parseFloat(e.target.value),
-                    }))
-                  }
-                  className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter cost"
-                />
               </div>
+            } // Pass the JSX as content
+            confirmLabel="Save"
+            confirmAction={() => {
+              handleInputChange({
+                target: { name: "notes", value: notes },
+              } as any);
+              setNotes("");
+              setCreateNoteOpen(false); // Close modal after saving
+            }}
+            cancelLabel="Cancel"
+            cancelAction={() => setNotes("")}
+          />
 
-              {/* Year Input */}
-              <div className="mt-4">
-                <label
-                  htmlFor="year"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Year
-                </label>
-                <input
-                  id="year"
-                  name="year"
-                  type="number"
-                  value={cost.year ?? ""}
-                  onChange={(e) =>
-                    setCost((prev) => ({
-                      ...prev,
-                      year: parseInt(e.target.value),
-                    }))
-                  }
-                  className="block w-full p-2 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter fiscal year"
-                />
-              </div>
+          {/* Location Name */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="locationName"
+              label="Location Name"
+              name="locationName"
+              type="text"
+              value={projectData?.locationName || ""}
+              onChange={handleInputChange}
+              placeholder="Enter location name"
+              required // Mark as required (add red star)
+            />
+            {error.locationName && (
+              <p className="text-red-500 text-sm">{error.locationName}</p>
+            )}
+          </div>
+
+          {/* Address */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="address"
+              label="Address"
+              name="address"
+              type="text"
+              value={projectData?.address || ""}
+              onChange={handleInputChange}
+              placeholder="Enter address"
+              required // Mark as required (add red star)
+            />
+            {error.address && (
+              <p className="text-red-500 text-sm">{error.address}</p>
+            )}
+          </div>
+
+          {/* Rooms */}
+          <div className="sm:col-span-6">
+            <div className="flex">
+              <h3 className="dark:text-white">Rooms</h3>
+              <span className="text-sm text-red-500">*</span>
             </div>
-          }
-          confirmLabel="Save"
-          confirmAction={handleSaveCost}
-          cancelLabel="Cancel"
-          cancelAction={() => {
-            setCostInputError(null);
-            setCost({ cost: null, year: null });
-          }}
-        />
-      </form>
 
-      <div className="flex mt-10">
-        <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Milestones
-          </button>
+            <p id="email-error" className="mt-2 text-sm text-red-600">
+              * Please click on each room to view solution profile.
+            </p>
+            <div className="flex space-x-4 mt-3">
+              {projectData?.rooms?.length &&
+                projectData.rooms.map((room) => (
+                  <a
+                    key={room.id}
+                    href={`/room/${room.id}`}
+                    className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+                  >
+                    <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
+                    Room {room.num}
+                  </a>
+                ))}
+              <a
+                href="#"
+                className="flex items-center px-3 p-2 text-sm font-medium  bg-gray-800 rounded-xl hover:bg-gray-600 text-white"
+              >
+                + Add Room
+              </a>
+            </div>
+          </div>
+
+          {/* Project Sponsor */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="projectSponsor"
+              label="Project Sponsor"
+              name="projectSponsor"
+              type="text"
+              value={projectData?.projectSponsor || ""}
+              onChange={handleInputChange}
+              placeholder="Enter project sponsor"
+              required // Mark as required (add red star)
+            />
+            {error.projectSponsor && (
+              <p className="text-red-500 text-sm">{error.projectSponsor}</p>
+            )}
+          </div>
+
+          {/* Ministry */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="ministry"
+              label="Ministry"
+              name="ministry"
+              type="text"
+              value={projectData?.ministry || ""}
+              onChange={handleInputChange}
+              placeholder="Enter ministry"
+              required
+            />
+            {error.ministry && (
+              <p className="text-red-500 text-sm">{error.ministry}</p>
+            )}
+          </div>
+
+          {/* Division */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="division"
+              label="Division"
+              name="division"
+              type="text"
+              value={projectData?.division || ""}
+              onChange={handleInputChange}
+              placeholder="Enter division"
+              required
+            />
+            {error.division && (
+              <p className="text-red-500 text-sm">{error.division}</p>
+            )}
+          </div>
+
+          {/* Branch/Unit */}
+          <div className="sm:col-span-3">
+            <FormInput
+              id="branchUnit"
+              label="Branch/Unit"
+              name="branchUnit"
+              type="text"
+              value={projectData?.branchUnit || ""}
+              onChange={handleInputChange}
+              placeholder="Enter branch/unit"
+              required
+            />
+            {error.branchUnit && (
+              <p className="text-red-500 text-sm">{error.branchUnit}</p>
+            )}
+          </div>
+
+          {/* Requested Completion Date */}
+          <div className="sm:col-span-3">
+            <FormDate
+              id="requestedCompletionDate"
+              label="Requested Completion Date"
+              name="requestedCompletionDate"
+              inputClassName="pr-2"
+              value={projectData?.requestedCompletionDate || ""}
+              onChange={handleInputChange}
+            />
+            {error.requestedCompletionDate && (
+              <p className="text-red-500 text-sm">
+                {error.requestedCompletionDate}
+              </p>
+            )}
+          </div>
+
+          {/* Assigned to PM */}
+          <div className="mt-8 flex items-center sm:col-span-3">
+            <FormCheckbox
+              id="assignedToPM"
+              name="assignedToPM"
+              label="Assigned to PM"
+              checked={projectData?.assignedToPM ? true : false}
+              onChange={handleInputChange}
+            />
+          </div>
+
+          {/* Estimated Cost */}
+          <div className="sm:col-span-6">
+            <h3 className="dark:text-white">Estimated Cost/Fiscal</h3>
+            <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
+              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-200">
+                <thead className="bg-gray-100 dark:bg-slate-700">
+                  <tr>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                      Year
+                    </th>
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                      Cost
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900">
+                  {projectData?.estimatedCost?.map((data, index) => (
+                    <tr key={index}>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                        {data.year}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                        ${data.cost}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
+              <a href="#" onClick={() => setCreateCostOpen(true)}>
+                + Add Estimated Cost/Fiscal
+              </a>
+            </div>
+          </div>
+
+          {/* Create New Cost Modal */}
+          <Modal
+            open={createCostOpen}
+            onClose={() => {
+              // Close the modal without checking for errors or input
+              setCreateCostOpen(false);
+            }}
+            title="Create Cost/Fiscal"
+            content={
+              <div>
+                {/* Error Message */}
+                {costInputError && (
+                  <div className="text-red-500 text-sm mb-2">
+                    {costInputError}
+                  </div>
+                )}
+
+                {/* Cost Input */}
+                <div className="mt-4">
+                  <label
+                    htmlFor="cost"
+                    className="block text-md font-medium text-gray-700 dark:text-white p-2"
+                  >
+                    Cost
+                  </label>
+                  <input
+                    id="cost"
+                    name="cost"
+                    type="number"
+                    value={cost.cost ?? ""}
+                    onChange={(e) =>
+                      setCost((prev) => ({
+                        ...prev,
+                        cost: parseFloat(e.target.value),
+                      }))
+                    }
+                    className="block w-full p-2 border-gray-300 rounded-md dark:text-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Enter cost"
+                  />
+                </div>
+
+                {/* Year Input */}
+                <div className="mt-4">
+                  <label
+                    htmlFor="year"
+                    className="block text-md p-2 font-medium text-gray-700 dark:text-white align-left"
+                  >
+                    Year
+                  </label>
+                  <input
+                    id="year"
+                    name="year"
+                    type="number"
+                    value={cost.year ?? ""}
+                    onChange={(e) =>
+                      setCost((prev) => ({
+                        ...prev,
+                        year: parseInt(e.target.value),
+                      }))
+                    }
+                    className="block w-full p-2 border-gray-300 dark:text-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Enter fiscal year"
+                  />
+                </div>
+              </div>
+            }
+            confirmLabel="Save"
+            confirmAction={handleSaveCost}
+            cancelLabel="Cancel"
+            cancelAction={() => {
+              setCostInputError(null);
+              setCost({ cost: null, year: null });
+            }}
+          />
+        </form>
+
+        <div className="flex mt-10">
+          <div className="">
+            <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Milestones
+            </button>
+          </div>
+          <div className="">
+            <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Requisition Orders
+            </button>
+          </div>
         </div>
-        <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-            Requisition Orders
-          </button>
-        </div>
-      </div>
-      <hr className="my-6 border-t border-gray-300" />
-      <div className="flex mt-10 justify-end">
-        <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
-            Cancel
-          </button>
-        </div>
-        <div className="">
-          <button
-            className="mr-2 inline-flex items-center px-4 py-2
+        <hr className="my-6 border-t border-gray-300" />
+        <div className="flex mt-10 justify-end">
+          <div className="">
+            <button className="mr-2 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+              Cancel
+            </button>
+          </div>
+          <div className="">
+            <button
+              className="mr-2 inline-flex items-center px-4 py-2
            border border-transparent text-sm font-medium rounded-md shadow-sm
             text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none 
             focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={handleSubmit}
-          >
-            Save
-          </button>
+              onClick={handleSubmit}
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
