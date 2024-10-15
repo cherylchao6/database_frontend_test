@@ -1,5 +1,4 @@
 import DashboardLayout from "@/components/DashboardLayout";
-import Footer from "@/components/Footer";
 
 // Layout component
 export default function Layout({
@@ -10,7 +9,6 @@ export default function Layout({
   return (
     <div className="flex flex-col h-screen justify-between">
       <DashboardLayout>{children}</DashboardLayout>
-      <Footer />
     </div>
   );
 }

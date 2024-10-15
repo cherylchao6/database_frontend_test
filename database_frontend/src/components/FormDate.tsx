@@ -20,7 +20,7 @@ const FormDate: React.FC<FormDateProps> = ({
   ...props
 }) => {
   const baseClassName =
-    "pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
+    "dark:text-white pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6";
 
   // Use formatting function if provided, otherwise use the value directly
   const formattedValue = value ? formatTimestamp(value) : "";
@@ -28,7 +28,7 @@ const FormDate: React.FC<FormDateProps> = ({
   return (
     <div>
       {label && (
-        <label className="block font-medium leading-6 text-gray-900 mb-2">
+        <label className="block font-medium leading-6 text-gray-900 mb-2 dark:text-white ">
           {label}
           {required && <span className="text-red-500">*</span>}
         </label>

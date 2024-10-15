@@ -14,12 +14,12 @@ const FormCheckbox: React.FC<FormCheckboxProps> = ({
   ...props
 }) => {
   const baseClassName =
-    "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600";
+    "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 dark:text-white ";
 
   return (
     <div className="flex items-center">
       {label && (
-        <label className="block text-m font-medium leading-6 text-gray-900 mr-2">
+        <label className="block text-m font-medium leading-6 text-gray-900 mr-2 dark:text-white ">
           {label}
         </label>
       )}

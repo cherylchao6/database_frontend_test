@@ -21,13 +21,12 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <nav
       aria-label="Pagination"
-      className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
+      className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 dark:bg-slate-800 "
     >
       <div className="hidden sm:block">
-        <p className="text-sm text-gray-700">
-          Showing <span className="font-medium">{startItem}</span> to{" "}
-          <span className="font-medium">{endItem}</span> of{" "}
-          <span className="font-medium">{totalItems}</span> results
+        <p className="text-sm text-gray-700 dark:text-white">
+          Showing <span>{startItem}</span> to <span>{endItem}</span> of{" "}
+          <span>{totalItems}</span> results
         </p>
       </div>
       <div className="flex flex-1 justify-between sm:justify-end">

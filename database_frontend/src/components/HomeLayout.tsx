@@ -11,10 +11,9 @@ const HomeLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="shrink-0 items-center">
               <Image
                 src="/logo.png"
-                width={250}
-                height={100}
-                className="h-10 w-auto"
                 alt="ontario-logo"
+                width={150}
+                height={55}
               />
             </div>
             <div className="text-3xl font-semibold text-white hidden md:block">
