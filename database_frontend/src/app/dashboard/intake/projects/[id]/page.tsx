@@ -2,11 +2,18 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Hourglass } from "react-loader-spinner";
-import { XCircleIcon, BuildingLibraryIcon } from "@heroicons/react/24/outline";
+import {
+  XCircleIcon,
+  BuildingLibraryIcon,
+  CheckIcon,
+  XMarkIcon,
+  DocumentCheckIcon,
+} from "@heroicons/react/24/outline";
 import DynamicSearchListbox from "@/components/DynamicSearchListbox";
 import Modal from "@/components/Modal";
 import { Person } from "@/types/intakes/person";
 import { Project } from "@/types/intakes/project";
+import { Milestone, MilestoneKey } from "@/types/intakes/milestone";
 import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormDate from "@/components/FormDate";
@@ -24,6 +31,7 @@ import {
   intakeFormStatusOptions,
   clientMinistryOptions,
   fundingSourceOptions,
+  milestoneStatus,
 } from "constants/intake/dropDownOptions";
 
 // Convert to 'YYYY-MM-DD' format
@@ -36,7 +44,164 @@ const fetchUsersFromApi = async (query: string) => {
   return await response.json(); // Returns the people data
 };
 
-///////////////////////////////////////////// Project Update Page Component ////////////////////////////////////////////////////////////
+const getIcon = (status: string) => {
+  switch (status) {
+    case "Planned":
+      return (
+        <DocumentCheckIcon className="h-5 w-5 text-blue-500 inline-block mr-2" />
+      );
+    case "Completed":
+      return <CheckIcon className="h-5 w-5 text-green-500 inline-block mr-2" />;
+    case "Not Required":
+      return <XMarkIcon className="h-5 w-5 text-gray-400 inline-block mr-2" />;
+    default:
+      return null;
+  }
+};
+
+const fakeMilestones: Record<MilestoneKey, Milestone> = {
+  "Floor Plans": {
+    forecastedDate: "2024-06-11",
+    completedDate: "2024-05-11",
+    status: "Completed",
+  },
+  "Site Visit (If required)": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "CRM Conceptual/Rearward": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Not Required",
+  },
+  "Cabinet Design": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Client Design Document Walkthrough": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Floor Plan Markup and JVN LAN Marking": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Facilities Scope of Work Submitted to IO": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Functional Design Document Created": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Pictures/Initial Info Request": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Not Required",
+  },
+  "Pictures Received": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Design Brief Meeting with Client": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Conceptual Created by ET": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "FSOW Issued": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Equipment by Position Issued": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "FSOW Sent MAS/FMB": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "PSIF Issued": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "FDD Completed by JVN": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Not Required",
+  },
+  "FDD Client Approved": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "ET Proposal Received": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Requisition Orders Created": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "VHH Sign-Off RO": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "CSO Sign-Off RO": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Package Sent to Bell": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Equipment Orders": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Equipment Staging & Programming": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Equipment Deliveries": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "Network Circuit Install or Uplift": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+  "AV Install": {
+    forecastedDate: null,
+    completedDate: null,
+    status: "Planned",
+  },
+};
+
 const UpdateProjectPage = () => {
   const pathname = usePathname();
   const id = pathname.split("/").pop(); // Extract project ID from route (e.g., MAG-001)
@@ -60,6 +225,8 @@ const UpdateProjectPage = () => {
   const [costInputError, setCostInputError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false); // Track if the form has been submitted
 
+  const [milestoneOpen, setMilestoneOpen] = useState(false);
+  const [milestones, setMilestones] = useState(fakeMilestones);
   // Store initial values separately
   const [initialProjectData, setInitialProjectData] = useState({
     projectId: "",
@@ -307,6 +474,30 @@ const UpdateProjectPage = () => {
     }
   };
 
+  const handleMilestoneDateChange = (
+    key: MilestoneKey,
+    field: "forecastedDate" | "completedDate",
+    value: string
+  ) => {
+    setMilestones((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleMilestoneStatusChange = (key: MilestoneKey, value: string) => {
+    setMilestones((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        status: value,
+      },
+    }));
+  };
+
   const fetchProjectData = async (projectId: string) => {
     try {
       console.log(projectId);
@@ -492,7 +683,7 @@ const UpdateProjectPage = () => {
             />
           </div>
 
-          {/* Implemented */}
+          {/* implemented */}
           <div className="mt-8 flex items-center sm:col-span-3">
             <FormCheckbox
               id="implemented"
@@ -640,33 +831,33 @@ const UpdateProjectPage = () => {
           </div>
 
           {/* Note Log */}
-          <div className="sm:col-span-6 ">
-            <h3 className="dark:text-white">Note Logs</h3>
-            <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm ">
-              <table className="min-w-full divide-y divide-gray-300 dark:divide-gray-200 ">
-                <thead className="bg-gray-100 dark:bg-slate-700">
+          <div className="sm:col-span-6">
+            <h3 className="">Note Logs</h3>
+            <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Description
                     </th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white ">
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       User
                     </th>
-                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white ">
+                    <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Timestamp
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200 dark:bg-slate-900">
+                <tbody className="bg-white divide-y divide-gray-200">
                   {projectData?.noteLog.map((note, index) => (
                     <tr key={index}>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
                         {note.description}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 dark:text-white">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
                         {note.user}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-white">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {formatTimestamp(note.timestamp)}
                       </td>
                     </tr>
@@ -674,7 +865,7 @@ const UpdateProjectPage = () => {
                 </tbody>
               </table>
             </div>
-            <div className="mt-4 text-right text-sky-500 hover:text-sky-700 ">
+            <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
               <a href="#" onClick={() => setCreateNoteOpen(true)}>
                 + Add Notes
               </a>
@@ -687,14 +878,13 @@ const UpdateProjectPage = () => {
             onClose={setCreateNoteOpen}
             title="Create Note"
             content={
-              <div className="dark:bg-slate-800">
+              <div>
                 <div className="mt-1">
                   <textarea
                     id="notes"
                     name="notes"
                     rows={4}
-                    className="block w-full p-2 rounded-md border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm 
-                    dark:bg-slate-800 dark:text-white"
+                    className="block w-full p-2 rounded-md border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     placeholder="Write something..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
@@ -750,11 +940,7 @@ const UpdateProjectPage = () => {
 
           {/* Rooms */}
           <div className="sm:col-span-6">
-            <div className="flex">
-              <h3 className="dark:text-white">Rooms</h3>
-              <span className="text-sm text-red-500">*</span>
-            </div>
-
+            <h3 className="">Rooms</h3>
             <p id="email-error" className="mt-2 text-sm text-red-600">
               * Please click on each room to view solution profile.
             </p>
@@ -763,7 +949,7 @@ const UpdateProjectPage = () => {
                 projectData.rooms.map((room) => (
                   <a
                     key={room.id}
-                    href={`/room/${room.id}`}
+                    href={`/dashboard/intake/rooms/${room.id}`}
                     className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
                   >
                     <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
@@ -772,7 +958,7 @@ const UpdateProjectPage = () => {
                 ))}
               <a
                 href="#"
-                className="flex items-center px-3 p-2 text-sm font-medium  bg-gray-800 rounded-xl hover:bg-gray-600 text-white"
+                className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
               >
                 + Add Room
               </a>
@@ -989,14 +1175,124 @@ const UpdateProjectPage = () => {
 
         <div className="flex mt-10">
           <div className="">
-            <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <a
+              className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => setMilestoneOpen(true)}
+            >
               Milestones
-            </button>
+            </a>
+
+            {/* Milestone Modal */}
+            <Modal
+              open={milestoneOpen}
+              onClose={setMilestoneOpen}
+              title="Milestones"
+              confirmLabel="Save"
+              confirmAction={() => {
+                // Save the milestone data
+                setMilestoneOpen(false);
+              }}
+              content={
+                <div className="overflow-y-auto">
+                  <table className="min-w-full divide-y divide-gray-300">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                          Milestone
+                        </th>
+                        <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                          Forecasted Date
+                        </th>
+                        <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                          Completed Date
+                        </th>
+                        <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-300">
+                      {Object.keys(milestones).map((key) => {
+                        const milestoneKey = key as MilestoneKey;
+                        const milestone = milestones[milestoneKey];
+                        const isDisabled = milestone.status === "Not Required";
+                        return (
+                          <tr
+                            key={milestoneKey}
+                            className={isDisabled ? "bg-gray-100" : ""}
+                          >
+                            <td className="px-3 py-4 text-sm text-gray-900">
+                              {milestoneKey}
+                            </td>
+                            <td className="px-3 py-4 text-sm text-gray-900">
+                              {!isDisabled && (
+                                <input
+                                  type="date"
+                                  value={milestone.forecastedDate || ""}
+                                  onChange={(e) =>
+                                    handleMilestoneDateChange(
+                                      milestoneKey,
+                                      "forecastedDate",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="border rounded-md p-1"
+                                />
+                              )}
+                            </td>
+                            <td className="px-3 py-4 text-sm text-gray-900">
+                              {!isDisabled && (
+                                <input
+                                  type="date"
+                                  value={milestone.completedDate || ""}
+                                  onChange={(e) =>
+                                    handleMilestoneDateChange(
+                                      milestoneKey,
+                                      "forecastedDate",
+                                      e.target.value
+                                    )
+                                  }
+                                  className="border rounded-md p-1"
+                                />
+                              )}
+                            </td>
+                            <td className="px-3 py-4 text-sm text-gray-900">
+                              <div className="flex items-center">
+                                {getIcon(milestones[milestoneKey].status)}
+                                <select
+                                  value={milestones[milestoneKey].status}
+                                  onChange={(e) =>
+                                    handleMilestoneStatusChange(
+                                      milestoneKey,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="border rounded-md p-1"
+                                >
+                                  {milestoneStatus.map((option) => (
+                                    <option key={option} value={option}>
+                                      {option}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              }
+            />
           </div>
           <div className="">
-            <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <a
+              href="/dashboard/intake/requisitionOrders"
+              className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
               Requisition Orders
-            </button>
+            </a>
           </div>
         </div>
         <hr className="my-6 border-t border-gray-300" />
