@@ -950,7 +950,7 @@ const UpdateProjectPage = () => {
 
         {/* Estimated Cost */}
         <div className="sm:col-span-2">
-          <h3 className="">Estimated Cost/Fiscal</h3>
+          <h3 className="">Estimated Cost/Fiscal Year</h3>
           <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
             {projectData?.estimatedCost &&
             projectData.estimatedCost.length > 0 ? (
@@ -983,6 +983,11 @@ const UpdateProjectPage = () => {
                 There is no Cost/Fiscal record.
               </p>
             )}
+          </div>
+          <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
+            <a onClick={() => setCreateCostOpen(true)}>
+              + Add Cost / Fiscal Year
+            </a>
           </div>
         </div>
 
@@ -1179,9 +1184,12 @@ const UpdateProjectPage = () => {
           />
         </div>
         <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <a
+            href="/dashboard/intake/requisitionOrders"
+            className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             Requisition Orders
-          </button>
+          </a>
         </div>
       </div>
       <hr className="my-6 border-t border-gray-300" />
@@ -1192,9 +1200,12 @@ const UpdateProjectPage = () => {
           </button>
         </div>
         <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <a
+            href="/dashboard/intake/projects"
+            className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             Save
-          </button>
+          </a>
         </div>
       </div>
     </div>

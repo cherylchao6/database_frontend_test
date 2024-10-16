@@ -78,7 +78,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     ],
   },
   {
-    id: "2",
+    id: "3",
     dateAdded: "2023-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
@@ -107,7 +107,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     ],
   },
   {
-    id: "2",
+    id: "4",
     dateAdded: "2023-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
@@ -136,7 +136,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     ],
   },
   {
-    id: "2",
+    id: "5",
     dateAdded: "2023-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
@@ -198,7 +198,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     ],
   },
   {
-    id: "1",
+    id: "2",
     dateAdded: "2021-07-01",
     roNumber: "123456",
     chargeDescription: "Initial Design",
@@ -298,7 +298,7 @@ const fakeOutstandingMonthlyCostChargeReqs: OutstandingMonthlyCostChargeReq[] =
     },
 
     {
-      id: "1",
+      id: "2",
       dateAdded: "2021-07-03",
       crNumber: "123456",
       roomNumber: "123",
@@ -328,7 +328,7 @@ const fakeOutstandingMonthlyCostChargeReqs: OutstandingMonthlyCostChargeReq[] =
       ],
     },
     {
-      id: "1",
+      id: "3",
       dateAdded: "2023-07-03",
       crNumber: "123456",
       roomNumber: "123",
@@ -490,7 +490,12 @@ const RequisitionOrdersPage = () => {
   ) => {
     setCurrentRowData(row); // Store the row data to edit
     setCurrentTableType(tableType); // Set the current table type
-    setAssignedTo([row.approvedBy]); // Set the initial person
+    if (row.approvedBy) {
+      setAssignedTo([row.approvedBy]); // Set the initial person
+    } else {
+      setAssignedTo([]);
+    }
+
     setIsEditModalOpen(true); // Open modal
   };
 
@@ -850,6 +855,17 @@ const RequisitionOrdersPage = () => {
         confirmAction={() => handleSaveEdit(currentRowData)}
         cancelLabel="Cancel"
       />
+      <hr className="my-6 border-t border-gray-300" />
+      <div className="flex mt-10 justify-end">
+        <div className="">
+          <a
+            href="/dashboard/intake/projects/MAG-001"
+            className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Back To Project
+          </a>
+        </div>
+      </div>
     </div>
   );
 };
