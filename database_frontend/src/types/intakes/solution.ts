@@ -8,7 +8,7 @@ export interface Solution {
   solutionTypeIfOther: string;
   roomFunction: string;
   roomFunctionIfOther: string;
-  secondaryRoomFunctions: string[];
+  secondaryRoomFunctions: string;
   features: { id: string; feature: string }[];
   systemCtrlType: string;
   audioConfePhoneNum: string;

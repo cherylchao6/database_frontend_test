@@ -43,7 +43,7 @@ const fakeSolutionData: Solution = {
   solutionTypeIfOther: "",
   roomFunction: "Courtroom",
   roomFunctionIfOther: "",
-  secondaryRoomFunctions: [],
+  secondaryRoomFunctions: "Admin Meetings",
   features: [
     { id: "1", feature: "Soft Codec Audio Only" },
     { id: "2", feature: "Audio Uplift" },
