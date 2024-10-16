@@ -88,3 +88,104 @@ export const intakeFormStatusOptions = [
   "110-Declined (JVDSC)",
   "120-Declined (JVESC)",
 ];
+
+export const businessRegion = [
+  "Central East",
+  "Central West",
+  "East",
+  "Northeast",
+  "Northwest",
+  "Toronto",
+  "West",
+];
+
+export const buildingTypes = [
+  "Business Office",
+  "Correctional Institution",
+  "Courthouse",
+  "Police Detachment",
+];
+
+export const hoursOfOperations = [
+  "Business Hours",
+  "Business Hours incl. weekend",
+  "24/7",
+];
+
+export const supportLevel = [
+  "Justice Grade",
+  "Legacy Support",
+  "Office Grade",
+  "OPP Critical Support",
+  "Time & Material",
+  "Enhanced",
+  "Standard",
+  "Basic",
+  "Ancilliary",
+];
+
+export const levelOfCourt = [
+  "Court of Appeal",
+  "Ontario Court of Justice",
+  "Superior Court of Justice",
+  "OCJ/SCJ",
+  "N/A",
+];
+
+export const solutionType = [
+  "Boardroom",
+  "Courtroom",
+  "Desktop Video",
+  "Mobile Cart",
+  "Remand Suite",
+  "Remote Visit Unit",
+  "Telecom/AV room",
+  "Other",
+];
+
+export const roomFunction: string[] = [
+  "Admin Meetings",
+  "Bail/Remand Court",
+  "Civil Court/Family/Small Claims",
+  "Court Appearance",
+  "Hearings & Tribunals",
+  "Jury Assembly/Selection",
+  "Jury Deliberation",
+  "Lawyer Consultation",
+  "Remote Interpretation",
+  "Remote Testimony/Vulnerable Witness",
+  "Remote Visits",
+  "Training",
+  "Trial Court",
+  "Other",
+];
+
+export const systemControlType: string[] = [
+  "Auto-sensing",
+  "Button panel",
+  "AMX touch panel",
+  "Crestron Touch panel",
+  "ELO Touch panel",
+  "Native Cisco Touch panel",
+  "Remote Control",
+];
+
+// Features
+export const features = [
+  { id: "1", feature: "Codec Video Conferencing" },
+  { id: "2", feature: "Soft Codec Audio Only" },
+  { id: "3", feature: "Soft Codec Video Conferencing" },
+  { id: "4", feature: "Mobile Cart Network Availability" },
+  { id: "5", feature: "Audio Uplift" },
+  { id: "6", feature: "Presentation" },
+  { id: "7", feature: "Fixed ALD" },
+  { id: "8", feature: "ALD Output Port" },
+  { id: "9", feature: "Privacy Switch" },
+  { id: "10", feature: "Teleconference Integration" },
+  { id: "11", feature: "USD DRD Integration" },
+  { id: "12", feature: "Mixer to Mixer DRD Integration" },
+  { id: "13", feature: "Simultaneous Interpretation Booth" },
+  { id: "14", feature: "Simultaneous Interpretation Input" },
+];
+
+export const milestoneStatus = ["Planned", "Completed", "Not Required"];
