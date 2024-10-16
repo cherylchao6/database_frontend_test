@@ -5,12 +5,14 @@ interface FormSelectProps
   label: string;
   selectClassName?: string; // Optional prop for extending class names
   options: string[]; // The array of options to display
+  value?: string; // The selected value
 }
 
 const FormSelect: React.FC<FormSelectProps> = ({
   label,
   selectClassName = "",
   options,
+  value,
   ...props
 }) => {
   const baseClassName =
@@ -23,7 +25,11 @@ const FormSelect: React.FC<FormSelectProps> = ({
           {label}
         </label>
       )}
-      <select className={`${baseClassName} ${selectClassName}`} {...props}>
+      <select
+        value={value}
+        className={`${baseClassName} ${selectClassName}`}
+        {...props}
+      >
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
