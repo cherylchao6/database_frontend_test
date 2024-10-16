@@ -12,11 +12,8 @@ const FormSelect: React.FC<FormSelectProps> = ({
   label,
   selectClassName = "",
   options,
-<<<<<<< HEAD
   required,
-=======
   value,
->>>>>>> origin/main
   ...props
 }) => {
   const baseClassName =
