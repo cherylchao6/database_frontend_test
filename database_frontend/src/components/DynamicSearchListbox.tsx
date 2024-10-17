@@ -13,7 +13,6 @@ interface DynamicSearchDropdownProps {
   setAssignedTo: (value: Person[]) => void;
   fetchOptions: (query: string) => Promise<Person[]>; // API fetch function passed as a prop
   allowMultiple?: boolean; // New prop to allow multiple selection
-  required?: boolean;
 }
 
 const DynamicSearchDropdown = ({
@@ -22,7 +21,6 @@ const DynamicSearchDropdown = ({
   setAssignedTo,
   fetchOptions,
   allowMultiple = false,
-  required,
 }: DynamicSearchDropdownProps) => {
   const [people, setPeople] = useState<Person[]>([]); // Options from API
   const [searchQuery, setSearchQuery] = useState(""); // Search input value
@@ -85,9 +83,8 @@ const DynamicSearchDropdown = ({
 
   return (
     <div className="relative sm:col-span-3">
-      <label className="block font-medium leading-6 text-gray-900 dark:text-white">
+      <label className="block font-medium leading-6 text-gray-900">
         {label}
-        {required && <span className="text-red-500">*</span>}
       </label>
 
       {/* Search input field - always show if allowMultiple is true */}
@@ -97,7 +94,7 @@ const DynamicSearchDropdown = ({
           placeholder="Search for a person..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="mt-2 pl-2 block w-full rounded-md border-0 py-1.5 dark:text-white  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          className="mt-2 pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           onFocus={() => searchQuery.length > 2 && setDropdownOpen(true)}
         />
       ) : null}
@@ -122,9 +119,7 @@ const DynamicSearchDropdown = ({
                     src={person.avatar}
                     className="h-5 w-5 flex-shrink-0 rounded-full"
                   />
-                  <span className="ml-3 block truncate dark:text-">
-                    {person.name}
-                  </span>
+                  <span className="ml-3 block truncate">{person.name}</span>
                 </div>
               </div>
             ))
@@ -142,9 +137,7 @@ const DynamicSearchDropdown = ({
               src={person.avatar}
               className="h-6 w-6 flex-shrink-0 rounded-full"
             />
-            <span className="ml-2 text-gray-900 dark:text-white">
-              {person.name}
-            </span>
+            <span className="ml-2 text-gray-900">{person.name}</span>
             <button
               type="button"
               onClick={() => handleRemovePerson(person)}

@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 
 // Status options array
 const statusOptions = [
@@ -91,8 +90,7 @@ const tableColumns = [
 ];
 
 const ProjectListPage = () => {
-  const labelClassName =
-    "block text-sm font-medium leading-6 text-gray-900 dark:text-white";
+  const labelClassName = "block text-sm font-medium leading-6 text-gray-900";
   const [projectId, setProjectId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -163,14 +161,14 @@ const ProjectListPage = () => {
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-4xl font-semibold text-slate-900 dark:text-white">
+        <h1 className="text-4xl font-semibold text-slate-900">
           Active Projects
         </h1>
       </div>
       <div className="mt-4">
         {/* Filter Section */}
-        <div className=" p-4 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 dark:text-white">
+        <div className="bg-white p-4 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Project ID Filter */}
             <div>
               <label htmlFor="projectId" className={labelClassName}>
@@ -195,14 +193,10 @@ const ProjectListPage = () => {
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="mt-1 block w-full rounded-md border-0 p-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2  sm:text-sm sm:leading-6 dark:text-white"
+                className="mt-1 block w-full rounded-md border-0 p-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
                 {statusOptions.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                    className="dark:text-white"
-                  >
+                  <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
@@ -273,24 +267,27 @@ const ProjectListPage = () => {
           )}
         </div>
         <div className="">
-          <Link href="/dashboard/intake/projects/create">
-            <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <a href="/dashboard/intake/projects/create">
+            <button
+              onClick={handleSearch}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
               + Create New Project
             </button>
-          </Link>
+          </a>
         </div>
         {/* Table Section */}
-        <div className="mt-8 flow-root ">
+        <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8 ">
-              <table className="min-w-full divide-y divide-gray-300 dark:gray-200  ">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
                 <thead>
                   <tr>
                     {tableColumns.map((column) => (
                       <th
                         key={column.key}
                         scope="col"
-                        className={`py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3 bg-gray-100 dark:bg-slate-800 dark:text-white ${
+                        className={`py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3 bg-gray-100 ${
                           column.key === "lastComm" ||
                           column.key === "dateAdded"
                             ? "hover:bg-gray-200 hover:text-indigo-600 cursor-pointer"
@@ -319,19 +316,19 @@ const ProjectListPage = () => {
                     ))}
                     <th
                       scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-3 bg-gray-100 dark:bg-slate-800 dark:text-white"
+                      className="relative py-3.5 pl-3 pr-4 sm:pr-3 bg-gray-100"
                     >
                       <span className="sr-only">Edit</span>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-slate-900">
+                <tbody className="bg-white">
                   {sortedProjects.map((project, index) => (
                     <tr key={index}>
                       {tableColumns.map((column) => (
                         <td
                           key={column.key}
-                          className={`whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3 dark:text-white ${
+                          className={`whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3 ${
                             column.key === "projectId"
                               ? "font-bold text-gray-900"
                               : "text-gray-900"
