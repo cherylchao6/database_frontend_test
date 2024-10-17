@@ -7,9 +7,13 @@
   --foreground: #171717;
 }
 
-.dark body {
-  @apply bg-gray-900 text-white; /* Tailwind's dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
+
 body {
   color: var(--foreground);
   background: var(--background);
