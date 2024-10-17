@@ -24,7 +24,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     dateAdded: "2021-07-01",
     roNumber: "123456",
     chargeDescription: "Initial Design",
-    status: "RO Created",
+    status: "RO sent to Client for Approval",
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
@@ -65,11 +65,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     statusHistory: [
-      { status: "RO Created", timestamp: "2023-04-21", current: false },
+      { status: "RO Created", timestamp: "2023-04-21", current: true },
       {
         status: "RO sent to Client for Approval",
-        timestamp: "2023-04-21",
-        current: true,
+        timestamp: "",
+        current: false,
       },
       { status: "Client Approval Received", timestamp: "", current: false },
       { status: "Pending JVN Approval", timestamp: "", current: false },
@@ -82,7 +82,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     dateAdded: "2023-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
-    status: "RO Created",
+    status: "Pending CIO Approval",
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "10000",
@@ -94,15 +94,27 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     statusHistory: [
-      { status: "RO Created", timestamp: "2023-04-21", current: false },
+      { status: "RO Created", timestamp: "2022-12-21", current: false },
       {
         status: "RO sent to Client for Approval",
+        timestamp: "2023-01-21",
+        current: false,
+      },
+      {
+        status: "Client Approval Received",
+        timestamp: "2023-02-21",
+        current: false,
+      },
+      {
+        status: "Pending JVN Approval",
+        timestamp: "2023-03-21",
+        current: false,
+      },
+      {
+        status: "Pending CIO Approval",
         timestamp: "2023-04-21",
         current: true,
       },
-      { status: "Client Approval Received", timestamp: "", current: false },
-      { status: "Pending JVN Approval", timestamp: "", current: false },
-      { status: "Pending CIO Approval", timestamp: "", current: false },
       { status: "Sent to Bell/Vendor", timestamp: "", current: false },
     ],
   },
@@ -453,6 +465,7 @@ const RequisitionOrdersPage = () => {
   // State to control the Modal
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentStatusHistory, setCurrentStatusHistory] = useState<
     { status: orderStatus; timestamp: string; current: boolean }[]
   >([]);
@@ -562,7 +575,8 @@ const RequisitionOrdersPage = () => {
   };
 
   const renderFormFields = () => {
-    if (!currentRowData || !currentTableType) return null;
+    if (!currentTableType) return null;
+    // if (!currentRowData || !currentTableType) return null;
 
     // Define the columns based on the current table type
     let columns: { key: keyof any; label: string }[] = [];
@@ -596,7 +610,7 @@ const RequisitionOrdersPage = () => {
           {column.key === "dateAdded" ? (
             <input
               type="date"
-              value={currentRowData[column.key] || ""}
+              value={currentRowData?.[column.key] || ""}
               onChange={(e) =>
                 setCurrentRowData({
                   ...currentRowData,
@@ -615,7 +629,7 @@ const RequisitionOrdersPage = () => {
           ) : (
             <input
               type="text"
-              value={currentRowData[column.key] || ""}
+              value={currentRowData?.[column.key] || ""}
               onChange={(e) =>
                 setCurrentRowData({
                   ...currentRowData,
@@ -657,51 +671,62 @@ const RequisitionOrdersPage = () => {
 
     // if the set a new current status, the date can't be empty
     const currentStatus = currentStatusHistory.find((item) => item.current);
+
+    console.log("currentStatus", currentStatus);
     if (currentStatus && !currentStatus.timestamp) {
       setError("* Please set a date for the current status");
       return;
     }
-    switch (currentTableType) {
-      case "OneTimeROSInit":
-        const updatedOneTimeROSInits = oneTimeROSInits.map((item) =>
-          item.id === currentItemId
-            ? { ...item, statusHistory: currentStatusHistory }
-            : item
-        );
-        setOneTimeROSInits(updatedOneTimeROSInits);
-        break;
+    if (currentStatus) {
+      switch (currentTableType) {
+        case "OneTimeROSInit":
+          const updatedOneTimeROSInits = oneTimeROSInits.map((item) =>
+            item.id === currentItemId
+              ? {
+                  ...item,
+                  statusHistory: currentStatusHistory,
+                  status: currentStatus.status,
+                  statusDate: currentStatus.timestamp,
+                }
+              : item
+          );
 
-      case "OutstandingMonthlyCostChargeReq":
-        const updatedOutstandingReqs = outstandingMonthlyCostChargeReqs.map(
-          (item) =>
+          setOneTimeROSInits(updatedOneTimeROSInits);
+          break;
+
+        case "OutstandingMonthlyCostChargeReq":
+          const updatedOutstandingReqs = outstandingMonthlyCostChargeReqs.map(
+            (item) =>
+              item.id === currentItemId
+                ? { ...item, statusHistory: currentStatusHistory }
+                : item
+          );
+          setOutstandingMonthlyCostChargeReqs(updatedOutstandingReqs);
+          break;
+
+        case "OneTimeROSChangeReq":
+          const updatedROSChangeReqs = oneTimeROSChangeReqs.map((item) =>
             item.id === currentItemId
               ? { ...item, statusHistory: currentStatusHistory }
               : item
-        );
-        setOutstandingMonthlyCostChargeReqs(updatedOutstandingReqs);
-        break;
+          );
+          setOneTimeROSChangeReqs(updatedROSChangeReqs);
+          break;
 
-      case "OneTimeROSChangeReq":
-        const updatedROSChangeReqs = oneTimeROSChangeReqs.map((item) =>
-          item.id === currentItemId
-            ? { ...item, statusHistory: currentStatusHistory }
-            : item
-        );
-        setOneTimeROSChangeReqs(updatedROSChangeReqs);
-        break;
+        case "MonthlyRO":
+          const updatedMonthlyROs = monthlyROs.map((item) =>
+            item.id === currentItemId
+              ? { ...item, statusHistory: currentStatusHistory }
+              : item
+          );
+          setMonthlyROs(updatedMonthlyROs);
+          break;
 
-      case "MonthlyRO":
-        const updatedMonthlyROs = monthlyROs.map((item) =>
-          item.id === currentItemId
-            ? { ...item, statusHistory: currentStatusHistory }
-            : item
-        );
-        setMonthlyROs(updatedMonthlyROs);
-        break;
-
-      default:
-        break;
+        default:
+          break;
+      }
     }
+
     setError(null);
     setIsStatusModalOpen(false);
   };
@@ -718,9 +743,21 @@ const RequisitionOrdersPage = () => {
       </h2>
       {/* One Time ROS-Initial Design Table Section */}
       <div>
-        <h2 className="col-span-6 text-lg font-semibold text-slate-900">
-          One Time ROS-Initial Design
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="col-span-6 text-lg font-semibold text-slate-900">
+            One Time ROS-Initial Design
+          </h2>
+          <a
+            onClick={() => {
+              setCurrentTableType("OneTimeROSInit");
+              setIsCreateModalOpen(true);
+            }}
+            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            + Create New
+          </a>
+        </div>
+
         {/* One Time ROS-Initial Design Table Section */}
         <RequisitionOrderTable
           columns={OneTimeROSInitColumns}
@@ -735,9 +772,21 @@ const RequisitionOrdersPage = () => {
       </div>
       {/* One Time ROS-Change Request Table Section */}
       <div className="mt-8">
-        <h2 className="col-span-6 text-lg font-semibold text-slate-900">
-          One Time ROS-Change Request
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="col-span-6 text-lg font-semibold text-slate-900">
+            One Time ROS-Change Request
+          </h2>
+          <a
+            onClick={() => {
+              setCurrentTableType("OneTimeROSChangeReq");
+              setIsCreateModalOpen(true);
+            }}
+            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            + Create New
+          </a>
+        </div>
+
         <RequisitionOrderTable
           columns={OneTimeROSChangeReqColumns}
           data={oneTimeROSChangeReqs}
@@ -751,9 +800,21 @@ const RequisitionOrdersPage = () => {
       </div>
       {/* Monthly RO Table Section */}
       <div className="mt-8">
-        <h2 className="col-span-6 text-lg font-semibold text-slate-900">
-          Monthly RO
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="col-span-6 text-lg font-semibold text-slate-900">
+            Monthly RO
+          </h2>
+          <a
+            onClick={() => {
+              setCurrentTableType("MonthlyRO");
+              setIsCreateModalOpen(true);
+            }}
+            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            + Create New
+          </a>
+        </div>
+
         <RequisitionOrderTable
           columns={MonthlyROColumns}
           data={monthlyROs}
@@ -767,9 +828,20 @@ const RequisitionOrdersPage = () => {
       </div>
       {/* Outstanding Monthly Cost Charge Req Table Section */}
       <div className="mt-8">
-        <h2 className="col-span-6 text-lg font-semibold text-slate-900">
-          Outstanding Monthly Cost Charge Request
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="col-span-6 text-lg font-semibold text-slate-900">
+            Outstanding Monthly Cost Charge Request
+          </h2>
+          <a
+            onClick={() => {
+              setCurrentTableType("OutstandingMonthlyCostChargeReq");
+              setIsCreateModalOpen(true);
+            }}
+            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            + Create New
+          </a>
+        </div>
         <RequisitionOrderTable
           columns={OutstandingMonthlyCostChargeReqColumns}
           data={outstandingMonthlyCostChargeReqs}
@@ -850,6 +922,16 @@ const RequisitionOrdersPage = () => {
         open={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         title="Edit Row"
+        content={<div>{renderFormFields()}</div>}
+        confirmLabel="Save"
+        confirmAction={() => handleSaveEdit(currentRowData)}
+        cancelLabel="Cancel"
+      />
+      {/* Modal for Creating */}
+      <Modal
+        open={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        title="Create New Order"
         content={<div>{renderFormFields()}</div>}
         confirmLabel="Save"
         confirmAction={() => handleSaveEdit(currentRowData)}
