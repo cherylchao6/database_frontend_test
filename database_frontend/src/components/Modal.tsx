@@ -18,6 +18,7 @@ interface ModalProps {
   cancelAction?: () => void;
   cancelLabel?: string;
   showCheckIcon?: boolean;
+  displayCancelLabel?: boolean;
 }
 
 export default function Modal({
@@ -30,6 +31,7 @@ export default function Modal({
   cancelLabel = "Cancel",
   cancelAction,
   showCheckIcon = false,
+  displayCancelLabel = true,
 }: ModalProps) {
   return (
     <Dialog
@@ -83,18 +85,21 @@ export default function Modal({
               >
                 {confirmLabel}
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (cancelAction) {
-                    cancelAction(); // Perform the confirm action
-                  }
-                  onClose(false);
-                }}
-                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-              >
-                {cancelLabel}
-              </button>
+              {/* Conditionally render cancel button */}
+              {displayCancelLabel && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (cancelAction) {
+                      cancelAction(); // Perform the cancel action
+                    }
+                    onClose(false);
+                  }}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                >
+                  {cancelLabel}
+                </button>
+              )}
             </div>
           </DialogPanel>
         </div>

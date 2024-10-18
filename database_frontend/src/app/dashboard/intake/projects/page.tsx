@@ -135,10 +135,10 @@ const ProjectListPage = () => {
   });
 
   const handleSearch = () => {
-    if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
-      setError("End Date cannot be earlier than Start Date");
-      return;
-    }
+    // if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+    //   setError("End Date cannot be earlier than Start Date");
+    //   return;
+    // }
 
     setError(""); // Clear error if validation passes
 
@@ -212,7 +212,13 @@ const ProjectListPage = () => {
                 type="date"
                 id="startDate"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => {
+                  setStartDate(e.target.value);
+                  if (endDate && e.target.value > endDate) {
+                    // Optional: reset endDate if it's before startDate
+                    setEndDate("");
+                  }
+                }}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
@@ -226,6 +232,7 @@ const ProjectListPage = () => {
                 type="date"
                 id="endDate"
                 value={endDate}
+                min={startDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
@@ -373,6 +380,22 @@ const ProjectListPage = () => {
           totalItems={totalItems}
           itemsPerPage={itemsPerPage}
         />
+      </div>
+      {/* Buttons */}
+      <div className="mt-4 text-right">
+        <a
+          // onClick={}
+          href="/dashboard/intake/planviews"
+          className="cursor-pointer mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Planview
+        </a>
+        <button
+          // onClick={}
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Generate Bell Opp.List
+        </button>
       </div>
     </div>
   );
