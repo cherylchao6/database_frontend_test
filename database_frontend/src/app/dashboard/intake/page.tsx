@@ -33,7 +33,7 @@ const IntakePage: React.FC = () => {
 
             {/* Search Input */}
             <input
-              className="w-full w-1/2 mx-2 bg-transparent placeholder:text-slate-400 dark:text-white text-slate-700 text-lg border border-slate-200 
+              className="w-full  mx-2 bg-transparent placeholder:text-slate-400 dark:text-white text-slate-700 text-lg border border-slate-200 
     rounded-lg pl-10 pr-3 py-4 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
               placeholder="Search by project ID ..."
             />

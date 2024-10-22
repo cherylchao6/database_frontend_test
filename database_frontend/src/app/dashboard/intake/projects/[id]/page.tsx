@@ -420,23 +420,6 @@ const UpdateProjectPage = () => {
       return "This field must contain only letters, numbers, and dashes.";
     }
 
-    // Get the current date
-    const currentDate = new Date();
-    const selectedDate = new Date(value);
-
-    if (name === "firstContactDate" && selectedDate > currentDate) {
-      return "First contact date cannot be in the future.";
-    } else if (
-      (name === "deadline" || name === "requestedCompletionDate") &&
-      selectedDate < currentDate
-    ) {
-      const errorMessage =
-        name === "deadline"
-          ? "Deadline must be in the future."
-          : "Requested completion date must be in the future.";
-      return errorMessage;
-    }
-
     return null; // Clear error if the value is valid
   };
 
@@ -650,9 +633,6 @@ const UpdateProjectPage = () => {
               value={projectData?.deadline || ""}
               onChange={handleInputChange}
             />
-            {error.deadline && (
-              <p className="text-red-500 text-sm">{error.deadline}</p>
-            )}
           </div>
 
           {/* First Contact Date */}
@@ -666,9 +646,6 @@ const UpdateProjectPage = () => {
               onChange={handleInputChange}
               required // Mark as required (add red star)
             />
-            {error.firstContactDate && (
-              <p className="text-red-500 text-sm">{error.firstContactDate}</p>
-            )}
           </div>
 
           {/* Status */}
@@ -1043,11 +1020,6 @@ const UpdateProjectPage = () => {
               value={projectData?.requestedCompletionDate || ""}
               onChange={handleInputChange}
             />
-            {error.requestedCompletionDate && (
-              <p className="text-red-500 text-sm">
-                {error.requestedCompletionDate}
-              </p>
-            )}
           </div>
 
           {/* Assigned to PM */}
