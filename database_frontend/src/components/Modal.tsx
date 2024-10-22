@@ -18,7 +18,6 @@ interface ModalProps {
   cancelAction?: () => void;
   cancelLabel?: string;
   showCheckIcon?: boolean;
-  displayCancelLabel?: boolean;
 }
 
 export default function Modal({
@@ -31,26 +30,23 @@ export default function Modal({
   cancelLabel = "Cancel",
   cancelAction,
   showCheckIcon = false,
-  displayCancelLabel = true,
 }: ModalProps) {
   return (
     <Dialog
       open={open}
-      onClose={() => {
-        onClose(false);
-      }}
-      className="relative z-10"
+      onClose={() => onClose(false)}
+      className="relative z-10 "
     >
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        className="fixed inset-0 bg-gray-500 dark:bg-black dark:bg-opacity-75 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
       />
 
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-4xl sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            className="dark:bg-slate-900 relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
           >
             <div>
               {showCheckIcon && (
@@ -64,11 +60,11 @@ export default function Modal({
               <div className="mt-3 text-center sm:mt-5">
                 <DialogTitle
                   as="h3"
-                  className="text-base font-semibold leading-6 text-gray-900"
+                  className="text-base font-semibold leading-6 text-gray-900 dark:text-white"
                 >
                   {title}
                 </DialogTitle>
-                <div className="mt-2">
+                <div className="mt-2 ">
                   {content} {/* Render any JSX passed as the content */}
                 </div>
               </div>
@@ -85,21 +81,18 @@ export default function Modal({
               >
                 {confirmLabel}
               </button>
-              {/* Conditionally render cancel button */}
-              {displayCancelLabel && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (cancelAction) {
-                      cancelAction(); // Perform the cancel action
-                    }
-                    onClose(false);
-                  }}
-                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
-                >
-                  {cancelLabel}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => {
+                  if (cancelAction) {
+                    cancelAction(); // Perform the confirm action
+                  }
+                  onClose(false);
+                }}
+                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+              >
+                {cancelLabel}
+              </button>
             </div>
           </DialogPanel>
         </div>

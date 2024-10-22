@@ -109,7 +109,7 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                   scope="col"
                   className="sticky top-0 z-10 py-3.5 pl-3 pr-4 sm:pr-3 bg-gray-100"
                 >
-                  <span className="sr-only ">Edit</span>
+                  <span className="sr-only">Edit</span>
                 </th>
               </tr>
             </thead>
@@ -143,7 +143,7 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                     <a
                       onClick={() => onEditClick(row, tableType)} // Open modal on Edit click
-                      className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
+                      className="text-indigo-600 hover:text-indigo-900"
                     >
                       Edit
                       <span className="sr-only">, {row.roNumber}</span>

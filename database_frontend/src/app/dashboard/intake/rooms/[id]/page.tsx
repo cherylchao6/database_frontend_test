@@ -16,7 +16,7 @@ import {
   roomFunction,
   systemControlType,
   features,
-} from "constants/intake/dropDownOptions";
+} from "@/constants/intakes/dropDownOptions";
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const fakeRoomData: Room = {

@@ -1,32 +1,57 @@
-"use client"
+"use client";
 import React from "react";
 import Button from "@/components/Button";
-import { useRouter } from 'next/navigation'
-
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const DashBoardPage: React.FC = () => {
-    const router = useRouter();
+  const router = useRouter();
 
-    const handleClick = (endPoint: string) => {
-        router.push(`/dashboard/${endPoint}`);
-    };
+  const handleClick = (endPoint: string) => {
+    router.push(`/dashboard/${endPoint}`);
+  };
 
   return (
-    <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Welcome to JVN Databese System
-          </h2>
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
-           Start by selecting a team 
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button text="Intake"  onClick={() => handleClick('intake')}/>
-            <Button text="Operations"  onClick={() => handleClick('operations')}/>
-            <Button text="Project Management"  onClick={() => handleClick('pm')}/>
+    <>
+      <div className="flex justify-center items-center p-4 ">
+        <div className="w-full max-w-lg lg:max-w-2xl rounded-lg p-6 space-y-6 shadow-xl border-gray-100 border-2">
+          <div className="flex items-center justify-center">
+            <Image
+              src="/jvn-logo.png"
+              height={250}
+              width={400}
+              alt="JVN Logo"
+              className="rounded-lg w-full h-auto max-w-xs sm:max-w-md"
+            />
+          </div>
+          <div className="mx-auto text-center space-y-4">
+            <h2 className="py-4 text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-gray-700 dark:text-white">
+              Welcome to JVN Database System!
+            </h2>
+            <p className="mx-auto text-base sm:text-lg max-w-xl leading-8 text-gray-600 dark:text-white">
+              Start by selecting a team
+            </p>
+            <div className="py-5 flex flex-col items-center justify-center gap-y-3 w-full sm:w-auto">
+              <Button
+                text="Intake"
+                onClick={() => handleClick("intake")}
+                className="w-full sm:w-auto"
+              />
+              <Button
+                text="Operations"
+                onClick={() => handleClick("operations")}
+                className="w-full sm:w-auto"
+              />
+              <Button
+                text="Project Management"
+                onClick={() => handleClick("pm")}
+                className="w-full sm:w-auto"
+              />
+            </div>
           </div>
         </div>
       </div>
+    </>
   );
 };
 

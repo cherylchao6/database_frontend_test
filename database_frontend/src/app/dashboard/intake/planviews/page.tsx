@@ -7,7 +7,7 @@ import Note from "@/types/intakes/note";
 import {
   planviewStatus,
   planviewPhase,
-} from "@/constants/intake/dropDownOptions";
+} from "@/constants/intakes/dropDownOptions";
 import * as XLSX from "xlsx";
 
 const labelClassName = "block text-sm font-medium leading-6 text-gray-900";
