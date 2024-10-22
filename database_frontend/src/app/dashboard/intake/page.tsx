@@ -13,10 +13,10 @@ const IntakePage: React.FC = () => {
   return (
     <>
       <div className=" flex-col space-y-5">
-        <div className="mx-auto max-w-2xl text-center p-10  border-gray-100 border-2 rounded-lg  shadow-sm">
-          <div className="relative flex items-center w-full">
+        <div className="mx-auto max-w-2xl text-center p-10  border-gray-100 border-2 rounded-lg  shadow-sm g">
+          <div className="relative flex flex-col sm:flex-row items-center w-full justify-center">
             {/* Search Icon */}
-            <div>
+            <div className="relative w-full sm:w-auto hidden sm:block">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -33,13 +33,13 @@ const IntakePage: React.FC = () => {
 
             {/* Search Input */}
             <input
-              className="w-1/2 grow mx-2 bg-transparent placeholder:text-slate-400 dark:text-white text-slate-700 text-lg border border-slate-200 
-              rounded-lg pl-10 pr-3 py-4 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+              className="w-full w-1/2 mx-2 bg-transparent placeholder:text-slate-400 dark:text-white text-slate-700 text-lg border border-slate-200 
+    rounded-lg pl-10 pr-3 py-4 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
               placeholder="Search by project ID ..."
             />
 
             {/* Search Button */}
-            <div className="w-1/4">
+            <div className="mt-4 sm:mt-0 w-full sm:w-1/4">
               <Button text="Search" />
             </div>
           </div>
@@ -47,13 +47,13 @@ const IntakePage: React.FC = () => {
           <div className="mt-10 flex flex-col gap-y-3 justify-center items-center">
             <a
               href="/dashboard/intake/projects/create"
-              className="w-1/2 rounded-md bg-indigo-700 p-4 text-md font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="w-full sm:w-1/2 rounded-md bg-indigo-700 p-4 text-md font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               + Add New Project
             </a>
             <a
               href="/dashboard/intake/projects"
-              className="w-1/2 rounded-md bg-slate-500 p-4 text-md font-semibold text-white shadow-sm hover:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="w-full sm:w-1/2 rounded-md bg-slate-500 p-4 text-md font-semibold text-white shadow-sm hover:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               View Active Projects
             </a>
