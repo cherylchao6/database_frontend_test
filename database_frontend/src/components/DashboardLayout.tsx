@@ -66,7 +66,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const [teams, setTeams] = useState(initialTeams);
   const [selectedTeam, setSelectedTeam] = useState("");
   const { data: session } = useSession();
-  const [profileImage, setProfileImage] = useState<string | null>(
+  const [profileImage, setProfileImage] = useState<string | undefined>(
     "/profile.jpg"
   ); // Default image
 
