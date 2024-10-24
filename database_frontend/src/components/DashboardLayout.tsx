@@ -1,17 +1,28 @@
 //components/DashboardLayout.tsx
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogBackdrop,
   DialogPanel,
   TransitionChild,
 } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ArrowLeftEndOnRectangleIcon,
+} from "@heroicons/react/24/outline";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const initialTeams = [
-  { id: 1, name: "Intake", href: "/dashboard/intake", initial: "I", current: false },
+  {
+    id: 1,
+    name: "Intake",
+    href: "/dashboard/intake",
+    initial: "I",
+    current: false,
+  },
   { id: 2, name: "Operations", href: "#", initial: "O", current: false },
   {
     id: 3,
@@ -26,6 +37,27 @@ function classNames(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+// Fetch profile image from Microsoft Graph API
+const fetchUserProfileImage = async (accessToken: string) => {
+  const response = await fetch(
+    "https://graph.microsoft.com/v1.0/me/photo/$value",
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    console.log("response", response);
+    console.error("Failed to fetch profile image");
+    return null;
+  }
+
+  const blob = await response.blob();
+  return URL.createObjectURL(blob); // Convert the image blob to a URL
+};
+
 // Define the layout component
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -33,6 +65,31 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [teams, setTeams] = useState(initialTeams);
   const [selectedTeam, setSelectedTeam] = useState("");
+  const { data: session } = useSession();
+  const [profileImage, setProfileImage] = useState<string | undefined>(
+    "/profile.jpg"
+  ); // Default image
+
+  useEffect(() => {
+    const getProfileImage = async () => {
+      if (
+        session &&
+        session.user &&
+        !session.user.image &&
+        session.accessToken
+      ) {
+        console.log("Fetching profile image...");
+        console.log("session", session);
+        const imageUrl = await fetchUserProfileImage(
+          session.accessToken as string
+        );
+        if (imageUrl) {
+          setProfileImage(imageUrl);
+        }
+      }
+    };
+    getProfileImage();
+  }, [session]);
 
   const handleTeamClick = (id: number, teamName: string) => {
     setTeams((prevTeams) =>
@@ -44,7 +101,14 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
     );
     setSelectedTeam(teamName);
     setSidebarOpen(false);
+  };
 
+  const handleLogOutClick = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -116,6 +180,14 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
                     </li>
                   </ul>
                 </nav>
+
+                <button
+                  onClick={handleLogOutClick}
+                  className="absolute bottom-4 right-6 flex items-center text-white cursor-pointer hover:text-gray-400"
+                >
+                  <ArrowLeftEndOnRectangleIcon className="h-5 w-5" />
+                  <span className="ml-2">Logout</span>
+                </button>
               </div>
             </DialogPanel>
           </div>
@@ -141,7 +213,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
               <span className="sr-only">Your profile</span>
               <img
                 alt=""
-                src="/profile.jpg"
+                src={profileImage}
                 className="h-10 w-10 rounded-full bg-gray-800"
               />
             </a>
