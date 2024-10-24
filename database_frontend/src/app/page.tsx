@@ -18,17 +18,25 @@ const HomePage = () => {
 
   return (
     <HomeLayout>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black">
-        <h1 className="text-4xl font-bold mb-6">
-          Welcome to JVN Database System
-        </h1>
-        <p className="text-lg mb-10">Please login to access the system.</p>
-        <button
-          onClick={handleLoginClick}
-          className="bg-black text-white hover:bg-gray-800 hover:text-white font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
-        >
-          Login
-        </button>
+      <div
+        className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-center text-black"
+        style={{ backgroundImage: 'url("/court.jpg")' }}
+      >
+        <div className="absolute inset-0 bg-black opacity-50"></div>{" "}
+        <div className="relative z-10 backdrop-blur-lg bg-white/60 rounded-lg shadow-lg p-10 max-w-md text-center">
+          <h1 className="text-4xl font-bold mb-6 text-black">
+            Welcome to JVN Database System
+          </h1>
+          <p className="text-lg mb-10 text-black">
+            Please login to access the system.
+          </p>
+          <button
+            onClick={handleLoginClick}
+            className="bg-indigo-600 text-white hover:bg-indigo-700 font-semibold py-2 px-4 rounded-lg transition duration-300 ease-in-out"
+          >
+            Login
+          </button>
+        </div>
       </div>
     </HomeLayout>
   );

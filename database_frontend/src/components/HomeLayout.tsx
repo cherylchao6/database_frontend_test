@@ -1,8 +1,6 @@
 "use client";
 
-const HomeLayout: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+const HomeLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <>
       <div>
@@ -17,8 +15,8 @@ const HomeLayout: React.FC<{ children: React.ReactNode }> = ({
           </div>
         </div>
 
-        <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-20">{children}</div>
+        <main>
+          <div>{children}</div>
         </main>
       </div>
     </>
