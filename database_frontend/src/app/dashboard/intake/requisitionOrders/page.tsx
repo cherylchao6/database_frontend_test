@@ -11,6 +11,7 @@ import { Person } from "@/types/intakes/person";
 import RequisitionOrderTable from "@/components/RequisitionOrderTable";
 import Modal from "@/components/Modal";
 import DynamicSearchListbox from "@/components/DynamicSearchListbox";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const fetchUsersFromApi = async (query: string) => {
@@ -469,6 +470,7 @@ const RequisitionOrdersPage = () => {
   const [currentStatusHistory, setCurrentStatusHistory] = useState<
     { status: orderStatus; timestamp: string; current: boolean }[]
   >([]);
+  const [isCreateOptionModalOpen, setIsCreateOptionModalOpen] = useState(false);
 
   const [currentTableType, setCurrentTableType] = useState<
     | "OneTimeROSInit"
@@ -481,6 +483,31 @@ const RequisitionOrdersPage = () => {
 
   // Edit Order Modal Sections
   const [currentRowData, setCurrentRowData] = useState<any>(null);
+
+  // Control the display of order tables
+  const [isOneTimeROSInitTableShown, setIsOneTimeROSInitTableShown] =
+    useState(true);
+  const [
+    isOutstandingMonthlyCostChargeReqTableShown,
+    setIsOutstandingMonthlyCostChargeReqTableShown,
+  ] = useState(false);
+  const [isOneTimeROSChangeReqTableShown, setIsOneTimeROSChangeReqTableShown] =
+    useState(false);
+  const [isMonthlyROTableShown, setIsMonthlyROTableShown] = useState(false);
+  const toggleOneTimeROSInitTableShow = () => {
+    setIsOneTimeROSInitTableShown(!isOneTimeROSInitTableShown);
+  };
+  const toggleOutstandingMonthlyCostChargeReqTableShow = () => {
+    setIsOutstandingMonthlyCostChargeReqTableShown(
+      !isOutstandingMonthlyCostChargeReqTableShown
+    );
+  };
+  const toggleOneTimeROSChangeReqTableShow = () => {
+    setIsOneTimeROSChangeReqTableShown(!isOneTimeROSChangeReqTableShown);
+  };
+  const toggleMonthlyROTableShow = () => {
+    setIsMonthlyROTableShown(!isMonthlyROTableShown);
+  };
 
   // useEffect(() => {
   //   if (currentTableType && currentRowData) {
@@ -672,7 +699,6 @@ const RequisitionOrdersPage = () => {
     // if the set a new current status, the date can't be empty
     const currentStatus = currentStatusHistory.find((item) => item.current);
 
-    console.log("currentStatus", currentStatus);
     if (currentStatus && !currentStatus.timestamp) {
       setError("* Please set a date for the current status");
       return;
@@ -743,119 +769,131 @@ const RequisitionOrdersPage = () => {
       </h2>
       {/* One Time ROS-Initial Design Table Section */}
       <div>
-        <div className="flex justify-between">
+        <div className="flex">
           <h2 className="col-span-6 text-lg font-semibold text-slate-900">
             One Time ROS-Initial Design
           </h2>
-          <a
-            onClick={() => {
-              setCurrentTableType("OneTimeROSInit");
-              setIsCreateModalOpen(true);
-            }}
-            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <button
+            onClick={toggleOneTimeROSInitTableShow}
+            className="flex items-center cursor-pointer focus:outline-none px-2"
           >
-            + Create New
-          </a>
+            {isOneTimeROSInitTableShown ? (
+              <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
         </div>
 
-        {/* One Time ROS-Initial Design Table Section */}
-        <RequisitionOrderTable
-          columns={OneTimeROSInitColumns}
-          data={oneTimeROSInits}
-          moneyFields={["roAmount"]}
-          tableType="OneTimeROSInit"
-          onStatusClick={(statusHistory, itemId) =>
-            handleStatusClick(statusHistory, itemId, "OneTimeROSInit")
-          }
-          onEditClick={handleEditClick}
-        />
+        {isOneTimeROSInitTableShown && (
+          <RequisitionOrderTable
+            columns={OneTimeROSInitColumns}
+            data={oneTimeROSInits}
+            moneyFields={["roAmount"]}
+            tableType="OneTimeROSInit"
+            onStatusClick={(statusHistory, itemId) =>
+              handleStatusClick(statusHistory, itemId, "OneTimeROSInit")
+            }
+            onEditClick={handleEditClick}
+          />
+        )}
       </div>
       {/* One Time ROS-Change Request Table Section */}
       <div className="mt-8">
-        <div className="flex justify-between">
+        <div className="flex">
           <h2 className="col-span-6 text-lg font-semibold text-slate-900">
             One Time ROS-Change Request
           </h2>
-          <a
-            onClick={() => {
-              setCurrentTableType("OneTimeROSChangeReq");
-              setIsCreateModalOpen(true);
-            }}
-            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <button
+            onClick={toggleOneTimeROSChangeReqTableShow}
+            className="flex items-center cursor-pointer focus:outline-none px-2"
           >
-            + Create New
-          </a>
+            {isOneTimeROSChangeReqTableShown ? (
+              <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
         </div>
 
-        <RequisitionOrderTable
-          columns={OneTimeROSChangeReqColumns}
-          data={oneTimeROSChangeReqs}
-          moneyFields={["roAmount"]}
-          tableType="OneTimeROSChangeReq"
-          onStatusClick={(statusHistory, itemId) =>
-            handleStatusClick(statusHistory, itemId, "OneTimeROSChangeReq")
-          }
-          onEditClick={handleEditClick}
-        />
+        {isOneTimeROSChangeReqTableShown && (
+          <RequisitionOrderTable
+            columns={OneTimeROSChangeReqColumns}
+            data={oneTimeROSChangeReqs}
+            moneyFields={["roAmount"]}
+            tableType="OneTimeROSChangeReq"
+            onStatusClick={(statusHistory, itemId) =>
+              handleStatusClick(statusHistory, itemId, "OneTimeROSChangeReq")
+            }
+            onEditClick={handleEditClick}
+          />
+        )}
       </div>
       {/* Monthly RO Table Section */}
       <div className="mt-8">
-        <div className="flex justify-between">
+        <div className="flex">
           <h2 className="col-span-6 text-lg font-semibold text-slate-900">
             Monthly RO
           </h2>
-          <a
-            onClick={() => {
-              setCurrentTableType("MonthlyRO");
-              setIsCreateModalOpen(true);
-            }}
-            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <button
+            onClick={toggleMonthlyROTableShow}
+            className="flex items-center cursor-pointer focus:outline-none px-2"
           >
-            + Create New
-          </a>
+            {isMonthlyROTableShown ? (
+              <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
         </div>
 
-        <RequisitionOrderTable
-          columns={MonthlyROColumns}
-          data={monthlyROs}
-          moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
-          tableType="MonthlyRO"
-          onStatusClick={(statusHistory, itemId) =>
-            handleStatusClick(statusHistory, itemId, "MonthlyRO")
-          }
-          onEditClick={handleEditClick}
-        />
+        {isMonthlyROTableShown && (
+          <RequisitionOrderTable
+            columns={MonthlyROColumns}
+            data={monthlyROs}
+            moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
+            tableType="MonthlyRO"
+            onStatusClick={(statusHistory, itemId) =>
+              handleStatusClick(statusHistory, itemId, "MonthlyRO")
+            }
+            onEditClick={handleEditClick}
+          />
+        )}
       </div>
       {/* Outstanding Monthly Cost Charge Req Table Section */}
       <div className="mt-8">
-        <div className="flex justify-between">
+        <div className="flex">
           <h2 className="col-span-6 text-lg font-semibold text-slate-900">
             Outstanding Monthly Cost Charge Request
           </h2>
-          <a
-            onClick={() => {
-              setCurrentTableType("OutstandingMonthlyCostChargeReq");
-              setIsCreateModalOpen(true);
-            }}
-            className="cursor-pointer inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          <button
+            onClick={toggleOutstandingMonthlyCostChargeReqTableShow}
+            className="flex items-center cursor-pointer focus:outline-none px-2"
           >
-            + Create New
-          </a>
+            {isOutstandingMonthlyCostChargeReqTableShown ? (
+              <ChevronUpIcon className="h-5 w-5 text-gray-500" />
+            ) : (
+              <ChevronDownIcon className="h-5 w-5 text-gray-500" />
+            )}
+          </button>
         </div>
-        <RequisitionOrderTable
-          columns={OutstandingMonthlyCostChargeReqColumns}
-          data={outstandingMonthlyCostChargeReqs}
-          moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
-          tableType="OutstandingMonthlyCostChargeReq"
-          onStatusClick={(statusHistory, itemId) =>
-            handleStatusClick(
-              statusHistory,
-              itemId,
-              "OutstandingMonthlyCostChargeReq"
-            )
-          }
-          onEditClick={handleEditClick}
-        />
+
+        {isOutstandingMonthlyCostChargeReqTableShown && (
+          <RequisitionOrderTable
+            columns={OutstandingMonthlyCostChargeReqColumns}
+            data={outstandingMonthlyCostChargeReqs}
+            moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
+            tableType="OutstandingMonthlyCostChargeReq"
+            onStatusClick={(statusHistory, itemId) =>
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                "OutstandingMonthlyCostChargeReq"
+              )
+            }
+            onEditClick={handleEditClick}
+          />
+        )}
       </div>
       {/* Modal for status change */}
       <Modal
@@ -937,9 +975,72 @@ const RequisitionOrdersPage = () => {
         confirmAction={() => handleSaveEdit(currentRowData)}
         cancelLabel="Cancel"
       />
+      {/* Modal for Choose Type of Order to Create*/}
+      <Modal
+        open={isCreateOptionModalOpen}
+        onClose={() => setIsCreateOptionModalOpen(false)}
+        title="Please Choose the Type of Order to Create"
+        content={
+          <div className="flex justify-center">
+            <div className="flex flex-col gap-4 pt-2">
+              <a
+                onClick={() => {
+                  setCurrentTableType("OneTimeROSInit");
+                  setIsCreateOptionModalOpen(false);
+                  setIsCreateModalOpen(true);
+                }}
+                className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                One Time ROS-Initial Design
+              </a>
+              <a
+                onClick={() => {
+                  setCurrentTableType("OneTimeROSChangeReq");
+                  setIsCreateOptionModalOpen(false);
+                  setIsCreateModalOpen(true);
+                }}
+                className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                One Time ROS-Change Request
+              </a>
+
+              <a
+                onClick={() => {
+                  setCurrentTableType("MonthlyRO");
+                  setIsCreateOptionModalOpen(false);
+                  setIsCreateModalOpen(true);
+                }}
+                className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Monthly RO
+              </a>
+
+              <a
+                onClick={() => {
+                  setCurrentTableType("OutstandingMonthlyCostChargeReq");
+                  setIsCreateOptionModalOpen(false);
+                  setIsCreateModalOpen(true);
+                }}
+                className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Outstanding Monthly Cost Charge Request
+              </a>
+            </div>
+          </div>
+        }
+        displayCancelLabel={true}
+        displayConfirmLabel={false}
+      />
+
       <hr className="my-6 border-t border-gray-300" />
       <div className="flex mt-10 justify-end">
         <div className="">
+          <a
+            onClick={() => setIsCreateOptionModalOpen(true)}
+            className="cursor-pointer mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            + Add New Order
+          </a>
           <a
             href="/dashboard/intake/projects/MAG-001"
             className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

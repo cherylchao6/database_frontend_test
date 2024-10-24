@@ -18,6 +18,7 @@ interface ModalProps {
   cancelAction?: () => void;
   cancelLabel?: string;
   showCheckIcon?: boolean;
+  displayConfirmLabel?: boolean;
   displayCancelLabel?: boolean;
 }
 
@@ -31,8 +32,11 @@ export default function Modal({
   cancelLabel = "Cancel",
   cancelAction,
   showCheckIcon = false,
+  displayConfirmLabel = true,
   displayCancelLabel = true,
 }: ModalProps) {
+  const buttonCount =
+    (displayConfirmLabel ? 1 : 0) + (displayCancelLabel ? 1 : 0);
   return (
     <Dialog
       open={open}
@@ -73,18 +77,27 @@ export default function Modal({
                 </div>
               </div>
             </div>
-            <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  if (confirmAction) {
-                    confirmAction(); // Perform the confirm action
-                  }
-                }}
-                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-              >
-                {confirmLabel}
-              </button>
+            <div
+              className={`mt-5 sm:mt-6 ${
+                buttonCount === 1
+                  ? "flex justify-center w-1/5 mx-auto"
+                  : "sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3"
+              }`}
+            >
+              {/* Conditionally render confirm button */}
+              {displayConfirmLabel && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirmAction) {
+                      confirmAction(); // Perform the confirm action
+                    }
+                  }}
+                  className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                >
+                  {confirmLabel}
+                </button>
+              )}
               {/* Conditionally render cancel button */}
               {displayCancelLabel && (
                 <button
