@@ -57,14 +57,16 @@ export interface MonthlyRO {
   status: orderStatus;
   statusDate: string;
   ban: string;
-  chargeType: string;
+  chargeType: ChargeType;
   codecConnectivity: string;
   codecSupport: string;
   avMaintSupport: string;
-  other: string;
   coreInfraLANSupport: string;
-  totalMonthlyRate: string;
+  callCtrl: string;
+  commuManagement: string;
   jvnOperationsFee: string;
+  other: string;
+  totalMonthlyRate: string;
   costCentre: string;
   startStopDate: string;
   statusHistory: { status: orderStatus; timestamp: string; current: boolean }[];
@@ -77,3 +79,5 @@ export type orderStatus =
   | "Pending JVN Approval"
   | "Pending CIO Approval"
   | "Sent to Bell/Vendor";
+
+export type ChargeType = "Add" | "Remove";

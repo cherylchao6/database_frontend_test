@@ -5,6 +5,7 @@ import {
   OneTimeROSChangeReq,
   MonthlyRO,
   orderStatus,
+  ChargeType,
 } from "@/types/intakes/requisitionOrder";
 import { Person } from "@/types/intakes/person";
 import RequisitionOrderTable from "@/components/RequisitionOrderTable";
@@ -28,7 +29,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -57,7 +58,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "500",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -86,7 +87,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "10000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -127,7 +128,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "10000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -189,7 +190,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030-0601-075025",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -219,7 +220,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030-0601-075025",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -251,15 +252,17 @@ const fakeMonthlyROs: MonthlyRO[] = [
     status: "RO Created",
     statusDate: "2021-07-01",
     ban: "123456",
-    chargeType: "Charge Type",
-    codecConnectivity: "Codec Connectivity",
-    codecSupport: "Codec Support",
-    avMaintSupport: "AV Maint Support",
-    other: "Other",
-    coreInfraLANSupport: "Core Infra LAN Support",
-    totalMonthlyRate: "1000",
+    chargeType: "Add",
+    codecConnectivity: "300",
+    codecSupport: "200",
+    avMaintSupport: "100",
+    coreInfraLANSupport: "200",
     jvnOperationsFee: "1000",
-    costCentre: "123456",
+    callCtrl: "2000",
+    commuManagement: "500",
+    other: "100",
+    totalMonthlyRate: "1000",
+    costCentre: "003-030-0601-075025",
     startStopDate: "2021-07-01",
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -317,10 +320,12 @@ const MonthlyROColumns: { key: keyof MonthlyRO; label: string }[] = [
   { key: "codecConnectivity", label: "Codec Connectivity" },
   { key: "codecSupport", label: "Codec Support" },
   { key: "avMaintSupport", label: "AV Maint Support" },
-  { key: "other", label: "Other" },
   { key: "coreInfraLANSupport", label: "Core Infra LAN Support" },
-  { key: "totalMonthlyRate", label: "Total Monthly Rate" },
   { key: "jvnOperationsFee", label: "JVN Operations Fee" },
+  { key: "callCtrl", label: "Call Control" },
+  { key: "commuManagement", label: "Communication Management" },
+  { key: "other", label: "Other" },
+  { key: "totalMonthlyRate", label: "Total Monthly Rate" },
   { key: "costCentre", label: "Cost Centre" },
   { key: "startStopDate", label: "Start/Stop Date" },
 ];
@@ -498,6 +503,21 @@ const RequisitionOrdersPage = () => {
               setAssignedTo={setAssignedTo}
               fetchOptions={fetchUsersFromApi}
             />
+          ) : column.key === "chargeType" ? (
+            <select
+              value={currentRowData?.[column.key] || ""}
+              onChange={(e) =>
+                setCurrentRowData({
+                  ...currentRowData,
+                  [column.key]: e.target.value as ChargeType,
+                })
+              }
+              className="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            >
+              <option value="">Select Charge Type</option>
+              <option value="Add">Add</option>
+              <option value="Remove">Remove</option>
+            </select>
           ) : (
             <input
               type="text"
@@ -686,7 +706,17 @@ const RequisitionOrdersPage = () => {
           <RequisitionOrderTable
             columns={MonthlyROColumns}
             data={monthlyROs}
-            moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
+            moneyFields={[
+              "totalMonthlyRate",
+              "jvnOperationsFee",
+              "callCtrl",
+              "commuManagement",
+              "other",
+              "coreInfraLANSupport",
+              "avMaintSupport",
+              "codecSupport",
+              "codecConnectivity",
+            ]}
             tableType="MonthlyRO"
             onStatusClick={(statusHistory, itemId) =>
               handleStatusClick(statusHistory, itemId, "MonthlyRO")
@@ -788,6 +818,8 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("OneTimeROSInit");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
+                  setAssignedTo([]);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -798,6 +830,8 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("OneTimeROSChangeReq");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
+                  setAssignedTo([]);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -809,6 +843,7 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("MonthlyRO");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
