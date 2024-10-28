@@ -6,11 +6,7 @@ interface RequisitionOrderTableProps<T> {
   columns: { key: keyof T; label: string }[];
   data: T[];
   moneyFields: string[];
-  tableType:
-    | "OneTimeROSInit"
-    | "OutstandingMonthlyCostChargeReq"
-    | "OneTimeROSChangeReq"
-    | "MonthlyRO";
+  tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO";
   onStatusClick: (
     statusHistory: {
       status: orderStatus;
@@ -18,19 +14,11 @@ interface RequisitionOrderTableProps<T> {
       current: boolean;
     }[],
     itemId: string,
-    tableType:
-      | "OneTimeROSInit"
-      | "OutstandingMonthlyCostChargeReq"
-      | "OneTimeROSChangeReq"
-      | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
   ) => void;
   onEditClick: (
     row: T,
-    tableType:
-      | "OneTimeROSInit"
-      | "OutstandingMonthlyCostChargeReq"
-      | "OneTimeROSChangeReq"
-      | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
   ) => void;
 }
 
