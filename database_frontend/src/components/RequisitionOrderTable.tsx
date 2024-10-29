@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { orderStatus } from "@/types/intakes/requisitionOrder";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 interface RequisitionOrderTableProps<T> {
   columns: { key: keyof T; label: string }[];
@@ -14,9 +15,14 @@ interface RequisitionOrderTableProps<T> {
       current: boolean;
     }[],
     itemId: string,
-    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO",
+    order: T
   ) => void;
   onEditClick: (
+    row: T,
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
+  ) => void;
+  onCancelClick: (
     row: T,
     tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
   ) => void;
@@ -29,6 +35,7 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
   tableType,
   onStatusClick,
   onEditClick,
+  onCancelClick,
 }: RequisitionOrderTableProps<T>) => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -111,9 +118,14 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                     >
                       {column.key === "status" ? (
                         <a
-                          onClick={() =>
-                            onStatusClick(row.statusHistory, row.id, tableType)
-                          }
+                          onClick={() => {
+                            onStatusClick(
+                              row.statusHistory,
+                              row.id,
+                              tableType,
+                              row
+                            );
+                          }}
                           className="text-indigo-600 hover:text-indigo-900"
                         >
                           {row[column.key]}
@@ -129,13 +141,29 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                     </td>
                   ))}
                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                    <a
-                      onClick={() => onEditClick(row, tableType)} // Open modal on Edit click
-                      className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
-                    >
-                      Edit
-                      <span className="sr-only">, {row.roNumber}</span>
-                    </a>
+                    {row.status === "Client Approval Received" ? (
+                      <a
+                        onClick={() => onCancelClick(row, tableType)}
+                        className="text-red-600 hover:text-red-800 cursor-pointer relative group"
+                      >
+                        Cancel
+                        <span className="sr-only">, {row.roNumber}</span>
+                        <div className="absolute z-50 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-2 shadow-lg whitespace-normal min-w-60 text-left">
+                          <InformationCircleIcon className="inline w-4 h-4 mr-1 text-blue-400" />
+                          Once the Order status is "Client Approval Received",
+                          it cannot be modified. To make changes, please cancel
+                          this order and create a new one.
+                        </div>
+                      </a>
+                    ) : (
+                      <a
+                        onClick={() => onEditClick(row, tableType)}
+                        className="text-indigo-600 hover:text-indigo-900 cursor-pointer"
+                      >
+                        Edit
+                        <span className="sr-only">, {row.roNumber}</span>
+                      </a>
+                    )}
                   </td>
                 </tr>
               ))}

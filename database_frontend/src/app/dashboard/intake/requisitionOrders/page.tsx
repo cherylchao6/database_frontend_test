@@ -54,7 +54,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     dateAdded: "2021-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
-    status: "RO Created",
+    status: "Client Approval Received",
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "500",
@@ -66,13 +66,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     statusHistory: [
-      { status: "RO Created", timestamp: "2023-04-21", current: true },
+      { status: "RO Created", timestamp: "2023-04-21", current: false },
       {
         status: "RO sent to Client for Approval",
-        timestamp: "",
+        timestamp: "2023-05-21",
         current: false,
       },
-      { status: "Client Approval Received", timestamp: "", current: false },
+      {
+        status: "Client Approval Received",
+        timestamp: "2023-06-21",
+        current: true,
+      },
       { status: "Pending JVN Approval", timestamp: "", current: false },
       { status: "Pending CIO Approval", timestamp: "", current: false },
       { status: "Sent to Bell/Vendor", timestamp: "", current: false },
@@ -352,6 +356,7 @@ const RequisitionOrdersPage = () => {
     { status: orderStatus; timestamp: string; current: boolean }[]
   >([]);
   const [isCreateOptionModalOpen, setIsCreateOptionModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const [currentTableType, setCurrentTableType] = useState<
     "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO" | null
@@ -403,6 +408,16 @@ const RequisitionOrdersPage = () => {
     setIsEditModalOpen(true); // Open modal
   };
 
+  // delete the order
+  const handleCancelClick = (
+    row: any,
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
+  ) => {
+    setCurrentRowData(row);
+    setCurrentTableType(tableType);
+    setIsCancelModalOpen(true);
+  };
+
   // Function to handle status click and open the modal
   const handleStatusClick = (
     statusHistory: {
@@ -411,12 +426,14 @@ const RequisitionOrdersPage = () => {
       current: boolean;
     }[],
     itemId: string,
-    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO",
+    orderData: any
   ) => {
     setCurrentStatusHistory(statusHistory);
     setCurrentItemId(itemId);
     setCurrentTableType(tableType);
     setIsStatusModalOpen(true);
+    setCurrentRowData(orderData);
   };
 
   // Update row data upon saving
@@ -452,6 +469,35 @@ const RequisitionOrdersPage = () => {
     }
 
     setIsEditModalOpen(false); // Close modal after saving
+  };
+
+  // Function to handle canceling the edit
+  const handleCancelEdit = () => {
+    switch (currentTableType) {
+      case "OneTimeROSInit":
+        const updatedOneTimeROSInits = oneTimeROSInits.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setOneTimeROSInits(updatedOneTimeROSInits);
+        break;
+
+      case "OneTimeROSChangeReq":
+        const updatedROSChangeReqs = oneTimeROSChangeReqs.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setOneTimeROSChangeReqs(updatedROSChangeReqs);
+        break;
+
+      case "MonthlyRO":
+        const updatedMonthlyROs = monthlyROs.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setMonthlyROs(updatedMonthlyROs);
+        break;
+
+      default:
+        break;
+    }
   };
 
   const renderFormFields = () => {
@@ -646,10 +692,22 @@ const RequisitionOrdersPage = () => {
             data={oneTimeROSInits}
             moneyFields={["roAmount"]}
             tableType="OneTimeROSInit"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "OneTimeROSInit")
-            }
+            onStatusClick={(
+              statusHistory,
+              itemId,
+              tableType,
+              currentRowData
+            ) => {
+              // Now call handleStatusClick with verified parameters
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                tableType, // Ensure this is tableType
+                currentRowData
+              );
+            }}
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -677,10 +735,21 @@ const RequisitionOrdersPage = () => {
             data={oneTimeROSChangeReqs}
             moneyFields={["roAmount"]}
             tableType="OneTimeROSChangeReq"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "OneTimeROSChangeReq")
-            }
+            onStatusClick={(
+              statusHistory,
+              itemId,
+              tableType,
+              currentRowData
+            ) => {
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                tableType,
+                currentRowData
+              );
+            }}
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -718,10 +787,16 @@ const RequisitionOrdersPage = () => {
               "codecConnectivity",
             ]}
             tableType="MonthlyRO"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "MonthlyRO")
+            onStatusClick={(statusHistory, itemId, tableType, currentRowData) =>
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                tableType,
+                currentRowData
+              )
             }
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -734,6 +809,7 @@ const RequisitionOrdersPage = () => {
           <div className="overflow-x-auto">
             {/* Error Message */}
             {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+            {/* Table for status history */}
             <table className="min-w-full divide-y divide-gray-200 mt-2">
               <thead className="bg-gray-50">
                 <tr>
@@ -762,6 +838,9 @@ const RequisitionOrdersPage = () => {
                           handleStatusChange(index, "timestamp", e.target.value)
                         }
                         className="border border-gray-300 p-1 rounded"
+                        disabled={
+                          currentRowData.status === "Client Approval Received"
+                        }
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -769,6 +848,9 @@ const RequisitionOrdersPage = () => {
                         type="checkbox"
                         checked={historyItem.current}
                         onChange={() => handleCurrentStatusChange(index)}
+                        disabled={
+                          currentRowData.status === "Client Approval Received"
+                        }
                       />
                     </td>
                   </tr>
@@ -854,6 +936,25 @@ const RequisitionOrdersPage = () => {
         }
         displayCancelLabel={true}
         displayConfirmLabel={false}
+      />
+
+      {/* Modal for Canceling */}
+      <Modal
+        open={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        title="Cancel Order"
+        content={
+          <div>
+            <p>Are you sure you want to cancel this order?</p>
+          </div>
+        }
+        confirmLabel="Yes"
+        confirmAction={() => {
+          handleCancelEdit();
+          setIsCancelModalOpen(false);
+        }}
+        cancelLabel="No"
+        cancelAction={() => setIsCancelModalOpen(false)}
       />
 
       <hr className="my-6 border-t border-gray-300" />
