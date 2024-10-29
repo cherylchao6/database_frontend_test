@@ -150,9 +150,10 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                         <span className="sr-only">, {row.roNumber}</span>
                         <div className="absolute z-50 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded-md px-3 py-2 shadow-lg whitespace-normal min-w-60 text-left">
                           <InformationCircleIcon className="inline w-4 h-4 mr-1 text-blue-400" />
-                          Once the Order status is "Client Approval Received",
-                          it cannot be modified. To make changes, please cancel
-                          this order and create a new one.
+                          Once the Order status is &quot;Client Approval
+                          Received&quot;, it cannot be modified. To make
+                          changes, please cancel this order and create a new
+                          one.
                         </div>
                       </a>
                     ) : (
