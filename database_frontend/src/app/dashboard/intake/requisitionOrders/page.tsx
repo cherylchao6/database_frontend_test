@@ -2,10 +2,10 @@
 import { useState } from "react";
 import {
   OneTimeROSInit,
-  OutstandingMonthlyCostChargeReq,
   OneTimeROSChangeReq,
   MonthlyRO,
   orderStatus,
+  ChargeType,
 } from "@/types/intakes/requisitionOrder";
 import { Person } from "@/types/intakes/person";
 import RequisitionOrderTable from "@/components/RequisitionOrderTable";
@@ -29,7 +29,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -54,11 +54,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     dateAdded: "2021-07-05",
     roNumber: "123456",
     chargeDescription: "Initial Design",
-    status: "RO Created",
+    status: "Client Approval Received",
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "500",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -66,13 +66,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
         "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     },
     statusHistory: [
-      { status: "RO Created", timestamp: "2023-04-21", current: true },
+      { status: "RO Created", timestamp: "2023-04-21", current: false },
       {
         status: "RO sent to Client for Approval",
-        timestamp: "",
+        timestamp: "2023-05-21",
         current: false,
       },
-      { status: "Client Approval Received", timestamp: "", current: false },
+      {
+        status: "Client Approval Received",
+        timestamp: "2023-06-21",
+        current: true,
+      },
       { status: "Pending JVN Approval", timestamp: "", current: false },
       { status: "Pending CIO Approval", timestamp: "", current: false },
       { status: "Sent to Bell/Vendor", timestamp: "", current: false },
@@ -87,7 +91,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "10000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -128,7 +132,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "10000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -190,7 +194,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030-0601-075025",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -220,7 +224,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     statusDate: "2021-07-01",
     clientFunding: "Client Funded",
     roAmount: "1000",
-    costCentre: "123456",
+    costCentre: "003-030-0601-075025",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -252,15 +256,17 @@ const fakeMonthlyROs: MonthlyRO[] = [
     status: "RO Created",
     statusDate: "2021-07-01",
     ban: "123456",
-    chargeType: "Charge Type",
-    codecConnectivity: "Codec Connectivity",
-    codecSupport: "Codec Support",
-    avMaintSupport: "AV Maint Support",
-    other: "Other",
-    coreInfraLANSupport: "Core Infra LAN Support",
-    totalMonthlyRate: "1000",
+    chargeType: "Add",
+    codecConnectivity: "300",
+    codecSupport: "200",
+    avMaintSupport: "100",
+    coreInfraLANSupport: "200",
     jvnOperationsFee: "1000",
-    costCentre: "123456",
+    callCtrl: "2000",
+    commuManagement: "500",
+    other: "100",
+    totalMonthlyRate: "1000",
+    costCentre: "003-030-0601-075025",
     startStopDate: "2021-07-01",
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -277,101 +283,6 @@ const fakeMonthlyROs: MonthlyRO[] = [
   },
 ];
 
-const fakeOutstandingMonthlyCostChargeReqs: OutstandingMonthlyCostChargeReq[] =
-  [
-    {
-      id: "1",
-      dateAdded: "2021-07-01",
-      crNumber: "123456",
-      roomNumber: "123",
-      alias: "Alias",
-      status: "RO Created",
-      statusDate: "2021-07-01",
-      ban: "123456",
-      codecConnectivity: "Codec Connectivity",
-      codecSupport: "Codec Support",
-      avMaintSupport: "AV Maint Support",
-      other: "Other",
-      coreInfraLANSupport: "Core Infra LAN Support",
-      totalMonthlyRate: "1000",
-      jvnOperationsFee: "1000",
-      costCentre: "123456",
-      statusHistory: [
-        { status: "RO Created", timestamp: "2023-04-21", current: false },
-        {
-          status: "RO sent to Client for Approval",
-          timestamp: "2023-04-21",
-          current: true,
-        },
-        { status: "Client Approval Received", timestamp: "", current: false },
-        { status: "Pending JVN Approval", timestamp: "", current: false },
-        { status: "Pending CIO Approval", timestamp: "", current: false },
-        { status: "Sent to Bell/Vendor", timestamp: "", current: false },
-      ],
-    },
-
-    {
-      id: "2",
-      dateAdded: "2021-07-03",
-      crNumber: "123456",
-      roomNumber: "123",
-      alias: "Alias",
-      status: "RO Created",
-      statusDate: "2021-07-01",
-      ban: "123456",
-      codecConnectivity: "Codec Connectivity",
-      codecSupport: "Codec Support",
-      avMaintSupport: "AV Maint Support",
-      other: "Other",
-      coreInfraLANSupport: "Core Infra LAN Support",
-      totalMonthlyRate: "1500",
-      jvnOperationsFee: "500",
-      costCentre: "123456",
-      statusHistory: [
-        { status: "RO Created", timestamp: "2023-04-21", current: false },
-        {
-          status: "RO sent to Client for Approval",
-          timestamp: "2023-04-21",
-          current: true,
-        },
-        { status: "Client Approval Received", timestamp: "", current: false },
-        { status: "Pending JVN Approval", timestamp: "", current: false },
-        { status: "Pending CIO Approval", timestamp: "", current: false },
-        { status: "Sent to Bell/Vendor", timestamp: "", current: false },
-      ],
-    },
-    {
-      id: "3",
-      dateAdded: "2023-07-03",
-      crNumber: "123456",
-      roomNumber: "123",
-      alias: "Alias",
-      status: "RO Created",
-      statusDate: "2021-07-01",
-      ban: "123456",
-      codecConnectivity: "Codec Connectivity",
-      codecSupport: "Codec Support",
-      avMaintSupport: "AV Maint Support",
-      other: "Other",
-      coreInfraLANSupport: "Core Infra LAN Support",
-      totalMonthlyRate: "100",
-      jvnOperationsFee: "10000",
-      costCentre: "123456",
-      statusHistory: [
-        { status: "RO Created", timestamp: "2023-04-21", current: false },
-        {
-          status: "RO sent to Client for Approval",
-          timestamp: "2023-04-21",
-          current: true,
-        },
-        { status: "Client Approval Received", timestamp: "", current: false },
-        { status: "Pending JVN Approval", timestamp: "", current: false },
-        { status: "Pending CIO Approval", timestamp: "", current: false },
-        { status: "Sent to Bell/Vendor", timestamp: "", current: false },
-      ],
-    },
-  ];
-
 // Organize the columns for all order table columns
 const OneTimeROSInitColumns: { key: keyof OneTimeROSInit; label: string }[] = [
   { key: "dateAdded", label: "Date Added" },
@@ -383,27 +294,6 @@ const OneTimeROSInitColumns: { key: keyof OneTimeROSInit; label: string }[] = [
   { key: "roAmount", label: "RO Amount" },
   { key: "costCentre", label: "Cost Centre" },
   { key: "approvedBy", label: "Approved By" },
-];
-
-const OutstandingMonthlyCostChargeReqColumns: {
-  key: keyof OutstandingMonthlyCostChargeReq;
-  label: string;
-}[] = [
-  { key: "dateAdded", label: "Date Added" },
-  { key: "crNumber", label: "CR Number" },
-  { key: "roomNumber", label: "Room Number" },
-  { key: "alias", label: "Alias" },
-  { key: "status", label: "Status" },
-  { key: "statusDate", label: "Status Date" },
-  { key: "ban", label: "BAN" },
-  { key: "codecConnectivity", label: "Codec Connectivity" },
-  { key: "codecSupport", label: "Codec Support" },
-  { key: "avMaintSupport", label: "AV Maint Support" },
-  { key: "other", label: "Other" },
-  { key: "coreInfraLANSupport", label: "Core Infra LAN Support" },
-  { key: "totalMonthlyRate", label: "Total Monthly Rate" },
-  { key: "jvnOperationsFee", label: "JVN Operations Fee" },
-  { key: "costCentre", label: "Cost Centre" },
 ];
 
 const OneTimeROSChangeReqColumns: {
@@ -434,10 +324,12 @@ const MonthlyROColumns: { key: keyof MonthlyRO; label: string }[] = [
   { key: "codecConnectivity", label: "Codec Connectivity" },
   { key: "codecSupport", label: "Codec Support" },
   { key: "avMaintSupport", label: "AV Maint Support" },
-  { key: "other", label: "Other" },
   { key: "coreInfraLANSupport", label: "Core Infra LAN Support" },
-  { key: "totalMonthlyRate", label: "Total Monthly Rate" },
   { key: "jvnOperationsFee", label: "JVN Operations Fee" },
+  { key: "callCtrl", label: "Call Control" },
+  { key: "commuManagement", label: "Communication Management" },
+  { key: "other", label: "Other" },
+  { key: "totalMonthlyRate", label: "Total Monthly Rate" },
   { key: "costCentre", label: "Cost Centre" },
   { key: "startStopDate", label: "Start/Stop Date" },
 ];
@@ -454,13 +346,6 @@ const RequisitionOrdersPage = () => {
 
   const [monthlyROs, setMonthlyROs] = useState<MonthlyRO[]>(fakeMonthlyROs);
 
-  const [
-    outstandingMonthlyCostChargeReqs,
-    setOutstandingMonthlyCostChargeReqs,
-  ] = useState<OutstandingMonthlyCostChargeReq[]>(
-    fakeOutstandingMonthlyCostChargeReqs
-  );
-
   const [assignedTo, setAssignedTo] = useState<Person[]>([]);
 
   // State to control the Modal
@@ -471,13 +356,10 @@ const RequisitionOrdersPage = () => {
     { status: orderStatus; timestamp: string; current: boolean }[]
   >([]);
   const [isCreateOptionModalOpen, setIsCreateOptionModalOpen] = useState(false);
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 
   const [currentTableType, setCurrentTableType] = useState<
-    | "OneTimeROSInit"
-    | "OutstandingMonthlyCostChargeReq"
-    | "OneTimeROSChangeReq"
-    | "MonthlyRO"
-    | null
+    "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO" | null
   >(null);
   const [currentItemId, setCurrentItemId] = useState<string | null>(null);
 
@@ -487,26 +369,32 @@ const RequisitionOrdersPage = () => {
   // Control the display of order tables
   const [isOneTimeROSInitTableShown, setIsOneTimeROSInitTableShown] =
     useState(true);
-  const [
-    isOutstandingMonthlyCostChargeReqTableShown,
-    setIsOutstandingMonthlyCostChargeReqTableShown,
-  ] = useState(false);
   const [isOneTimeROSChangeReqTableShown, setIsOneTimeROSChangeReqTableShown] =
     useState(false);
   const [isMonthlyROTableShown, setIsMonthlyROTableShown] = useState(false);
   const toggleOneTimeROSInitTableShow = () => {
     setIsOneTimeROSInitTableShown(!isOneTimeROSInitTableShown);
   };
-  const toggleOutstandingMonthlyCostChargeReqTableShow = () => {
-    setIsOutstandingMonthlyCostChargeReqTableShown(
-      !isOutstandingMonthlyCostChargeReqTableShown
-    );
-  };
   const toggleOneTimeROSChangeReqTableShow = () => {
     setIsOneTimeROSChangeReqTableShown(!isOneTimeROSChangeReqTableShown);
   };
   const toggleMonthlyROTableShow = () => {
     setIsMonthlyROTableShown(!isMonthlyROTableShown);
+  };
+
+  const handleCostCentreChange = (
+    value: string,
+    partIndex: number,
+    key: string
+  ) => {
+    setCurrentRowData((prevData: any) => {
+      const parts = prevData[key]?.split("-") || ["", "", "", ""];
+      parts[partIndex] = value;
+      return {
+        ...prevData,
+        [key]: parts.join("-"),
+      };
+    });
   };
 
   // useEffect(() => {
@@ -522,11 +410,7 @@ const RequisitionOrdersPage = () => {
 
   const handleEditClick = (
     row: any,
-    tableType:
-      | "OneTimeROSInit"
-      | "OutstandingMonthlyCostChargeReq"
-      | "OneTimeROSChangeReq"
-      | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
   ) => {
     setCurrentRowData(row); // Store the row data to edit
     setCurrentTableType(tableType); // Set the current table type
@@ -539,6 +423,16 @@ const RequisitionOrdersPage = () => {
     setIsEditModalOpen(true); // Open modal
   };
 
+  // delete the order
+  const handleCancelClick = (
+    row: any,
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO"
+  ) => {
+    setCurrentRowData(row);
+    setCurrentTableType(tableType);
+    setIsCancelModalOpen(true);
+  };
+
   // Function to handle status click and open the modal
   const handleStatusClick = (
     statusHistory: {
@@ -547,16 +441,14 @@ const RequisitionOrdersPage = () => {
       current: boolean;
     }[],
     itemId: string,
-    tableType:
-      | "OneTimeROSInit"
-      | "OutstandingMonthlyCostChargeReq"
-      | "OneTimeROSChangeReq"
-      | "MonthlyRO"
+    tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO",
+    orderData: any
   ) => {
     setCurrentStatusHistory(statusHistory);
     setCurrentItemId(itemId);
     setCurrentTableType(tableType);
     setIsStatusModalOpen(true);
+    setCurrentRowData(orderData);
   };
 
   // Update row data upon saving
@@ -571,13 +463,6 @@ const RequisitionOrdersPage = () => {
           item.id === updatedData.id ? updatedData : item
         );
         setOneTimeROSInits(updatedTableData);
-        break;
-
-      case "OutstandingMonthlyCostChargeReq":
-        updatedTableData = outstandingMonthlyCostChargeReqs.map((item) =>
-          item.id === updatedData.id ? updatedData : item
-        );
-        setOutstandingMonthlyCostChargeReqs(updatedTableData);
         break;
 
       case "OneTimeROSChangeReq":
@@ -601,6 +486,35 @@ const RequisitionOrdersPage = () => {
     setIsEditModalOpen(false); // Close modal after saving
   };
 
+  // Function to handle canceling the edit
+  const handleCancelEdit = () => {
+    switch (currentTableType) {
+      case "OneTimeROSInit":
+        const updatedOneTimeROSInits = oneTimeROSInits.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setOneTimeROSInits(updatedOneTimeROSInits);
+        break;
+
+      case "OneTimeROSChangeReq":
+        const updatedROSChangeReqs = oneTimeROSChangeReqs.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setOneTimeROSChangeReqs(updatedROSChangeReqs);
+        break;
+
+      case "MonthlyRO":
+        const updatedMonthlyROs = monthlyROs.filter(
+          (item) => item.id !== currentRowData.id
+        );
+        setMonthlyROs(updatedMonthlyROs);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const renderFormFields = () => {
     if (!currentTableType) return null;
     // if (!currentRowData || !currentTableType) return null;
@@ -611,9 +525,6 @@ const RequisitionOrdersPage = () => {
     switch (currentTableType) {
       case "OneTimeROSInit":
         columns = OneTimeROSInitColumns;
-        break;
-      case "OutstandingMonthlyCostChargeReq":
-        columns = OutstandingMonthlyCostChargeReqColumns;
         break;
       case "OneTimeROSChangeReq":
         columns = OneTimeROSChangeReqColumns;
@@ -653,6 +564,94 @@ const RequisitionOrdersPage = () => {
               setAssignedTo={setAssignedTo}
               fetchOptions={fetchUsersFromApi}
             />
+          ) : column.key === "chargeType" ? (
+            <select
+              value={currentRowData?.[column.key] || ""}
+              onChange={(e) =>
+                setCurrentRowData({
+                  ...currentRowData,
+                  [column.key]: e.target.value as ChargeType,
+                })
+              }
+              className="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            >
+              <option value="">Select Charge Type</option>
+              <option value="Add">Add</option>
+              <option value="Remove">Remove</option>
+            </select>
+          ) : column.key === "costCentre" ? (
+            <div className="flex space-x-2">
+              <>
+                <input
+                  type="text"
+                  maxLength={3}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[0] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      0,
+                      column.key as string
+                    )
+                  }
+                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                <p className="text-center">-</p>
+                <input
+                  type="text"
+                  maxLength={currentTableType === "OneTimeROSInit" ? 6 : 3}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[1] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      1,
+                      column.key as string
+                    )
+                  }
+                  className="w-16 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                <p className="text-center">-</p>
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[2] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      2,
+                      column.key as string
+                    )
+                  }
+                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {currentTableType !== "OneTimeROSInit" && (
+                  <>
+                    <p className="text-center">-</p>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={
+                        currentRowData?.[column.key as string]?.split("-")[3] ||
+                        ""
+                      }
+                      onChange={(e) =>
+                        handleCostCentreChange(
+                          e.target.value,
+                          3,
+                          column.key as string
+                        )
+                      }
+                      className="w-20 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    />
+                  </>
+                )}
+              </>
+            </div>
           ) : (
             <input
               type="text"
@@ -720,16 +719,6 @@ const RequisitionOrdersPage = () => {
           setOneTimeROSInits(updatedOneTimeROSInits);
           break;
 
-        case "OutstandingMonthlyCostChargeReq":
-          const updatedOutstandingReqs = outstandingMonthlyCostChargeReqs.map(
-            (item) =>
-              item.id === currentItemId
-                ? { ...item, statusHistory: currentStatusHistory }
-                : item
-          );
-          setOutstandingMonthlyCostChargeReqs(updatedOutstandingReqs);
-          break;
-
         case "OneTimeROSChangeReq":
           const updatedROSChangeReqs = oneTimeROSChangeReqs.map((item) =>
             item.id === currentItemId
@@ -791,10 +780,22 @@ const RequisitionOrdersPage = () => {
             data={oneTimeROSInits}
             moneyFields={["roAmount"]}
             tableType="OneTimeROSInit"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "OneTimeROSInit")
-            }
+            onStatusClick={(
+              statusHistory,
+              itemId,
+              tableType,
+              currentRowData
+            ) => {
+              // Now call handleStatusClick with verified parameters
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                tableType, // Ensure this is tableType
+                currentRowData
+              );
+            }}
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -822,10 +823,21 @@ const RequisitionOrdersPage = () => {
             data={oneTimeROSChangeReqs}
             moneyFields={["roAmount"]}
             tableType="OneTimeROSChangeReq"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "OneTimeROSChangeReq")
-            }
+            onStatusClick={(
+              statusHistory,
+              itemId,
+              tableType,
+              currentRowData
+            ) => {
+              handleStatusClick(
+                statusHistory,
+                itemId,
+                tableType,
+                currentRowData
+              );
+            }}
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -851,47 +863,28 @@ const RequisitionOrdersPage = () => {
           <RequisitionOrderTable
             columns={MonthlyROColumns}
             data={monthlyROs}
-            moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
+            moneyFields={[
+              "totalMonthlyRate",
+              "jvnOperationsFee",
+              "callCtrl",
+              "commuManagement",
+              "other",
+              "coreInfraLANSupport",
+              "avMaintSupport",
+              "codecSupport",
+              "codecConnectivity",
+            ]}
             tableType="MonthlyRO"
-            onStatusClick={(statusHistory, itemId) =>
-              handleStatusClick(statusHistory, itemId, "MonthlyRO")
-            }
-            onEditClick={handleEditClick}
-          />
-        )}
-      </div>
-      {/* Outstanding Monthly Cost Charge Req Table Section */}
-      <div className="mt-8">
-        <div className="flex">
-          <h2 className="col-span-6 text-lg font-semibold text-slate-900">
-            Outstanding Monthly Cost Charge Request
-          </h2>
-          <button
-            onClick={toggleOutstandingMonthlyCostChargeReqTableShow}
-            className="flex items-center cursor-pointer focus:outline-none px-2"
-          >
-            {isOutstandingMonthlyCostChargeReqTableShown ? (
-              <ChevronUpIcon className="h-5 w-5 text-gray-500" />
-            ) : (
-              <ChevronDownIcon className="h-5 w-5 text-gray-500" />
-            )}
-          </button>
-        </div>
-
-        {isOutstandingMonthlyCostChargeReqTableShown && (
-          <RequisitionOrderTable
-            columns={OutstandingMonthlyCostChargeReqColumns}
-            data={outstandingMonthlyCostChargeReqs}
-            moneyFields={["totalMonthlyRate", "jvnOperationsFee"]}
-            tableType="OutstandingMonthlyCostChargeReq"
-            onStatusClick={(statusHistory, itemId) =>
+            onStatusClick={(statusHistory, itemId, tableType, currentRowData) =>
               handleStatusClick(
                 statusHistory,
                 itemId,
-                "OutstandingMonthlyCostChargeReq"
+                tableType,
+                currentRowData
               )
             }
             onEditClick={handleEditClick}
+            onCancelClick={handleCancelClick}
           />
         )}
       </div>
@@ -904,6 +897,7 @@ const RequisitionOrdersPage = () => {
           <div className="overflow-x-auto">
             {/* Error Message */}
             {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+            {/* Table for status history */}
             <table className="min-w-full divide-y divide-gray-200 mt-2">
               <thead className="bg-gray-50">
                 <tr>
@@ -932,6 +926,9 @@ const RequisitionOrdersPage = () => {
                           handleStatusChange(index, "timestamp", e.target.value)
                         }
                         className="border border-gray-300 p-1 rounded"
+                        disabled={
+                          currentRowData.status === "Client Approval Received"
+                        }
                       />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -939,6 +936,9 @@ const RequisitionOrdersPage = () => {
                         type="checkbox"
                         checked={historyItem.current}
                         onChange={() => handleCurrentStatusChange(index)}
+                        disabled={
+                          currentRowData.status === "Client Approval Received"
+                        }
                       />
                     </td>
                   </tr>
@@ -988,6 +988,8 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("OneTimeROSInit");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
+                  setAssignedTo([]);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -998,6 +1000,8 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("OneTimeROSChangeReq");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
+                  setAssignedTo([]);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
@@ -1009,27 +1013,36 @@ const RequisitionOrdersPage = () => {
                   setCurrentTableType("MonthlyRO");
                   setIsCreateOptionModalOpen(false);
                   setIsCreateModalOpen(true);
+                  setCurrentRowData(null);
                 }}
                 className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Monthly RO
-              </a>
-
-              <a
-                onClick={() => {
-                  setCurrentTableType("OutstandingMonthlyCostChargeReq");
-                  setIsCreateOptionModalOpen(false);
-                  setIsCreateModalOpen(true);
-                }}
-                className="justify-center cursor-pointer inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Outstanding Monthly Cost Charge Request
               </a>
             </div>
           </div>
         }
         displayCancelLabel={true}
         displayConfirmLabel={false}
+      />
+
+      {/* Modal for Canceling */}
+      <Modal
+        open={isCancelModalOpen}
+        onClose={() => setIsCancelModalOpen(false)}
+        title="Cancel Order"
+        content={
+          <div>
+            <p>Are you sure you want to cancel this order?</p>
+          </div>
+        }
+        confirmLabel="Yes"
+        confirmAction={() => {
+          handleCancelEdit();
+          setIsCancelModalOpen(false);
+        }}
+        cancelLabel="No"
+        cancelAction={() => setIsCancelModalOpen(false)}
       />
 
       <hr className="my-6 border-t border-gray-300" />
