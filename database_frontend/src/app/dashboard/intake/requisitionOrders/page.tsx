@@ -382,6 +382,21 @@ const RequisitionOrdersPage = () => {
     setIsMonthlyROTableShown(!isMonthlyROTableShown);
   };
 
+  const handleCostCentreChange = (
+    value: string,
+    partIndex: number,
+    key: string
+  ) => {
+    setCurrentRowData((prevData: any) => {
+      const parts = prevData[key]?.split("-") || ["", "", "", ""];
+      parts[partIndex] = value;
+      return {
+        ...prevData,
+        [key]: parts.join("-"),
+      };
+    });
+  };
+
   // useEffect(() => {
   //   if (currentTableType && currentRowData) {
   //     const initialPerson = currentRowData["approvedBy"] as Person | null;
@@ -564,6 +579,79 @@ const RequisitionOrdersPage = () => {
               <option value="Add">Add</option>
               <option value="Remove">Remove</option>
             </select>
+          ) : column.key === "costCentre" ? (
+            <div className="flex space-x-2">
+              <>
+                <input
+                  type="text"
+                  maxLength={3}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[0] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      0,
+                      column.key as string
+                    )
+                  }
+                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                <p className="text-center">-</p>
+                <input
+                  type="text"
+                  maxLength={currentTableType === "OneTimeROSInit" ? 6 : 3}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[1] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      1,
+                      column.key as string
+                    )
+                  }
+                  className="w-16 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                <p className="text-center">-</p>
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[2] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCentreChange(
+                      e.target.value,
+                      2,
+                      column.key as string
+                    )
+                  }
+                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+                {currentTableType !== "OneTimeROSInit" && (
+                  <>
+                    <p className="text-center">-</p>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={
+                        currentRowData?.[column.key as string]?.split("-")[3] ||
+                        ""
+                      }
+                      onChange={(e) =>
+                        handleCostCentreChange(
+                          e.target.value,
+                          3,
+                          column.key as string
+                        )
+                      }
+                      className="w-20 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                    />
+                  </>
+                )}
+              </>
+            </div>
           ) : (
             <input
               type="text"
