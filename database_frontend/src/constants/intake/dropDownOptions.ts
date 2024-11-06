@@ -191,7 +191,7 @@ export const features = [
 export const milestoneStatus = ["Planned", "Completed", "Not Required"];
 
 // Planview
-export const planviewStatus = ["On Track", "Manageable", "Hold", "At Risk"];
+// export const planviewStatus = ["On Track", "Manageable", "Hold", "At Risk"];
 export const planviewPhase = [
   "Planning",
   "Implementation",
