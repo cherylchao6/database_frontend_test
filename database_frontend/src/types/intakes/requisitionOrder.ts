@@ -4,13 +4,13 @@ export interface OneTimeROSInit {
   dateAdded: string;
   roNumber: string;
   chargeDescription: string;
-  status: orderStatus;
+  status: OrderStatus;
   statusDate: string;
-  clientFunding: string;
+  initiative: string;
   roAmount: string;
   costCentre: string;
   approvedBy: Person;
-  statusHistory: { status: orderStatus; timestamp: string; current: boolean }[];
+  statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
 
 export interface OutstandingMonthlyCostChargeReq {
@@ -19,7 +19,7 @@ export interface OutstandingMonthlyCostChargeReq {
   crNumber: string;
   roomNumber: string;
   alias: string;
-  status: orderStatus;
+  status: OrderStatus;
   statusDate: string;
   ban: string;
   codecConnectivity: string;
@@ -30,7 +30,7 @@ export interface OutstandingMonthlyCostChargeReq {
   totalMonthlyRate: string;
   jvnOperationsFee: string;
   costCentre: string;
-  statusHistory: { status: orderStatus; timestamp: string; current: boolean }[];
+  statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
 
 export interface OneTimeROSChangeReq {
@@ -39,13 +39,13 @@ export interface OneTimeROSChangeReq {
   roNumber: string;
   chargeDescription: string;
   crNumber: string;
-  status: orderStatus;
+  status: OrderStatus;
   statusDate: string;
-  clientFunding: string;
+  initiative: string;
   roAmount: string;
   costCentre: string;
   approvedBy: Person;
-  statusHistory: { status: orderStatus; timestamp: string; current: boolean }[];
+  statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
 
 export interface MonthlyRO {
@@ -54,7 +54,7 @@ export interface MonthlyRO {
   roNumber: string;
   roomNumber: string;
   alias: string;
-  status: orderStatus;
+  status: OrderStatus;
   statusDate: string;
   ban: string;
   chargeType: ChargeType;
@@ -69,10 +69,10 @@ export interface MonthlyRO {
   totalMonthlyRate: string;
   costCentre: string;
   startStopDate: string;
-  statusHistory: { status: orderStatus; timestamp: string; current: boolean }[];
+  statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
 
-export type orderStatus =
+export type OrderStatus =
   | "RO Created"
   | "RO sent to Client for Approval"
   | "Client Approval Received"

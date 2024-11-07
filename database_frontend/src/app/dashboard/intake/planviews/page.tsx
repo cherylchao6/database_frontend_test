@@ -192,7 +192,6 @@ const PlanviewListPage = () => {
       ...prev,
       [name]: value,
     }));
-    console.log(formData);
 
     // if (formData.requestedStartDate > formData.requestedStartDate) {
     //   console.log("Error");
@@ -242,7 +241,6 @@ const PlanviewListPage = () => {
 
     // Generate a download link for the workbook
     XLSX.writeFile(workbook, "planview_data.xlsx");
-    console.log("Exported to Excel");
   };
 
   return (

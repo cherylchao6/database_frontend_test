@@ -4,7 +4,7 @@ import {
   OneTimeROSInit,
   OneTimeROSChangeReq,
   MonthlyRO,
-  orderStatus,
+  OrderStatus,
   ChargeType,
 } from "@/types/intakes/requisitionOrder";
 import { Person } from "@/types/intakes/person";
@@ -23,11 +23,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "123456",
-    chargeDescription: "Initial Design",
+    roNumber: "MAG-353-RO305",
+    chargeDescription: "NTC-Video Conference Switch Credit",
     status: "RO sent to Client for Approval",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "LM&G",
     roAmount: "1000",
     costCentre: "003-030505-0000",
     approvedBy: {
@@ -52,11 +52,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "2",
     dateAdded: "2021-07-05",
-    roNumber: "123456",
+    roNumber: "MAG-400-RO306",
     chargeDescription: "Initial Design",
     status: "Client Approval Received",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "VHH",
     roAmount: "500",
     costCentre: "003-030505-0000",
     approvedBy: {
@@ -85,11 +85,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "3",
     dateAdded: "2023-07-05",
-    roNumber: "123456",
+    roNumber: "MAG-201-RO300",
     chargeDescription: "Initial Design",
     status: "Pending CIO Approval",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "CJVS",
     roAmount: "10000",
     costCentre: "003-030505-0000",
     approvedBy: {
@@ -126,11 +126,11 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "4",
     dateAdded: "2023-07-05",
-    roNumber: "123456",
+    roNumber: "MAG-153-RO105",
     chargeDescription: "Initial Design",
     status: "RO Created",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "R&D",
     roAmount: "10000",
     costCentre: "003-030505-0000",
     approvedBy: {
@@ -155,13 +155,13 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "5",
     dateAdded: "2023-07-05",
-    roNumber: "123456",
+    roNumber: "MAG-601-RO405",
     chargeDescription: "Initial Design",
     status: "RO Created",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "R&D",
     roAmount: "10000",
-    costCentre: "123456",
+    costCentre: "003-030505-0000",
     approvedBy: {
       id: 1,
       name: "Wade Cooper",
@@ -187,12 +187,12 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "123456",
-    chargeDescription: "Initial Design",
-    crNumber: "123456",
+    roNumber: "MAG-516-B+-243-RO101",
+    chargeDescription: "One-time charges associated with equipping audio",
+    crNumber: "CR-1",
     status: "RO Created",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "LM&G",
     roAmount: "1000",
     costCentre: "003-030-0601-075025",
     approvedBy: {
@@ -217,12 +217,12 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
   {
     id: "2",
     dateAdded: "2021-07-01",
-    roNumber: "123456",
+    roNumber: "MAG-316-B+-243-RO101",
     chargeDescription: "Initial Design",
-    crNumber: "123456",
+    crNumber: "CR-2",
     status: "RO Created",
     statusDate: "2021-07-01",
-    clientFunding: "Client Funded",
+    initiative: "CJVS",
     roAmount: "1000",
     costCentre: "003-030-0601-075025",
     approvedBy: {
@@ -250,12 +250,12 @@ const fakeMonthlyROs: MonthlyRO[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "123456",
-    roomNumber: "123",
-    alias: "Alias",
+    roNumber: "MAG-467-74-062-RO201",
+    roomNumber: "Ctrm 10",
+    alias: "AUD1094",
     status: "RO Created",
     statusDate: "2021-07-01",
-    ban: "123456",
+    ban: "TBD NEW",
     chargeType: "Add",
     codecConnectivity: "300",
     codecSupport: "200",
@@ -290,7 +290,7 @@ const OneTimeROSInitColumns: { key: keyof OneTimeROSInit; label: string }[] = [
   { key: "chargeDescription", label: "Charge Description" },
   { key: "status", label: "Status" },
   { key: "statusDate", label: "Status Date" },
-  { key: "clientFunding", label: "Client Funding" },
+  { key: "initiative", label: "Initiative" },
   { key: "roAmount", label: "RO Amount" },
   { key: "costCentre", label: "Cost Centre" },
   { key: "approvedBy", label: "Approved By" },
@@ -306,7 +306,7 @@ const OneTimeROSChangeReqColumns: {
   { key: "crNumber", label: "CR Number" },
   { key: "status", label: "Status" },
   { key: "statusDate", label: "Status Date" },
-  { key: "clientFunding", label: "Client Funding" },
+  { key: "initiative", label: "Client Funding" },
   { key: "roAmount", label: "RO Amount" },
   { key: "costCentre", label: "Cost Centre" },
   { key: "approvedBy", label: "Approved By" },
@@ -353,7 +353,7 @@ const RequisitionOrdersPage = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [currentStatusHistory, setCurrentStatusHistory] = useState<
-    { status: orderStatus; timestamp: string; current: boolean }[]
+    { status: OrderStatus; timestamp: string; current: boolean }[]
   >([]);
   const [isCreateOptionModalOpen, setIsCreateOptionModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -436,7 +436,7 @@ const RequisitionOrdersPage = () => {
   // Function to handle status click and open the modal
   const handleStatusClick = (
     statusHistory: {
-      status: orderStatus;
+      status: OrderStatus;
       timestamp: string;
       current: boolean;
     }[],
@@ -484,6 +484,41 @@ const RequisitionOrdersPage = () => {
     }
 
     setIsEditModalOpen(false); // Close modal after saving
+  };
+
+  const handleCreateOrderSaveClick = (newData: any) => {
+    newData.approvedBy = assignedTo[0];
+    newData.statusHistory = [
+      { status: "RO Created", timestamp: "", current: false },
+      {
+        status: "RO sent to Client for Approval",
+        timestamp: "",
+        current: false,
+      },
+      { status: "Client Approval Received", timestamp: "", current: false },
+      { status: "Pending JVN Approval", timestamp: "", current: false },
+      { status: "Pending CIO Approval", timestamp: "", current: false },
+      { status: "Sent to Bell/Vendor", timestamp: "", current: false },
+    ];
+
+    switch (currentTableType) {
+      case "OneTimeROSInit":
+        setOneTimeROSInits([...oneTimeROSInits, newData]);
+        break;
+
+      case "OneTimeROSChangeReq":
+        setOneTimeROSChangeReqs([...oneTimeROSChangeReqs, newData]);
+        break;
+
+      case "MonthlyRO":
+        setMonthlyROs([...monthlyROs, newData]);
+        break;
+
+      default:
+        break;
+    }
+
+    setIsCreateModalOpen(false);
   };
 
   // Function to handle canceling the edit
@@ -537,7 +572,9 @@ const RequisitionOrdersPage = () => {
     }
 
     return columns
-      .filter((column) => column.key !== "status") // Exclude the "status" field
+      .filter((column) => {
+        return column.key !== "status" && column.key !== "statusDate";
+      }) // Exclude the "status" and "statusDate" field
       .map((column) => (
         <div key={column.key as string} className="my-2 text-left text-m">
           <label className="block font-medium leading-6 text-gray-900 mb-2">
@@ -545,7 +582,7 @@ const RequisitionOrdersPage = () => {
           </label>
 
           {/* Check for specific fields to render the correct input types */}
-          {column.key === "dateAdded" ? (
+          {column.key === "dateAdded" || column.key === "startStopDate" ? (
             <input
               type="date"
               value={currentRowData?.[column.key] || ""}
@@ -972,7 +1009,7 @@ const RequisitionOrdersPage = () => {
         title="Create New Order"
         content={<div>{renderFormFields()}</div>}
         confirmLabel="Save"
-        confirmAction={() => handleSaveEdit(currentRowData)}
+        confirmAction={() => handleCreateOrderSaveClick(currentRowData)}
         cancelLabel="Cancel"
       />
       {/* Modal for Choose Type of Order to Create*/}
