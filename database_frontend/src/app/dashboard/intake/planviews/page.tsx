@@ -4,6 +4,7 @@ import Pagination from "@/components/Pagination";
 import Modal from "@/components/Modal";
 import Planview from "@/types/intakes/planview";
 import { planviewPhases, planviewStatuses } from "@/types/intakes/planview";
+import { ministries } from "@/types/organization";
 import Note from "@/types/intakes/note";
 import * as XLSX from "xlsx";
 import { useSession } from "next-auth/react";
@@ -93,6 +94,7 @@ const PlanviewListPage = () => {
   const user = useSession().data?.user?.name;
   const [projectId, setProjectId] = useState("");
   const [status, setStatus] = useState("");
+  const [ministry, setMinistry] = useState("");
   const [phase, setPhase] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -214,6 +216,7 @@ const PlanviewListPage = () => {
   const handleReset = () => {
     // Reset all state to empty or default values
     setProjectId("");
+    setMinistry("");
     setStartDate("");
     setEndDate("");
     setStatus("");
@@ -265,6 +268,25 @@ const PlanviewListPage = () => {
                 className="mt-1 block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="Enter Project ID"
               />
+            </div>
+            {/* Ministry Filter */}
+            <div>
+              <label htmlFor="projectId" className={labelClassName}>
+                Ministry
+              </label>
+              <select
+                id="ministry"
+                value={ministry}
+                onChange={(e) => setPhase(e.target.value)}
+                className="mt-1 block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              >
+                <option value="">Select Ministry</option>
+                {ministries.map((ministry) => (
+                  <option key={ministry} value={ministry}>
+                    {ministry}
+                  </option>
+                ))}
+              </select>
             </div>
             {/* Phase Filter */}
             <div>
