@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { orderStatus } from "@/types/intakes/requisitionOrder";
+import { OrderStatus } from "@/types/intakes/requisitionOrder";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 interface RequisitionOrderTableProps<T> {
@@ -10,7 +10,7 @@ interface RequisitionOrderTableProps<T> {
   tableType: "OneTimeROSInit" | "OneTimeROSChangeReq" | "MonthlyRO";
   onStatusClick: (
     statusHistory: {
-      status: orderStatus;
+      status: OrderStatus;
       timestamp: string;
       current: boolean;
     }[],
@@ -117,19 +117,35 @@ const RequisitionOrderTable = <T extends Record<string, any>>({
                       className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3 text-gray-900"
                     >
                       {column.key === "status" ? (
-                        <a
-                          onClick={() => {
-                            onStatusClick(
-                              row.statusHistory,
-                              row.id,
-                              tableType,
-                              row
-                            );
-                          }}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          {row[column.key]}
-                        </a>
+                        row.status ? (
+                          <a
+                            onClick={() => {
+                              onStatusClick(
+                                row.statusHistory,
+                                row.id,
+                                tableType,
+                                row
+                              );
+                            }}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            {row[column.key]}
+                          </a>
+                        ) : (
+                          <span
+                            className="text-indigo-600 cursor-pointer"
+                            onClick={() =>
+                              onStatusClick(
+                                row.statusHistory,
+                                row.id,
+                                tableType,
+                                row
+                              )
+                            }
+                          >
+                            Click to Add Status
+                          </span>
+                        )
                       ) : column.key === "approvedBy" ? (
                         // Render the name property of the approvedBy object
                         row[column.key]?.name || "NONE"
