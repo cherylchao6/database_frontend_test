@@ -12,6 +12,7 @@ import {
   ArchiveBoxXMarkIcon,
   PencilIcon,
   TrashIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 
 const labelClassName = "block text-sm font-medium leading-6 text-gray-900";
@@ -277,7 +278,7 @@ const PlanviewListPage = () => {
               <select
                 id="ministry"
                 value={ministry}
-                onChange={(e) => setPhase(e.target.value)}
+                onChange={(e) => setMinistry(e.target.value)}
                 className="mt-1 block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="">Select Ministry</option>
@@ -362,21 +363,20 @@ const PlanviewListPage = () => {
                 className="mt-1 block w-full p-2.5 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
             </div>
-
-            <div className="pt-8 flex justify-center">
-              <button
-                onClick={handleSearch}
-                className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Search
-              </button>
-              <button
-                onClick={handleReset}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Reset
-              </button>
-            </div>
+          </div>
+          <div className="pt-8 flex justify-end">
+            <button
+              onClick={handleSearch}
+              className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Search
+            </button>
+            <button
+              onClick={handleReset}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Reset
+            </button>
           </div>
         </div>
 
@@ -670,20 +670,27 @@ const PlanviewListPage = () => {
             <form className="space-y-4 text-left">
               {/* Display read-only fields */}
               {/* Message and link for full edit */}
-              <p className="text-sm text-gray-700 mt-4">
-                * To edit project data, please click{" "}
-                <a
-                  href={`/dashboard/intake/projects/${selectedPlanview.projectId}`}
-                  className="text-indigo-600 hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Here
-                </a>
-                .
-              </p>
+              <div className="flex">
+                <InformationCircleIcon className="h-5 w-5 text-blue-400 mr-1" />
+                <p className="text-sm text-gray-700 font-semibold">
+                  To edit project data, please click{" "}
+                  <a
+                    href={`/dashboard/intake/projects/${selectedPlanview.projectId}`}
+                    className="text-indigo-600 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Here
+                  </a>
+                  .
+                </p>
+              </div>
+
               <div className="">
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  className="block text-sm font-semibold
+ text-gray-700"
+                >
                   Project ID
                 </label>
                 <p className="mt-1 text-sm text-gray-500">
@@ -691,7 +698,10 @@ const PlanviewListPage = () => {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label
+                  className="block text-sm font-semibold
+ text-gray-700"
+                >
                   Ministry
                 </label>
                 <p className="mt-1 text-sm text-gray-500">
@@ -699,13 +709,23 @@ const PlanviewListPage = () => {
                 </p>
               </div>
               <div>
-                <label className={labelClassName}>Project Name</label>
+                <label
+                  className="block text-sm font-semibold
+ text-gray-700"
+                >
+                  Project Name
+                </label>
                 <p className="mt-1 text-sm text-gray-500">
                   {selectedPlanview.projectName}
                 </p>
               </div>
               <div>
-                <label className={labelClassName}>Description</label>
+                <label
+                  className="block text-sm font-semibold
+ text-gray-700"
+                >
+                  Description
+                </label>
                 <p className="mt-1 text-sm text-gray-500">
                   {selectedPlanview.projectDescription}
                 </p>
