@@ -1,6 +1,9 @@
 interface Note {
   id: string;
-  user: string;
+  user: {
+    id: string;
+    name: string;
+  };
   description: string;
   timestamp: string; // ISO date string
 }

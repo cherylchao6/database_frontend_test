@@ -9,11 +9,17 @@ import Note from "@/types/intakes/note";
 import * as XLSX from "xlsx";
 import { useSession } from "next-auth/react";
 import {
-  ArchiveBoxXMarkIcon,
+  ArchiveBoxIcon,
   PencilIcon,
   TrashIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
+
+type CustomUser = {
+  id: string;
+  email: string;
+  name: string;
+};
 
 const labelClassName = "block text-sm font-medium leading-6 text-gray-900";
 const tableColumns = [
@@ -40,25 +46,37 @@ const notesData: Note[] = [
   {
     id: "1",
     description: "Initial contact made, but still need more follow-up",
-    user: "Jane Smith",
+    user: {
+      id: "1",
+      name: "Jane Chen",
+    },
     timestamp: "2024-12-03T10:30:00Z",
   },
   {
     id: "2",
     description: "Follow-up email sent",
-    user: "John Doe",
+    user: {
+      id: "1",
+      name: "Jane Chen",
+    },
     timestamp: "2024-11-03T10:30:00Z",
   },
   {
     id: "3",
     description: "Follow-up email sent",
-    user: "John Doe",
+    user: {
+      id: "1",
+      name: "Jane Chen",
+    },
     timestamp: "2024-10-03T10:30:00Z",
   },
   {
     id: "4",
     description: "Follow-up email sent",
-    user: "John Doe",
+    user: {
+      id: "1",
+      name: "Jane Chen",
+    },
     timestamp: "2024-09-03T10:30:00Z",
   },
 ];
@@ -92,7 +110,8 @@ const planviewData: Planview[] = [
 
 const PlanviewListPage = () => {
   // get user from session
-  const user = useSession().data?.user?.name;
+  const user = useSession().data?.user as CustomUser;
+  console.log(user);
   const [projectId, setProjectId] = useState("");
   const [status, setStatus] = useState("");
   const [ministry, setMinistry] = useState("");
@@ -159,7 +178,7 @@ const PlanviewListPage = () => {
   };
 
   const totalItems = 50;
-  const itemsPerPage = 20;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (newPage: number) => {
@@ -236,6 +255,7 @@ const PlanviewListPage = () => {
     const selectedPlanviews = planviews.filter((planview) =>
       selectedRows.includes(planview.projectId)
     );
+    console.log(selectedPlanviews);
 
     const worksheet = XLSX.utils.json_to_sheet(selectedPlanviews);
 
@@ -250,7 +270,7 @@ const PlanviewListPage = () => {
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="text-4xl font-semibold text-slate-900">Planviews</h1>
+        <h1 className="text-4xl font-semibold text-slate-900">Planview</h1>
       </div>
       <div className="mt-4">
         {/* Filter Section */}
@@ -509,7 +529,7 @@ const PlanviewListPage = () => {
                           className="text-gray-500 hover:text-red-600"
                           title="Archive"
                         >
-                          <ArchiveBoxXMarkIcon className="h-5 w-5" />
+                          <ArchiveBoxIcon className="h-5 w-5" />
                         </button>
                       </td>
                     </tr>
@@ -562,13 +582,13 @@ const PlanviewListPage = () => {
                       {note.description}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      {note.user}
+                      {note.user.name}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                       {formatTimestamp(note.timestamp)}
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                      {note.user === user ? (
+                      {user && note.user.id === user.id ? (
                         <div className="flex space-x-2">
                           <button
                             onClick={() => {
@@ -645,7 +665,10 @@ const PlanviewListPage = () => {
               {
                 id: String(projectNotes.length + 1),
                 description: notes,
-                user: user ? user : "Jane Chen",
+                user: {
+                  id: user.id,
+                  name: user.name,
+                },
                 timestamp: new Date().toISOString(),
               },
               ...projectNotes,
