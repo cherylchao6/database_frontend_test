@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Hourglass } from "react-loader-spinner";
 import {
@@ -251,6 +251,8 @@ const UpdateProjectPage = () => {
       setSelectedLocation(null); // 清空选择
       setAddress(""); // 清空地址
     }
+    // work around, need to figure out where to use addrerss variable
+    console.log(address);
   };
 
   // const fetchMilestoneData = async (projectId: string) => {
