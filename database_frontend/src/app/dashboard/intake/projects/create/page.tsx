@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import DynamicSearchListbox from "@/components/DynamicSearchListbox";
+import DynamicSearchPeopleListbox from "@/components/DynamicSearchPeopleListbox";
 import { Person } from "@/types/intakes/person";
 import { Project } from "@/types/intakes/project";
 import FormInput from "@/components/FormInput";
@@ -42,7 +42,7 @@ const initialProjectData: Project = {
   intakeFormStatus: "",
   lastComm: "",
   clientContacts: [],
-  assocReferenceNo: "",
+  assocReferenceNo: [],
   fundingSource: "",
   noteLog: [],
 };
@@ -228,7 +228,7 @@ const CreateProjectPage = () => {
         </div>
         {/* Assigned To */}
         <div className="sm:col-span-3">
-          <DynamicSearchListbox
+          <DynamicSearchPeopleListbox
             label="Assigned To"
             assignedTo={assignedTo}
             setAssignedTo={setAssignedTo}
@@ -284,7 +284,7 @@ const CreateProjectPage = () => {
         </div>
         {/* Client Contacts */}
         <div className="sm:col-span-3">
-          <DynamicSearchListbox
+          <DynamicSearchPeopleListbox
             label="Client Contacts"
             assignedTo={clientContacts}
             setAssignedTo={setClientContacts}

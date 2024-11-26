@@ -8,7 +8,7 @@ export interface OneTimeROSInit {
   statusDate: string;
   initiative: string;
   roAmount: string;
-  costCentre: string;
+  costCenter: string;
   approvedBy: Person;
   statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
@@ -29,7 +29,7 @@ export interface OutstandingMonthlyCostChargeReq {
   coreInfraLANSupport: string;
   totalMonthlyRate: string;
   jvnOperationsFee: string;
-  costCentre: string;
+  costCenter: string;
   statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
 
@@ -43,7 +43,7 @@ export interface OneTimeROSChangeReq {
   statusDate: string;
   initiative: string;
   roAmount: string;
-  costCentre: string;
+  costCenter: string;
   approvedBy: Person;
   statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
@@ -62,12 +62,11 @@ export interface MonthlyRO {
   codecSupport: string;
   avMaintSupport: string;
   coreInfraLANSupport: string;
-  callCtrl: string;
-  commuManagement: string;
+  callCtrlAndcommuManagement: string;
   jvnOperationsFee: string;
   other: string;
   totalMonthlyRate: string;
-  costCentre: string;
+  costCenter: string;
   startStopDate: string;
   statusHistory: { status: OrderStatus; timestamp: string; current: boolean }[];
 }
