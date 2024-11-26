@@ -19,7 +19,7 @@ export interface Project {
   intakeFormStatus: string;
   lastComm: string;
   clientContacts: Person[];
-  assocReferenceNo: string;
+  assocReferenceNo: string[];
   fundingSource: string;
   noteLog: { description: string; user: string; timestamp: string }[];
   locationName?: string;

@@ -10,7 +10,7 @@ import {
 import { Person } from "@/types/intakes/person";
 import RequisitionOrderTable from "@/components/RequisitionOrderTable";
 import Modal from "@/components/Modal";
-import DynamicSearchListbox from "@/components/DynamicSearchListbox";
+import DynamicSearchPeopleListbox from "@/components/DynamicSearchPeopleListbox";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -23,18 +23,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "MAG-353-RO305",
-    chargeDescription: "NTC-Video Conference Switch Credit",
+    roNumber: "MAG-516-B+-67-RO101",
+    chargeDescription: "One Time Costs Equipment",
     status: "RO sent to Client for Approval",
     statusDate: "2021-07-01",
-    initiative: "LM&G",
-    roAmount: "1000",
-    costCentre: "003-030505-0000",
+    initiative: "VHH",
+    roAmount: "156000",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -52,18 +51,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "2",
     dateAdded: "2021-07-05",
-    roNumber: "MAG-400-RO306",
-    chargeDescription: "Initial Design",
+    roNumber: "MAG-516-B+-67-RO102",
+    chargeDescription: "One Time Costs Training",
     status: "Client Approval Received",
     statusDate: "2021-07-01",
     initiative: "VHH",
-    roAmount: "500",
-    costCentre: "003-030505-0000",
+    roAmount: "2400",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -85,18 +83,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "3",
     dateAdded: "2023-07-05",
-    roNumber: "MAG-201-RO300",
-    chargeDescription: "Initial Design",
+    roNumber: "MAG-516-B+-67-RO103",
+    chargeDescription: "One Time Costs Training",
     status: "Pending CIO Approval",
     statusDate: "2021-07-01",
-    initiative: "CJVS",
-    roAmount: "10000",
-    costCentre: "003-030505-0000",
+    initiative: "VHH",
+    roAmount: "2000",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2022-12-21", current: false },
@@ -126,18 +123,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "4",
     dateAdded: "2023-07-05",
-    roNumber: "MAG-153-RO105",
-    chargeDescription: "Initial Design",
+    roNumber: "MAG-516-B+-67-RO104",
+    chargeDescription: "One Time Costs Training",
     status: "RO Created",
     statusDate: "2021-07-01",
-    initiative: "R&D",
-    roAmount: "10000",
-    costCentre: "003-030505-0000",
+    initiative: "VHH",
+    roAmount: "2300",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -155,18 +151,17 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
   {
     id: "5",
     dateAdded: "2023-07-05",
-    roNumber: "MAG-601-RO405",
-    chargeDescription: "Initial Design",
+    roNumber: "MAG-516-B+-67-RO105",
+    chargeDescription: "One Time Costs Training",
     status: "RO Created",
     statusDate: "2021-07-01",
-    initiative: "R&D",
-    roAmount: "10000",
-    costCentre: "003-030505-0000",
+    initiative: "VHH",
+    roAmount: "2100",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -187,19 +182,18 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "MAG-516-B+-243-RO101",
-    chargeDescription: "One-time charges associated with equipping audio",
+    roNumber: "MAG-516-B+-67-RO301",
+    chargeDescription: "Codec switch",
     crNumber: "CR-1",
     status: "RO Created",
     statusDate: "2021-07-01",
-    initiative: "LM&G",
+    initiative: "VHH",
     roAmount: "1000",
-    costCentre: "003-030-0601-075025",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -217,19 +211,18 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
   {
     id: "2",
     dateAdded: "2021-07-01",
-    roNumber: "MAG-316-B+-243-RO101",
+    roNumber: "MAG-316-B+-67-RO302",
     chargeDescription: "Initial Design",
     crNumber: "CR-2",
     status: "RO Created",
     statusDate: "2021-07-01",
-    initiative: "CJVS",
+    initiative: "VHH",
     roAmount: "1000",
-    costCentre: "003-030-0601-075025",
+    costCenter: "003-030101-0000-040945-531800-0000",
     approvedBy: {
-      id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      id: 6,
+      name: "Charles Zhang",
+      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -250,23 +243,22 @@ const fakeMonthlyROs: MonthlyRO[] = [
   {
     id: "1",
     dateAdded: "2021-07-01",
-    roNumber: "MAG-467-74-062-RO201",
+    roNumber: "MAG-316-B+-67-RO201",
     roomNumber: "Ctrm 10",
     alias: "AUD1094",
     status: "RO Created",
     statusDate: "2021-07-01",
-    ban: "TBD NEW",
+    ban: "552286984",
     chargeType: "Add",
-    codecConnectivity: "300",
-    codecSupport: "200",
-    avMaintSupport: "100",
-    coreInfraLANSupport: "200",
-    jvnOperationsFee: "1000",
-    callCtrl: "2000",
-    commuManagement: "500",
-    other: "100",
-    totalMonthlyRate: "1000",
-    costCentre: "003-030-0601-075025",
+    codecConnectivity: "130",
+    codecSupport: "128",
+    avMaintSupport: "765.24",
+    coreInfraLANSupport: "0",
+    jvnOperationsFee: "250",
+    callCtrlAndcommuManagement: "2000",
+    other: "0",
+    totalMonthlyRate: "3273.24",
+    costCenter: "003-030501-0601-075025",
     startStopDate: "2021-07-01",
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -292,7 +284,7 @@ const OneTimeROSInitColumns: { key: keyof OneTimeROSInit; label: string }[] = [
   { key: "statusDate", label: "Status Date" },
   { key: "initiative", label: "Initiative" },
   { key: "roAmount", label: "RO Amount" },
-  { key: "costCentre", label: "Cost Centre" },
+  { key: "costCenter", label: "Cost Center" },
   { key: "approvedBy", label: "Approved By" },
 ];
 
@@ -308,7 +300,7 @@ const OneTimeROSChangeReqColumns: {
   { key: "statusDate", label: "Status Date" },
   { key: "initiative", label: "Client Funding" },
   { key: "roAmount", label: "RO Amount" },
-  { key: "costCentre", label: "Cost Centre" },
+  { key: "costCenter", label: "Cost Center" },
   { key: "approvedBy", label: "Approved By" },
 ];
 
@@ -326,11 +318,13 @@ const MonthlyROColumns: { key: keyof MonthlyRO; label: string }[] = [
   { key: "avMaintSupport", label: "AV Maint Support" },
   { key: "coreInfraLANSupport", label: "Core Infra LAN Support" },
   { key: "jvnOperationsFee", label: "JVN Operations Fee" },
-  { key: "callCtrl", label: "Call Control" },
-  { key: "commuManagement", label: "Communication Management" },
+  {
+    key: "callCtrlAndcommuManagement",
+    label: "Call Control & Communication Management",
+  },
   { key: "other", label: "Other" },
   { key: "totalMonthlyRate", label: "Total Monthly Rate" },
-  { key: "costCentre", label: "Cost Centre" },
+  { key: "costCenter", label: "Cost Center" },
   { key: "startStopDate", label: "Start/Stop Date" },
 ];
 
@@ -382,7 +376,7 @@ const RequisitionOrdersPage = () => {
     setIsMonthlyROTableShown(!isMonthlyROTableShown);
   };
 
-  const handleCostCentreChange = (
+  const handleCostCenterChange = (
     value: string,
     partIndex: number,
     key: string
@@ -595,7 +589,7 @@ const RequisitionOrdersPage = () => {
               className="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           ) : column.key === "approvedBy" ? (
-            <DynamicSearchListbox
+            <DynamicSearchPeopleListbox
               label=""
               assignedTo={assignedTo}
               setAssignedTo={setAssignedTo}
@@ -616,9 +610,13 @@ const RequisitionOrdersPage = () => {
               <option value="Add">Add</option>
               <option value="Remove">Remove</option>
             </select>
-          ) : column.key === "costCentre" ? (
-            <div className="flex space-x-2">
-              <>
+          ) : column.key === "costCenter" ? (
+            <div className="flex flex-col space-y-2">
+              {/* 第一行: Balance Unit (3 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Balance Unit (3 digits)
+                </label>
                 <input
                   type="text"
                   maxLength={3}
@@ -626,31 +624,43 @@ const RequisitionOrdersPage = () => {
                     currentRowData?.[column.key as string]?.split("-")[0] || ""
                   }
                   onChange={(e) =>
-                    handleCostCentreChange(
+                    handleCostCenterChange(
                       e.target.value,
                       0,
                       column.key as string
                     )
                   }
-                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  className="w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                 />
-                <p className="text-center">-</p>
+              </div>
+
+              {/* 第二行: Program (6 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Program (6 digits)
+                </label>
                 <input
                   type="text"
-                  maxLength={currentTableType === "OneTimeROSInit" ? 6 : 3}
+                  maxLength={6}
                   value={
                     currentRowData?.[column.key as string]?.split("-")[1] || ""
                   }
                   onChange={(e) =>
-                    handleCostCentreChange(
+                    handleCostCenterChange(
                       e.target.value,
                       1,
                       column.key as string
                     )
                   }
-                  className="w-16 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  className="w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                 />
-                <p className="text-center">-</p>
+              </div>
+
+              {/* 第三行: Business Unit (4 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Business Unit (4 digits)
+                </label>
                 <input
                   type="text"
                   maxLength={4}
@@ -658,36 +668,91 @@ const RequisitionOrdersPage = () => {
                     currentRowData?.[column.key as string]?.split("-")[2] || ""
                   }
                   onChange={(e) =>
-                    handleCostCentreChange(
+                    handleCostCenterChange(
                       e.target.value,
                       2,
                       column.key as string
                     )
                   }
-                  className="w-14 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                  className="w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                 />
-                {currentTableType !== "OneTimeROSInit" && (
-                  <>
-                    <p className="text-center">-</p>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={
-                        currentRowData?.[column.key as string]?.split("-")[3] ||
-                        ""
-                      }
-                      onChange={(e) =>
-                        handleCostCentreChange(
-                          e.target.value,
-                          3,
-                          column.key as string
-                        )
-                      }
-                      className="w-20 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
-                    />
-                  </>
-                )}
-              </>
+              </div>
+
+              {/* 第四行: Cost Center (6 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Cost Center (6 digits)
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[3] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCenterChange(
+                      e.target.value,
+                      3,
+                      column.key as string
+                    )
+                  }
+                  className="w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                />
+              </div>
+
+              {/* 第五行: Account Code (6 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Account Code (6 digits)
+                </label>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[4] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCenterChange(
+                      e.target.value,
+                      4,
+                      column.key as string
+                    )
+                  }
+                  className={`w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm ${
+                    currentTableType === "MonthlyRO"
+                      ? "bg-gray-200 cursor-not-allowed"
+                      : "focus:ring-2 focus:ring-indigo-600"
+                  }`}
+                  disabled={currentTableType === "MonthlyRO"}
+                />
+              </div>
+
+              {/* 第六行: Initiative Code (8 digits) */}
+              <div className="flex items-center space-x-4">
+                <label className="w-60 text-right font-medium">
+                  Initiative Code (8 digits)
+                </label>
+                <input
+                  type="text"
+                  maxLength={8}
+                  value={
+                    currentRowData?.[column.key as string]?.split("-")[5] || ""
+                  }
+                  onChange={(e) =>
+                    handleCostCenterChange(
+                      e.target.value,
+                      5,
+                      column.key as string
+                    )
+                  }
+                  className={`w-36 text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm ${
+                    currentTableType === "MonthlyRO"
+                      ? "bg-gray-200 cursor-not-allowed"
+                      : "focus:ring-2 focus:ring-indigo-600"
+                  }`}
+                  disabled={currentTableType === "MonthlyRO"}
+                />
+              </div>
             </div>
           ) : (
             <input
@@ -791,7 +856,7 @@ const RequisitionOrdersPage = () => {
         </h1>
       </div>
       <h2 className="col-span-6 text-xl font-semibold text-slate-900 mb-10">
-        Project ID : 123456
+        Project ID : MAG-516-B+-67
       </h2>
       {/* One Time ROS-Initial Design Table Section */}
       <div>
@@ -903,7 +968,7 @@ const RequisitionOrdersPage = () => {
             moneyFields={[
               "totalMonthlyRate",
               "jvnOperationsFee",
-              "callCtrl",
+              "callCtrlAndcommuManagement",
               "commuManagement",
               "other",
               "coreInfraLANSupport",

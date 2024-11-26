@@ -9,7 +9,7 @@ import {
   XMarkIcon,
   DocumentCheckIcon,
 } from "@heroicons/react/24/outline";
-import DynamicSearchListbox from "@/components/DynamicSearchListbox";
+import DynamicSearchPeopleListbox from "@/components/DynamicSearchPeopleListbox";
 import Modal from "@/components/Modal";
 import { Person } from "@/types/intakes/person";
 import { Project } from "@/types/intakes/project";
@@ -18,9 +18,16 @@ import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormDate from "@/components/FormDate";
 import FormCheckbox from "@/components/FormCheckbox";
+import LocationSearch from "@/components/LocationSearch";
+import ResponsiveDropdowns from "@/components/OrgResponsiveDropdowns";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+interface Location {
+  id: number;
+  name: string;
+  address: string;
+}
 import {
   priorityOptions,
   statusOptions,
@@ -224,6 +231,29 @@ const UpdateProjectPage = () => {
 
   const [milestoneOpen, setMilestoneOpen] = useState(false);
   const [milestones, setMilestones] = useState(fakeMilestones);
+  const [assocReferenceNoTags, setAssocReferenceNoTags] = useState<string[]>(
+    projectData?.assocReferenceNo || []
+  );
+  const [referenceNoInput, setReferenceNoInput] = useState("");
+
+  const [selectedLocation, setSelectedLocation] = useState<string | null>(
+    projectData?.locationName || ""
+  );
+  const [address, setAddress] = useState<string | null>(
+    projectData?.address || ""
+  );
+
+  const handleLocationSelect = (location: Location | null) => {
+    if (location) {
+      setSelectedLocation(location.name); // 更新选中的 Location 名称
+      setAddress(location.address); // 更新地址
+    } else {
+      setSelectedLocation(null); // 清空选择
+      setAddress(""); // 清空地址
+    }
+    // work around, need to figure out where to use addrerss variable
+    console.log(address);
+  };
 
   // const fetchMilestoneData = async (projectId: string) => {
   //   try {
@@ -233,6 +263,26 @@ const UpdateProjectPage = () => {
   //     console.error(err);
   //   }
   // };
+
+  const [ministry, setMinistry] = useState<string>("");
+  const [division, setDivision] = useState<string>("");
+  const [branch, setBranch] = useState<string>("");
+
+  const handleMinistryChange = (selectedMinistry: string) => {
+    console.log("Selected Ministry:", selectedMinistry);
+    setMinistry(selectedMinistry);
+  };
+
+  const handleDivisionChange = (selectedDivision: string) => {
+    console.log("Selected Division:", selectedDivision);
+    setDivision(selectedDivision);
+  };
+
+  const handleBranchChange = (selectedBranch: string) => {
+    console.log("Selected Branch:", selectedBranch);
+    setBranch(selectedBranch);
+  };
+
   // Fetch project data based on the project ID from the URL
   useEffect(() => {
     if (id) {
@@ -248,34 +298,80 @@ const UpdateProjectPage = () => {
     }
   }, [projectData?.assignedTo]);
 
+  useEffect(() => {
+    if (projectData?.clientContacts) {
+      setClientContacts(projectData.clientContacts);
+    } else {
+      setClientContacts([]);
+    }
+  }, [projectData?.clientContacts]);
+
+  useEffect(() => {
+    if (projectData?.assocReferenceNo) {
+      setAssocReferenceNoTags(projectData.assocReferenceNo);
+    } else {
+      setAssocReferenceNoTags([]);
+    }
+  }, [projectData?.assocReferenceNo]);
+
+  useEffect(() => {
+    if (projectData?.locationName) {
+      console.log("Setting location:", projectData.locationName);
+      setSelectedLocation(projectData.locationName);
+    } else {
+      setSelectedLocation(null);
+    }
+
+    if (projectData?.address) {
+      console.log("Setting address:", projectData.address);
+      setAddress(projectData.address);
+    } else {
+      setAddress(null);
+    }
+  }, [projectData?.locationName]);
+
+  useEffect(() => {
+    if (projectData?.ministry) {
+      setMinistry(projectData.ministry);
+    } else {
+      setMinistry("");
+    }
+
+    if (projectData?.division) {
+      setDivision(projectData.division);
+    }
+
+    if (projectData?.branchUnit) {
+      setBranch(projectData.branchUnit);
+    }
+  }, [projectData]);
+
   const fakeData: Project = {
-    projectId: id || "MAG-001", // Use the project ID from the URL
+    projectId: id || "MAG-516-B+-67", // Use the project ID from the URL
     projectName: "Super Fun Project", // Project Name
-    projectDescription:
-      "Project related to infrastructure improvements in Arizona.",
+    projectDescription: "Brampton-7755 Hurontario St-Ctrm-401-SCJ",
     priority: "Low",
     onOppList: true, // This is for the "On Opp List?" checkbox
     implemented: false, // This is for the "In Implementation Phase?" checkbox
     deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
     firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
-    status: "035 - Pre-Intake assess. complete", // Status field
-    alias: "TEST-002", // Alias field
-    waitingOnContact: "John Doe", // Waiting on con Contact(s)
-    waitingFor: "Approval from Stakeholder",
+    status: "100 - Intake compl. (to Implement'n)", // Status field
+    alias: "5200073", // Alias field
+    waitingOnContact: "Client",
+    waitingFor: "Response",
     assignedTo: {
       id: 1,
-      name: "Wade Cooper",
-      avatar:
-        "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+      name: "Devesh Gupta",
+      avatar: "https://i.postimg.cc/T16LxQRt/Screenshot-2024-11-18-112632.png",
     },
-    clientMinistry: "Ministry of Infrastructure", // Client Ministry
-    folderName: "Infra-Arizona-Docs", // Folder Name if exists
-    intakeFormStatus: "Initial Discussion", // Intake from Status
+    clientMinistry: "MAG", // Client Ministry
+    folderName: "Brampton-7755 Hurontario St-Ctrm-401-SCJ", // Folder Name if exists
+    intakeFormStatus: "100-Approved (JVESC+JVDSC)", // Intake from Status
     lastComm: "2024-11-03T10:30:00Z", // Last Communication (Out Bound)
     clientContacts: [
       {
         id: 3,
-        name: "Devon Webb",
+        name: "Anthony Permell",
         avatar:
           "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
       },
@@ -286,54 +382,52 @@ const UpdateProjectPage = () => {
           "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
     ], // Client Contact field
-    assocReferenceNo: "REF-2022-001", // Associated Reference No. if exists
-    fundingSource: "State Budget", // Funding Source
+    assocReferenceNo: ["REF-2022-001"], // Associated Reference No. if exists
+    fundingSource: "VHH", // Funding Source
     noteLog: [
       {
         description: "Initial contact made",
-        user: "Jane Smith",
+        user: "Derek Pert",
         timestamp: "2024-12-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
-        user: "John Doe",
+        user: "Derek Pert",
         timestamp: "2024-11-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
-        user: "John Doe",
+        user: "Derek Pert",
         timestamp: "2024-10-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
-        user: "John Doe",
+        user: "Derek Pert",
         timestamp: "2024-09-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
-        user: "John Doe",
+        user: "Derek Pert",
         timestamp: "2024-08-03T10:30:00Z",
       },
       {
         description: "Follow-up email sent",
-        user: "John Doe",
+        user: "Derek Pert",
         timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
-    locationName: "Arizona Main Office", // Location Name
+    locationName: "Brampton Courthouse", // Location Name
     address: "123 Main Street, Phoenix, AZ", // Address field
-    // room1Num: "303",
-    // room2Num: "202",
     rooms: [
-      { id: "000001", num: "123" },
-      { id: "000002", num: "124" },
-      { id: "000003", num: "125" },
-      { id: "000004", num: "126" },
+      { id: "000001", num: "Ctrm401" },
+      { id: "000002", num: "Ctrm402" },
+      { id: "000003", num: "Ctrm403" },
+      { id: "000004", num: "Ctrm404" },
     ], // Room numbers
     projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
-    ministry: "Ministry of Infrastructure", // Ministry field
-    division: "Infrastructure Development", // Division field
-    branchUnit: "Western Operations", // Branch/Unit field
+    ministry: "MAG", // Ministry field
+    division: "Court Services", // Division field
+    branchUnit: "Brampton (A. Grenville and William Davis) Courthouse", // Branch/Unit field
     requestedCompletionDate: "2023-12-31", // Requested Completion Date
     assignedToPM: "Michael Johnson", // Assigned to PM field
     confirmed: true, // Confirmed checkbox
@@ -468,6 +562,32 @@ const UpdateProjectPage = () => {
         setError("An unknown error occurred");
       }
       setLoading(false);
+    }
+  };
+
+  const addReferenceNoTag = () => {
+    if (
+      referenceNoInput.trim() &&
+      !assocReferenceNoTags.includes(referenceNoInput.trim())
+    ) {
+      setAssocReferenceNoTags([
+        ...assocReferenceNoTags,
+        referenceNoInput.trim(),
+      ]);
+    }
+    setReferenceNoInput(""); // 清空輸入框
+  };
+
+  const removeReferenceNoTag = (tagToRemove: string) => {
+    setAssocReferenceNoTags(
+      assocReferenceNoTags.filter((tag) => tag !== tagToRemove)
+    );
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addReferenceNoTag();
     }
   };
 
@@ -653,7 +773,7 @@ const UpdateProjectPage = () => {
 
         {/* Assigned To */}
         <div className="sm:col-span-3">
-          <DynamicSearchListbox
+          <DynamicSearchPeopleListbox
             label="Assigned To"
             assignedTo={assignedTo}
             setAssignedTo={setAssignedTo}
@@ -712,7 +832,7 @@ const UpdateProjectPage = () => {
 
         {/* Client Contacts */}
         <div className="sm:col-span-3">
-          <DynamicSearchListbox
+          <DynamicSearchPeopleListbox
             label="Client Contacts"
             assignedTo={clientContacts}
             setAssignedTo={setClientContacts}
@@ -722,7 +842,7 @@ const UpdateProjectPage = () => {
         </div>
 
         {/* Assoc Reference No. (if exist) */}
-        <div className="sm:col-span-3">
+        {/* <div className="sm:col-span-3">
           <FormInput
             id="assocReferenceNo"
             label="Assoc Reference No. (if exist)"
@@ -732,6 +852,50 @@ const UpdateProjectPage = () => {
             onChange={handleInputChange}
             placeholder="Enter reference number"
           />
+        </div> */}
+
+        <div className="sm:col-span-3">
+          <label
+            htmlFor="assocReferenceNo"
+            className="block font-medium leading-6 text-gray-900 mb-2"
+          >
+            Assoc Reference No.
+          </label>
+
+          <div className="flex items-center">
+            <input
+              type="text"
+              value={referenceNoInput}
+              onChange={(e) => setReferenceNoInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Add reference number"
+              className="pl-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+            <button
+              type="button"
+              onClick={addReferenceNoTag}
+              className="ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Add
+            </button>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-2 ">
+            {assocReferenceNoTags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1.5 flex items-center text-gray-900 bg-gray-100 rounded hover:bg-gray-200"
+              >
+                {tag}
+                <button
+                  type="button"
+                  onClick={() => removeReferenceNoTag(tag)}
+                  className="ml-2 text-gray-900 hover:bg-gray-200 font-bold"
+                >
+                  ✕
+                </button>
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* Funding Source */}
@@ -821,7 +985,7 @@ const UpdateProjectPage = () => {
         />
 
         {/* Location Name */}
-        <div className="sm:col-span-3">
+        {/* <div className="sm:col-span-3">
           <FormInput
             id="locationName"
             label="Location Name"
@@ -831,10 +995,10 @@ const UpdateProjectPage = () => {
             onChange={handleInputChange}
             placeholder="Enter location name"
           />
-        </div>
+        </div> */}
 
         {/* Address */}
-        <div className="sm:col-span-3">
+        {/* <div className="sm:col-span-3">
           <FormInput
             id="address"
             label="Address"
@@ -843,6 +1007,12 @@ const UpdateProjectPage = () => {
             value={projectData?.address || ""}
             onChange={handleInputChange}
             placeholder="Enter address"
+          />
+        </div> */}
+        <div className="sm:col-span-6">
+          <LocationSearch
+            onLocationSelect={handleLocationSelect}
+            initialLocationName={selectedLocation ?? undefined}
           />
         </div>
 
@@ -861,7 +1031,7 @@ const UpdateProjectPage = () => {
                   className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
                   <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
-                  Room {room.num}
+                  {room.num}
                 </a>
               ))}
             <a
@@ -886,42 +1056,15 @@ const UpdateProjectPage = () => {
           />
         </div>
 
-        {/* Ministry */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="ministry"
-            label="Ministry"
-            name="ministry"
-            type="text"
-            value={projectData?.ministry || ""}
-            onChange={handleInputChange}
-            placeholder="Enter ministry"
-          />
-        </div>
-
-        {/* Division */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="division"
-            label="Division"
-            name="division"
-            type="text"
-            value={projectData?.division || ""}
-            onChange={handleInputChange}
-            placeholder="Enter division"
-          />
-        </div>
-
-        {/* Branch/Unit */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="branchUnit"
-            label="Branch/Unit"
-            name="branchUnit"
-            type="text"
-            value={projectData?.branchUnit || ""}
-            onChange={handleInputChange}
-            placeholder="Enter branch/unit"
+        {/* Ministry, Division, Branch */}
+        <div className="sm:col-span-6">
+          <ResponsiveDropdowns
+            initialMinistry={ministry}
+            initialDivision={division}
+            initialBranch={branch}
+            onChangeMinistry={handleMinistryChange}
+            onChangeDivision={handleDivisionChange}
+            onChangeBranch={handleBranchChange}
           />
         </div>
 
@@ -1193,19 +1336,30 @@ const UpdateProjectPage = () => {
         </div>
       </div>
       <hr className="my-6 border-t border-gray-300" />
-      <div className="flex mt-10 justify-end">
-        <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
-            Cancel
-          </button>
-        </div>
-        <div className="">
+
+      <div className="flex justify-between">
+        <div>
           <a
             href="/dashboard/intake/projects"
             className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Save
+            Back to Projects
           </a>
+        </div>
+        <div className="flex justify-end">
+          <div className="">
+            <button className="mr-2 inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+              Cancel
+            </button>
+          </div>
+          <div className="">
+            <a
+              href="/dashboard/intake/projects"
+              className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Save
+            </a>
+          </div>
         </div>
       </div>
     </div>
