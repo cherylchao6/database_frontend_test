@@ -18,7 +18,7 @@ interface Project {
   waitingFor: string;
   status: string;
   priority: string;
-  intakesFromStatus: string;
+  intakesFormStatus: string;
   onOpsList: boolean; // Ensure this is boolean
   lastComm: string;
   projectSponsor: string;
@@ -35,7 +35,7 @@ const projectData: Project[] = [
     waitingFor: "Response",
     status: "100 - Intake compl. (to Implement'n)",
     priority: "Moderate",
-    intakesFromStatus: "100-Approved (JVESC+JVDSC)",
+    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
     onOpsList: true,
     lastComm: "11-Sep-22",
     projectSponsor: "MAG",
@@ -49,7 +49,7 @@ const projectData: Project[] = [
     waitingFor: "Response",
     status: "100 - Intake compl. (to Implement'n)",
     priority: "Moderate",
-    intakesFromStatus: "100-Approved (JVESC+JVDSC)",
+    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
     onOpsList: true,
     lastComm: "12-Sep-22",
     projectSponsor: "MAG",
@@ -57,13 +57,13 @@ const projectData: Project[] = [
     implemented: true,
   },
   {
-    projectId: "MAG-516-B+-68",
+    projectId: "MAG-516-B+-69",
     projectName: "STGC",
     waitingOn: "Client",
     waitingFor: "Response",
     status: "100 - Intake compl. (to Implement'n)",
     priority: "Moderate",
-    intakesFromStatus: "100-Approved (JVESC+JVDSC)",
+    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
     onOpsList: false,
     lastComm: "13-Sep-22",
     projectSponsor: "MAG",
@@ -81,7 +81,7 @@ const tableColumns = [
   { label: "Waiting For", key: "waitingFor" },
   { label: "Status", key: "status" },
   { label: "Priority", key: "priority" },
-  { label: "Intakes From Status", key: "intakesFromStatus" },
+  { label: "Intakes Form Status", key: "intakesFormStatus" },
   { label: "On Ops List", key: "onOpsList" },
   { label: "Last Comm.", key: "lastComm" },
   { label: "Project Sponsor", key: "projectSponsor" },
