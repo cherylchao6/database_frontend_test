@@ -2,14 +2,7 @@
 import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-
-// Status options array
-const statusOptions = [
-  { value: "", label: "All" },
-  { value: "In Intake", label: "In Intake" },
-  { value: "Follow-up", label: "Follow-up" },
-  // Add more options as needed
-];
+import { statusOptions } from "@/constants/intake/dropDownOptions";
 
 interface Project {
   projectId: string;
@@ -195,9 +188,12 @@ const ProjectListPage = () => {
                 onChange={(e) => setStatus(e.target.value)}
                 className="mt-1 block w-full rounded-md border-0 p-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
+                <option value="" disabled selected>
+                  Select a status
+                </option>
                 {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
+                  <option key={option} value={option}>
+                    {option}
                   </option>
                 ))}
               </select>
