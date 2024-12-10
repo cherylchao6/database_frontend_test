@@ -362,7 +362,7 @@ const UpdateProjectPage = () => {
     assignedTo: {
       id: 1,
       name: "Devesh Gupta",
-      avatar: "https://i.postimg.cc/T16LxQRt/Screenshot-2024-11-18-112632.png",
+      avatar: "https://i.ibb.co/B6ygD2G/devesh.png",
     },
     clientMinistry: "MAG", // Client Ministry
     folderName: "Brampton-7755 Hurontario St-Ctrm-401-SCJ", // Folder Name if exists
@@ -417,7 +417,7 @@ const UpdateProjectPage = () => {
       },
     ], // Note log array
     locationName: "Brampton Courthouse", // Location Name
-    address: "123 Main Street, Phoenix, AZ", // Address field
+    address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1", // Address field
     rooms: [
       { id: "000001", num: "Ctrm401" },
       { id: "000002", num: "Ctrm402" },

@@ -20,38 +20,37 @@ import {
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const fakeRoomData: Room = {
-  ministry: "Ministry of Health",
-  division: "Health Services",
-  branchSiteName: "Vancouver General Hospital",
-  city: "Vancouver",
-  streetAddress: "1234 Fake St",
-  floor: "1",
-  roomNumber: "123",
-  postalCode: "V5T 1A1",
+  ministry: "MAG",
+  division: "Court Services",
+  branchSiteName: "Brampton (A. Grenville and William Davis) Courthouse",
+  city: "Brampton",
+  streetAddress: "7755 Hurontario Street",
+  floor: "4",
+  roomNumber: "401",
+  postalCode: "L6W 4T1",
   businessRegion: "East",
-  buildingType: "Correctional Institution",
-  hoursOfOperation: "24/7",
+  buildingType: "Courthouse",
+  hoursOfOperation: "Business Hours",
 };
 
 const fakeSolutionData: Solution = {
-  siteAlias: "VGH",
-  codecAlias: "VGH",
-  systemName: "VGH System",
+  siteAlias: "5200073",
+  codecAlias: "5200073",
+  systemName: "Brampton-7755-Hurontario-Ctrm-401",
   supportLevel: "Legacy Support",
-  levelOfCourt: "Supreme",
+  levelOfCourt: "Superior Court of Justice",
   solutionType: "Courtroom",
   solutionTypeIfOther: "",
-  roomFunction: "Courtroom",
+  roomFunction: "Trial Court",
   roomFunctionIfOther: "",
-  secondaryRoomFunctions: "Admin Meetings",
+  secondaryRoomFunctions: "",
   features: [
     { id: "1", feature: "Soft Codec Audio Only" },
     { id: "2", feature: "Audio Uplift" },
-    { id: "3", feature: "Codec Video Conferencing" },
   ],
-  systemCtrlType: "Type 1",
-  audioConfePhoneNum: "1234567890",
-  privacyNum: "1234567890",
+  systemCtrlType: "Crestron Touch panel",
+  audioConfePhoneNum: "9054568011",
+  privacyNum: "",
   hasLocalConnec: false,
   localConnecRooms: [],
 };
@@ -187,8 +186,7 @@ const RoomSolutionPage = () => {
             name="ministry"
             type="text"
             value={roomData?.ministry || ""}
-            onChange={handleRoomInputChange}
-            placeholder="Enter Ministry"
+            disabled
           />
         </div>
 
@@ -200,8 +198,7 @@ const RoomSolutionPage = () => {
             name="division"
             type="text"
             value={roomData?.division || ""}
-            onChange={handleRoomInputChange}
-            placeholder="Enter Division"
+            disabled
           />
         </div>
 
@@ -214,7 +211,7 @@ const RoomSolutionPage = () => {
             type="text"
             value={roomData?.branchSiteName || ""}
             onChange={handleRoomInputChange}
-            placeholder="Enter Branch/Site Name"
+            disabled
           />
         </div>
 
@@ -226,8 +223,7 @@ const RoomSolutionPage = () => {
             name="city"
             type="text"
             value={roomData?.city || ""}
-            onChange={handleRoomInputChange}
-            placeholder="Enter City"
+            disabled
           />
         </div>
 
@@ -239,8 +235,19 @@ const RoomSolutionPage = () => {
             name="streetAddress"
             type="text"
             value={roomData?.streetAddress || ""}
-            onChange={handleRoomInputChange}
-            placeholder="Enter Street Address"
+            disabled
+          />
+        </div>
+
+        {/* Postal Code */}
+        <div className="sm:col-span-3">
+          <FormInput
+            id="postalCode"
+            label="Postal Code"
+            name="postalCode"
+            type="text"
+            value={roomData?.postalCode || ""}
+            disabled
           />
         </div>
 
@@ -267,19 +274,6 @@ const RoomSolutionPage = () => {
             value={roomData?.roomNumber || ""}
             onChange={handleRoomInputChange}
             placeholder="Enter Room Number"
-          />
-        </div>
-
-        {/* Postal Code */}
-        <div className="sm:col-span-3">
-          <FormInput
-            id="postalCode"
-            label="Postal Code"
-            name="postalCode"
-            type="text"
-            value={roomData?.postalCode || ""}
-            onChange={handleRoomInputChange}
-            placeholder="Enter Postal Code"
           />
         </div>
 
@@ -657,9 +651,12 @@ const RoomSolutionPage = () => {
           </button>
         </div>
         <div className="">
-          <button className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <a
+            href="/dashboard/intake/projects/MAG-516-B+-67"
+            className="mr-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
             Save
-          </button>
+          </a>
         </div>
       </div>
     </div>
