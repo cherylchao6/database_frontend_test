@@ -26,10 +26,14 @@ const FormSelect: React.FC<FormSelectProps> = ({
         </label>
       )}
       <select
-        value={value}
+        value={value || ""}
         className={`${baseClassName} ${selectClassName}`}
         {...props}
       >
+        {/* 預留一個空的選項 */}
+        <option value="" disabled>
+          Select an option
+        </option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}

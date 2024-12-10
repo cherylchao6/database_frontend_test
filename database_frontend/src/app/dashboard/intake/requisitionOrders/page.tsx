@@ -33,7 +33,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -61,7 +61,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -93,7 +93,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2022-12-21", current: false },
@@ -133,7 +133,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -161,7 +161,7 @@ const fakeOneTimeROSInits: OneTimeROSInit[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -193,7 +193,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
@@ -222,7 +222,7 @@ const fakeOneTimeROSChangeReqs: OneTimeROSChangeReq[] = [
     approvedBy: {
       id: 6,
       name: "Charles Zhang",
-      avatar: "https://i.postimg.cc/Njpp3S7j/charles.png",
+      avatar: "https://i.ibb.co/f0QTs9J/charles.png",
     },
     statusHistory: [
       { status: "RO Created", timestamp: "2023-04-21", current: false },
