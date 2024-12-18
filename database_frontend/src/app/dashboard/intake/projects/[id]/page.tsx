@@ -1035,7 +1035,7 @@ const UpdateProjectPage = () => {
                 </a>
               ))}
             <a
-              href="#"
+              href="/dashboard/intake/rooms/create"
               className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
             >
               + Add Room
