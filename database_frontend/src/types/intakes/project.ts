@@ -13,7 +13,7 @@ export interface Project {
   implemented: boolean;
   waitingOnContact: string;
   waitingFor: string;
-  assignedTo: Person;
+  assignedTo?: Person;
   clientMinistry: string;
   folderName: string;
   intakeFormStatus: string;

@@ -17,7 +17,6 @@ const initialProjectData: Project = {
   implemented: false,
   waitingOnContact: "",
   waitingFor: "",
-  assignedTo: "",
   clientMinistry: "",
   folderName: "",
   intakeFormStatus: "",
@@ -70,10 +69,6 @@ const CreateProjectPage = () => {
     }
   };
 
-  const handleCancel = () => {
-    router.push("/dashboard/intake/projects");
-  };
-
   return (
     <div className="mt-4">
       {error && (
@@ -86,7 +81,6 @@ const CreateProjectPage = () => {
         initialProjectData={initialProjectData}
         isEditMode={false}
         onSave={handleSave}
-        onCancel={handleCancel}
       />
     </div>
   );
