@@ -88,12 +88,7 @@ const UpdateProjectPage = () => {
     ], // Note log array
     locationName: "Brampton Courthouse", // Location Name
     address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1", // Address field
-    rooms: [
-      { id: "000001", num: "Ctrm401" },
-      { id: "000002", num: "Ctrm402" },
-      { id: "000003", num: "Ctrm403" },
-      { id: "000004", num: "Ctrm404" },
-    ], // Room numbers
+    rooms: [{ id: "000001", num: "Ctrm401" }], // Room numbers
     projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
     ministry: "MAG", // Ministry field
     division: "Court Services", // Division field
