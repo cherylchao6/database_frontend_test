@@ -56,33 +56,43 @@ const UpdateProjectPage = () => {
     fundingSource: "VHH", // Funding Source
     noteLog: [
       {
+        id: "1",
         description: "Initial contact made",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-12-03T10:30:00Z",
+        attachedFile: {
+          name: "Email Copy Demo.msg",
+          url: "https://example.com/initial-contact.pdf",
+        },
       },
       {
+        id: "2",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-11-03T10:30:00Z",
       },
       {
+        id: "3",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-10-03T10:30:00Z",
       },
       {
+        id: "4",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-09-03T10:30:00Z",
       },
       {
+        id: "5",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-08-03T10:30:00Z",
       },
       {
+        id: "6",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
