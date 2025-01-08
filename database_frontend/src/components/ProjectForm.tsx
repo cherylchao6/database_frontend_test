@@ -10,7 +10,8 @@ import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormDate from "@/components/FormDate";
 import FormCheckbox from "@/components/FormCheckbox";
-import LocationSearch from "@/components/LocationSearch";
+import LocationSearch2 from "@/components/LocationSearch2";
+
 import ResponsiveDropdowns from "@/components/OrgResponsiveDropdowns";
 import MilestonesComponent from "@/components/MilestonesComponent";
 import {
@@ -61,7 +62,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [selectedLocation, setSelectedLocation] = useState(
     initialProjectData.locationName || ""
   );
-  const [address, setAddress] = useState(initialProjectData.address || "");
+  const [selectedAddress, setSelectedAddress] = useState(
+    initialProjectData.address || ""
+  );
 
   const [assocReferenceNoTags, setAssocReferenceNoTags] = useState<string[]>(
     initialProjectData.assocReferenceNo || []
@@ -160,7 +163,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       assignedTo: assignedTo[0],
       clientContacts,
       locationName: selectedLocation,
-      address,
+      address: selectedAddress,
     });
 
     router.push("/dashboard/intake/projects");
@@ -195,13 +198,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const handleLocationSelect = (location: Location | null) => {
     if (location) {
       setSelectedLocation(location.name);
-      setAddress(location.address);
+      setSelectedAddress(location.address);
     } else {
       setSelectedLocation("");
-      setAddress("");
+      setSelectedAddress("");
     }
     // work around, need to figure out where to use addrerss variable
-    console.log(address);
+    // console.log(address);
   };
 
   const handleMinistryChange = (selectedMinistry: string) => {
@@ -657,9 +660,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         />
 
         <div className="sm:col-span-6">
-          <LocationSearch
+          {/* <LocationSearch
             onLocationSelect={handleLocationSelect}
             initialLocationName={selectedLocation ?? undefined}
+          /> */}
+          <LocationSearch2
+            onLocationSelect={handleLocationSelect}
+            initialLocationName={selectedLocation ?? ""}
+            initialAddress={selectedAddress ?? ""}
           />
         </div>
 
