@@ -5,7 +5,7 @@ import Modal from "@/components/Modal";
 import Planview from "@/types/intakes/planview";
 import { planviewPhases, planviewStatuses } from "@/types/intakes/planview";
 import { ministries } from "@/types/organization";
-import { Note } from "../../../../types/intakes/note";
+import { Note } from "@/types/intakes/note";
 import * as XLSX from "xlsx";
 import { useSession } from "next-auth/react";
 import {
