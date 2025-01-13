@@ -56,44 +56,49 @@ const UpdateProjectPage = () => {
     fundingSource: "VHH", // Funding Source
     noteLog: [
       {
+        id: "1",
         description: "Initial contact made",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-12-03T10:30:00Z",
+        attachedFile: {
+          name: "Email Copy Demo.msg",
+          url: "https://example.com/initial-contact.pdf",
+        },
       },
       {
+        id: "2",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-11-03T10:30:00Z",
       },
       {
+        id: "3",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-10-03T10:30:00Z",
       },
       {
+        id: "4",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-09-03T10:30:00Z",
       },
       {
+        id: "5",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-08-03T10:30:00Z",
       },
       {
+        id: "6",
         description: "Follow-up email sent",
-        user: "Derek Pert",
+        user: { id: "1", name: "Derek Pert" },
         timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
     locationName: "Brampton Courthouse", // Location Name
     address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1", // Address field
-    rooms: [
-      { id: "000001", num: "Ctrm401" },
-      { id: "000002", num: "Ctrm402" },
-      { id: "000003", num: "Ctrm403" },
-      { id: "000004", num: "Ctrm404" },
-    ], // Room numbers
+    rooms: [{ id: "000001", num: "Ctrm401" }], // Room numbers
     projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
     ministry: "MAG", // Ministry field
     division: "Court Services", // Division field

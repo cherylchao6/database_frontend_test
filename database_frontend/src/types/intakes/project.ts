@@ -1,4 +1,5 @@
 import { Person } from "./person";
+import { Note } from "./note";
 
 export interface Project {
   projectId: string;
@@ -21,7 +22,7 @@ export interface Project {
   clientContacts: Person[];
   assocReferenceNo: string[];
   fundingSource: string;
-  noteLog: { description: string; user: string; timestamp: string }[];
+  noteLog: Note[];
   locationName?: string;
   address?: string;
   rooms?: { id: string; num: string }[];

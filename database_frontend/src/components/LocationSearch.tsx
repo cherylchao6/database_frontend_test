@@ -18,6 +18,10 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
   onLocationSelect,
   initialLocationName = "",
 }) => {
+  // get user token and determine if user has permission
+  // const user = useSession().data?.user as CustomUser;
+  const hasPermission = false;
+
   const [locationQuery, setLocationQuery] =
     useState<string>(initialLocationName);
   const [locationResults, setLocationResults] = useState<Location[]>([]);
@@ -168,6 +172,35 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Address */}
+      <div>
+        <label
+          htmlFor="address"
+          className="block font-medium leading-6 text-gray-900 mb-2"
+        >
+          Address
+        </label>
+        <div className="flex">
+          <input
+            id="address"
+            type="text"
+            value={selectedLocation ? address : ""}
+            readOnly
+            placeholder="Search address"
+            className="pl-2 block w-1/3 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
+          />
+          {hasPermission && selectedLocation && (
+            <button
+              onClick={() => setShowEditModal(true)}
+              type="button"
+              className="ml-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Edit Address
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Location Name */}
       <div className="relative">
         <label
@@ -207,44 +240,19 @@ const LocationSearch: React.FC<LocationSearchProps> = ({
               </ul>
             )}
           </div>
-          <button
-            onClick={() => {
-              setShowCreateModal(true);
-              setNewLocationName(""); // 初始化名稱
-              setNewAddress(""); // 初始化地址
-            }}
-            type="button"
-            className="ml-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            Add New Location
-          </button>
-        </div>
-      </div>
-
-      {/* Address */}
-      <div>
-        <label
-          htmlFor="address"
-          className="block font-medium leading-6 text-gray-900 mb-2"
-        >
-          Address
-        </label>
-        <div className="flex">
-          <input
-            id="address"
-            type="text"
-            value={selectedLocation ? address : ""}
-            readOnly
-            placeholder="Address will be shown here"
-            className="pl-2 block w-1/3 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6"
-          />
-          <button
-            onClick={() => setShowEditModal(true)}
-            type="button"
-            className="ml-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            Edit Address
-          </button>
+          {hasPermission && (
+            <button
+              onClick={() => {
+                setShowCreateModal(true);
+                setNewLocationName(""); // 初始化名稱
+                setNewAddress(""); // 初始化地址
+              }}
+              type="button"
+              className="ml-2 px-3 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              Add New Location
+            </button>
+          )}
         </div>
       </div>
 

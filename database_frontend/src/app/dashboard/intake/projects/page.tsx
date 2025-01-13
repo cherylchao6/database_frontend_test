@@ -3,6 +3,7 @@ import { useState } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { statusOptions } from "@/constants/intake/dropDownOptions";
+import Link from "next/link";
 
 interface Project {
   projectId: string;
@@ -188,7 +189,7 @@ const ProjectListPage = () => {
                 onChange={(e) => setStatus(e.target.value)}
                 className="mt-1 block w-full rounded-md border-0 p-3 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                <option value="" disabled selected>
+                <option value="" disabled>
                   Select a status
                 </option>
                 {statusOptions.map((option) => (
@@ -317,50 +318,50 @@ const ProjectListPage = () => {
                         )}
                       </th>
                     ))}
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-3 bg-gray-100"
-                    >
-                      <span className="sr-only">Edit</span>
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white">
                   {sortedProjects.map((project, index) => (
                     <tr key={index}>
-                      {tableColumns.map((column) => (
-                        <td
-                          key={column.key}
-                          className={`whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3 ${
-                            column.key === "projectId"
-                              ? "font-bold text-gray-900"
-                              : "text-gray-900"
-                          }`}
-                        >
-                          {column.key === "onOpsList" ||
-                          column.key === "implemented" ? (
-                            <input
-                              type="checkbox"
-                              checked={
-                                project[column.key as keyof Project] as boolean
-                              }
-                              readOnly
-                              className="form-checkbox h-4 w-4 text-indigo-600"
-                            />
-                          ) : (
-                            project[column.key as keyof typeof project]
-                          )}
-                        </td>
-                      ))}
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                        <a
-                          href={`/dashboard/intake/projects/${project.projectId}`}
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
-                          Edit
-                          <span className="sr-only">, {project.projectId}</span>
-                        </a>
-                      </td>
+                      {tableColumns.map((column) => {
+                        const isCheckboxColumn =
+                          column.key === "onOpsList" ||
+                          column.key === "implemented";
+                        const isLinkColumn = column.key === "projectId";
+
+                        return (
+                          <td
+                            key={column.key}
+                            className={`whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-3 ${
+                              isLinkColumn
+                                ? "font-bold text-gray-900"
+                                : "text-gray-900"
+                            }`}
+                          >
+                            {isCheckboxColumn ? (
+                              <input
+                                type="checkbox"
+                                checked={
+                                  project[
+                                    column.key as keyof Project
+                                  ] as boolean
+                                }
+                                readOnly
+                                className="form-checkbox h-4 w-4 text-indigo-600"
+                              />
+                            ) : isLinkColumn ? (
+                              <Link
+                                href={`/dashboard/intake/projects/${project.projectId}`}
+                                className="text-indigo-600 hover:text-indigo-900"
+                              >
+                                {project[column.key as keyof typeof project]}
+                              </Link>
+                            ) : (
+                              project[column.key as keyof typeof project]
+                            )}
+                          </td>
+                        );
+                      })}
                     </tr>
                   ))}
                 </tbody>

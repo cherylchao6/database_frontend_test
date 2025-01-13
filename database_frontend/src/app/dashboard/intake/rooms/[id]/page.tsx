@@ -22,10 +22,10 @@ const fakeSolutionData: Solution = {
   codecAlias: "5200073",
   systemName: "Brampton-7755-Hurontario-Ctrm-401",
   supportLevel: "Legacy Support",
-  levelOfCourt: "Superior Court of Justice",
+  levelOfCourt: ["Superior Court of Justice"],
   solutionType: "Courtroom",
   solutionTypeIfOther: "",
-  roomFunction: "Trial Court",
+  roomFunction: ["Trial Court"],
   roomFunctionIfOther: "",
   secondaryRoomFunctions: "",
   features: [
@@ -53,6 +53,7 @@ const RoomSolutionPage = () => {
   //     fetchRoomData(id);
   //   }
   // }, [id]);
+
   const handleSave = (roomData: Room, solutionData: Solution) => {
     console.log("Created Room Data:", roomData);
     console.log("Created Solution Data:", solutionData);

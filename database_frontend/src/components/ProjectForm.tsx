@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BuildingLibraryIcon } from "@heroicons/react/24/outline";
+import { BuildingLibraryIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DynamicSearchPeopleListbox from "@/components/DynamicSearchPeopleListbox";
 import Modal from "@/components/Modal";
 import { Person } from "@/types/intakes/person";
@@ -10,7 +10,9 @@ import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormDate from "@/components/FormDate";
 import FormCheckbox from "@/components/FormCheckbox";
-import LocationSearch from "@/components/LocationSearch";
+import LocationSearch2 from "@/components/LocationSearch2";
+import NotesTable from "@/components//NotesTable";
+
 import ResponsiveDropdowns from "@/components/OrgResponsiveDropdowns";
 import MilestonesComponent from "@/components/MilestonesComponent";
 import {
@@ -23,6 +25,8 @@ import {
   fundingSourceOptions,
 } from "constants/intake/dropDownOptions";
 
+import { Note, User } from "@/types/intakes/note";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 interface Location {
@@ -30,11 +34,6 @@ interface Location {
   name: string;
   address: string;
 }
-
-// Convert to 'YYYY-MM-DD' format
-const formatTimestamp = (dateString: string) => {
-  return new Date(dateString).toISOString().split("T")[0];
-};
 
 interface ProjectFormProps {
   initialProjectData: Project;
@@ -48,9 +47,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   onSave,
 }) => {
   const router = useRouter();
-
+  const user: User = { id: "8", name: "test user" };
   const projectId = isEditMode ? initialProjectData.projectId : "";
   const [projectData, setProjectData] = useState<Project>(initialProjectData);
+  const [projectNotes, setProjectNotes] = useState<Note[]>(
+    initialProjectData.noteLog
+  );
   const [assignedTo, setAssignedTo] = useState<Person[]>(
     initialProjectData.assignedTo ? [initialProjectData.assignedTo] : []
   );
@@ -61,7 +63,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [selectedLocation, setSelectedLocation] = useState(
     initialProjectData.locationName || ""
   );
-  const [address, setAddress] = useState(initialProjectData.address || "");
+  const [selectedAddress, setSelectedAddress] = useState(
+    initialProjectData.address || ""
+  );
 
   const [assocReferenceNoTags, setAssocReferenceNoTags] = useState<string[]>(
     initialProjectData.assocReferenceNo || []
@@ -69,7 +73,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [referenceNoInput, setReferenceNoInput] = useState("");
 
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
-  const [notes, setNotes] = useState("");
 
   const [ministry, setMinistry] = useState<string>(
     initialProjectData.ministry || ""
@@ -93,6 +96,20 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const [milestoneOpen, setMilestoneOpen] = useState(false);
   const [milestones, setMilestones] = useState<Record<string, any>>({}); // 用于保存 Milestones 数据
+
+  // available rooms for the location
+  // TODO::should call api in the future
+  const [selectedRoom, setSelectedRoom] = useState("");
+  const availableRooms: { id: string; num: string }[] = [
+    { id: "000001", num: "Ctrm401" },
+    { id: "000002", num: "Ctrm402" },
+    { id: "000003", num: "Ctrm403" },
+    { id: "000004", num: "Ctrm404" },
+  ];
+
+  const availableRoomOptions = availableRooms.filter(
+    (room) => !projectData?.rooms?.some((r) => r.id === room.id)
+  );
 
   /*Fetch Functions*/
   const fetchUsersFromApi = async (query: string) => {
@@ -123,8 +140,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           ...prevState,
           noteLog: [
             {
+              id: `${Date.now()}`, // Add a unique id for the note
               description: value,
-              user: "test user",
+              user: { id: user.id.toString(), name: user.name },
               timestamp: new Date().toISOString(),
             },
             ...prevState.noteLog,
@@ -146,7 +164,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       assignedTo: assignedTo[0],
       clientContacts,
       locationName: selectedLocation,
-      address,
+      address: selectedAddress,
     });
 
     router.push("/dashboard/intake/projects");
@@ -181,13 +199,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const handleLocationSelect = (location: Location | null) => {
     if (location) {
       setSelectedLocation(location.name);
-      setAddress(location.address);
+      setSelectedAddress(location.address);
     } else {
       setSelectedLocation("");
-      setAddress("");
+      setSelectedAddress("");
     }
     // work around, need to figure out where to use addrerss variable
-    console.log(address);
+    // console.log(address);
   };
 
   const handleMinistryChange = (selectedMinistry: string) => {
@@ -256,6 +274,26 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     }
   };
 
+  const handleAddRoom = () => {
+    if (selectedRoom) {
+      const roomToAdd = availableRooms.find((room) => room.id === selectedRoom);
+      if (roomToAdd) {
+        setProjectData((prev) => ({
+          ...prev,
+          rooms: [...(prev.rooms || []), roomToAdd],
+        }));
+        setSelectedRoom(""); // 重置選擇
+      }
+    }
+  };
+
+  function handleRemoveRoom(id: string): void {
+    setProjectData((prev) => ({
+      ...prev,
+      rooms: prev.rooms?.filter((r) => r.id !== id),
+    }));
+  }
+
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
@@ -276,7 +314,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             placeholder="Enter project ID"
           />
         </div>
-
         {/* Project Name */}
         <div className="sm:col-span-3">
           <FormInput
@@ -289,7 +326,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             placeholder="Enter project name"
           />
         </div>
-
         {/* Project Short Description */}
         <div className="sm:col-span-6">
           <FormInput
@@ -302,7 +338,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             placeholder="Enter project short description"
           />
         </div>
-
         {/* Priority */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -314,7 +349,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             label="Priority"
           />
         </div>
-
         {/* On Opp. List? */}
         <div className="mt-8 flex items-center sm:col-span-3">
           <FormCheckbox
@@ -325,7 +359,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Deadline */}
         <div className="sm:col-span-3">
           <FormDate
@@ -337,7 +370,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* First Contact Date */}
         <div className="sm:col-span-3">
           <FormDate
@@ -349,7 +381,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Status */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -361,7 +392,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={statusOptions}
           />
         </div>
-
         {/* implemented */}
         <div className="mt-8 flex items-center sm:col-span-3">
           <FormCheckbox
@@ -372,7 +402,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Alias */}
         <div className="sm:col-span-3">
           <FormInput
@@ -386,7 +415,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           />
         </div>
         <div className="sm:col-span-3"></div>
-
         {/* Waiting On Contact(s) */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -398,7 +426,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={waitingOnContactOptions}
           />
         </div>
-
         {/* Waiting For */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -410,7 +437,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={waitingForOptions}
           />
         </div>
-
         {/* Assigned To */}
         <div className="sm:col-span-3">
           <DynamicSearchPeopleListbox
@@ -420,7 +446,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             fetchOptions={fetchUsersFromApi}
           />
         </div>
-
         {/* Client Ministry */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -432,7 +457,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={clientMinistryOptions}
           />
         </div>
-
         {/* Folder Name */}
         <div className="sm:col-span-3">
           <FormInput
@@ -445,7 +469,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             placeholder="Enter folder name"
           />
         </div>
-
         {/* Intake From Status */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -457,7 +480,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={intakeFormStatusOptions}
           />
         </div>
-
         {/* Last Communication (Out Bound) */}
         <div className="sm:col-span-3">
           <FormDate
@@ -469,7 +491,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Client Contacts */}
         <div className="sm:col-span-3">
           <DynamicSearchPeopleListbox
@@ -480,7 +501,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             allowMultiple={true}
           />
         </div>
-
         <div className="sm:col-span-3">
           <label
             htmlFor="assocReferenceNo"
@@ -524,7 +544,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             ))}
           </div>
         </div>
-
         {/* Funding Source */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -536,53 +555,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             options={fundingSourceOptions}
           />
         </div>
-
         {/* Note Log */}
         <div className="sm:col-span-6">
           <h3 className="">Note Logs</h3>
-          <div className="mt-2 overflow-y-auto max-h-36 outline outline-gray-100 rounded-sm">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Description
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    User
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Timestamp
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {projectData?.noteLog?.length > 0 ? (
-                  projectData.noteLog.map((note, index) => (
-                    <tr key={index}>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                        {note.description}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                        {note.user}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {formatTimestamp(note.timestamp)}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="px-3 py-3.5 text-sm text-gray-500 text-center"
-                    >
-                      There is no note log.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <NotesTable
+            projectNotes={projectNotes}
+            setProjectNotes={setProjectNotes}
+            user={user}
+            createNoteModalOpen={createNoteOpen}
+            setCreateNoteModalOpen={setCreateNoteOpen}
+          />
+
           <div className="mt-4 text-right text-sky-500 hover:text-sky-700">
             <a href="#" onClick={() => setCreateNoteOpen(true)}>
               + Add Notes
@@ -590,75 +573,89 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           </div>
         </div>
 
-        {/* Create New Notes Modal */}
-        <Modal
-          open={createNoteOpen}
-          onClose={setCreateNoteOpen}
-          title="Create Note"
-          content={
-            <div>
-              <div className="mt-1">
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows={4}
-                  className="block w-full p-2 rounded-md border-gray-400 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  placeholder="Write something..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
-              </div>
-            </div>
-          }
-          confirmLabel="Save"
-          confirmAction={() => {
-            handleInputChange({
-              target: { name: "notes", value: notes },
-            } as any);
-            setNotes("");
-            setCreateNoteOpen(false);
-          }}
-          cancelLabel="Cancel"
-          cancelAction={() => setNotes("")}
-        />
-
+        {/* Location */}
         <div className="sm:col-span-6">
-          <LocationSearch
+          {/* <LocationSearch
             onLocationSelect={handleLocationSelect}
             initialLocationName={selectedLocation ?? undefined}
+          /> */}
+          <h3 className="mb-2">Locaiton</h3>
+          <LocationSearch2
+            onLocationSelect={handleLocationSelect}
+            initialLocationName={selectedLocation ?? ""}
+            initialAddress={selectedAddress ?? ""}
           />
         </div>
-
         {/* Rooms */}
         <div className="sm:col-span-6">
           <h3 className="">Rooms</h3>
+          <div className="flex">
+            <div className="flex items-center mt-1 w-3/6">
+              {availableRoomOptions.length > 0 ? (
+                <select
+                  value={selectedRoom}
+                  onChange={(e) => setSelectedRoom(e.target.value)}
+                  className="mr-2 px-2 block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                >
+                  <option value="" disabled>
+                    Select a room to add
+                  </option>
+                  {availableRoomOptions.map((room) => (
+                    <option key={room.id} value={room.id}>
+                      {room.num}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className="text-sm text-gray-500 mr-2">
+                  No available rooms for the location now.
+                </span>
+              )}
+
+              <button
+                onClick={handleAddRoom}
+                disabled={!selectedRoom}
+                className={`whitespace-nowrap items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                  !selectedRoom ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                Add Room
+              </button>
+            </div>
+          </div>
+
           <p className="mt-2 text-sm text-red-600">
             * Please click on each room to view solution profile.
           </p>
           <div className="flex space-x-4 mt-3">
             {projectData?.rooms?.length ? (
               projectData.rooms.map((room) => (
-                <a
+                <div
                   key={room.id}
-                  href={`/dashboard/intake/rooms/${room.id}`}
                   className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
-                  {room.num}
-                </a>
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => handleRemoveRoom(room.id)}
+                    className="mr-2"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                  {/* Room Link */}
+                  <a
+                    href={`/dashboard/intake/rooms/${room.id}`}
+                    className="flex items-center"
+                  >
+                    <BuildingLibraryIcon className="h-5 w-5 mr-1.5" />
+                    {room.num}
+                  </a>
+                </div>
               ))
             ) : (
               <span className="text-sm text-gray-500 py-1.5">No rooms</span>
             )}
-            <a
-              href="/dashboard/intake/rooms/create"
-              className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
-            >
-              + Add Room
-            </a>
           </div>
         </div>
-
         {/* Project Sponsor */}
         <div className="sm:col-span-3">
           <FormInput
@@ -671,7 +668,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             placeholder="Enter project sponsor"
           />
         </div>
-
         {/* Ministry, Division, Branch */}
         <div className="sm:col-span-6">
           <ResponsiveDropdowns
@@ -683,7 +679,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChangeBranch={handleBranchChange}
           />
         </div>
-
         {/* Requested Completion Date */}
         <div className="sm:col-span-3">
           <FormDate
@@ -695,7 +690,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Assigned to PM */}
         <div className="mt-8 flex items-center sm:col-span-3">
           <FormCheckbox
@@ -706,7 +700,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleInputChange}
           />
         </div>
-
         {/* Estimated Cost */}
         <div className="sm:col-span-2">
           <h3 className="">Estimated Cost/Fiscal Year</h3>
@@ -754,7 +747,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             </a>
           </div>
         </div>
-
         {/* Create New Cost Modal */}
         <Modal
           open={createCostOpen}
