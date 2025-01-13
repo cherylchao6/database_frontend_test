@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
+import FormMultipleCheckbox from "./FormMultipleCheckbox";
 import Modal from "@/components/Modal";
 import { Room } from "@/types/intakes/room";
 import { Solution } from "@/types/intakes/solution";
@@ -19,6 +20,12 @@ import {
 } from "constants/intake/dropDownOptions";
 import { useRouter } from "next/navigation";
 
+const versions = [
+  "archived-MAG-516-B+-67",
+  "archived-MAG-516-B+-68",
+  "planned-MAG-516-B+-69",
+];
+
 interface RoomSolutionFormProps {
   initialRoomData: Room;
   initialSolutionData: Solution;
@@ -32,13 +39,23 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
   isEditMode = false,
   onSave,
 }) => {
+  const user = {
+    id: "1",
+    name: "John Doe",
+    role: "no",
+  };
+  const canAddFeature = user.role === "pm";
   const router = useRouter();
   const [roomData, setRoomData] = useState(initialRoomData);
   const [solutionData, setSolutionData] = useState(initialSolutionData);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>(() =>
     initialSolutionData.features.map((feature) => feature.id)
   );
+  const [selectedFunctions, setSelectedFunctions] = useState<string[]>(
+    initialSolutionData.roomFunction
+  );
   const [addFeatureOpen, setAddFeatureOpen] = useState(false);
+  const [addFunctionOpen, setAddFunctionOpenState] = useState(false);
   const [createLocalConnRoomOpen, setCreateLocalConnRoomOpen] = useState(false);
   const [connRoomInputError, setConnRoomInputError] = useState<string | null>(
     null
@@ -47,6 +64,14 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
     alias: "",
     roomNum: "",
   });
+
+  const [selectedLevelOfCourt, setSelectedLevelOfCourt] = useState<string[]>(
+    initialSolutionData.levelOfCourt
+  );
+
+  const handleLevelOfCourtChange = (selected: string[]) => {
+    setSelectedLevelOfCourt(selected);
+  };
 
   const handleSaveLocalConnRoom = () => {
     if (connRoom.alias === "" || connRoom.roomNum === "") {
@@ -122,6 +147,33 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
     router.push("/dashboard/intake/projects/MAG-516-B+-67");
   };
 
+  const handleToggleFunction = (func: string) => {
+    if (selectedFunctions.includes(func)) {
+      setSelectedFunctions((prev) => prev.filter((f) => f !== func));
+    } else {
+      setSelectedFunctions((prev) => [...prev, func]);
+    }
+  };
+
+  const handleSaveFunctions = () => {
+    const updatedFunctions = roomFunction.filter((func) =>
+      selectedFunctions.includes(func)
+    );
+
+    setSolutionData((prev) => ({
+      ...prev,
+      roomFunction: updatedFunctions,
+    }));
+
+    setAddFunctionOpenState(false);
+  };
+
+  function handleRemoveFunction(func: string): void {
+    const updatedFunctions = selectedFunctions.filter((f) => f !== func);
+    setSelectedFunctions(updatedFunctions);
+    setSolutionData((prev) => ({ ...prev, roomFunction: updatedFunctions }));
+  }
+
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
@@ -130,7 +182,22 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
         </h1>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+      <div className="grid grid-cols-1 sm:grid-cols-6">
+        <div className="sm:col-span-3">
+          <h2 className="col-span-6 text-lg font-semibold text-slate-900 my-2">
+            Solution Version
+          </h2>
+          <FormSelect
+            id="version"
+            label=""
+            name="version"
+            value={""}
+            options={versions}
+          />
+        </div>
+      </div>
+
+      <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         {/* Room Information */}
         <h2 className="col-span-6 text-lg font-semibold text-slate-900">
           Room Information
@@ -326,14 +393,12 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
         </div>
 
         {/* Level of Court */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="levelOfCourt"
+        <div className="sm:col-span-6">
+          <FormMultipleCheckbox
             label="Level of Court"
-            name="levelOfCourt"
-            value={solutionData?.levelOfCourt || ""}
-            onChange={(e) => handleInputChange(e, "solution")}
             options={levelOfCourt}
+            selectedValues={selectedLevelOfCourt}
+            onChange={handleLevelOfCourtChange}
           />
         </div>
 
@@ -363,14 +428,69 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
         </div>
 
         {/* Room Function */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="roomFunction"
+        <div className="sm:col-span-6">
+          {/* <FormMultipleCheckbox
             label="Room Function"
-            name="roomFunction"
-            value={solutionData?.roomFunction || ""}
-            onChange={(e) => handleInputChange(e, "solution")}
             options={roomFunction}
+            selectedValues={solutionData?.roomFunction || []}
+            onChange={(selected) =>
+              setSolutionData((prev) => ({ ...prev, roomFunction: selected }))
+            }
+          /> */}
+          <h3 className="">Room Functions</h3>
+          <div className="flex space-x-4 mt-3">
+            {solutionData?.roomFunction?.map((func) => (
+              <div
+                key={func}
+                className="flex items-center text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFunction(func)}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+
+                <div className="pr-3 py-1.5">{func}</div>
+              </div>
+            ))}
+            <a
+              className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+              onClick={() => setAddFunctionOpenState(true)}
+            >
+              + Add Function
+            </a>
+          </div>
+
+          {/* Modal For Adding Functions*/}
+          <Modal
+            open={addFunctionOpen}
+            onClose={() => {
+              setAddFunctionOpenState(false);
+            }}
+            title="Add Room Functions"
+            content={
+              <div>
+                {roomFunction.map((func) => (
+                  <div key={func} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={func}
+                      checked={selectedFunctions?.includes(func)}
+                      onChange={() => handleToggleFunction(func)}
+                      className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                    />
+                    <label htmlFor={func} className="ml-2 text-gray-900">
+                      {func}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            }
+            confirmLabel="Save"
+            confirmAction={handleSaveFunctions}
+            cancelLabel="Cancel"
           />
         </div>
 
@@ -410,22 +530,32 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
                 key={feature.id}
                 className="flex items-center text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
               >
-                <button
-                  type="button"
-                  onClick={() => handleRemoveFeature(feature.id)} // 呼叫移除方法
-                  className="ml-2 text-gray-500 hover:text-gray-700"
-                >
-                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
-                <div className="pr-3 py-1.5">{feature.feature}</div>
+                {canAddFeature && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFeature(feature.id)}
+                    className="ml-2 text-gray-500 hover:text-gray-700"
+                  >
+                    <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                  </button>
+                )}
+                <div className={`pr-3 py-1.5 ${!canAddFeature ? "pl-3" : ""}`}>
+                  {feature.feature}
+                </div>
               </div>
             ))}
-            <a
-              className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
-              onClick={() => setAddFeatureOpen(true)}
-            >
-              + Add Feature
-            </a>
+            {
+              // Add Feature Button
+              canAddFeature && (
+                <a
+                  className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+                  onClick={() => setAddFeatureOpen(true)}
+                >
+                  + Add Feature
+                </a>
+              )
+            }
+
             {/* Modal For Adding Features*/}
             <Modal
               open={addFeatureOpen}

@@ -3,10 +3,10 @@ export interface Solution {
   codecAlias: string;
   systemName: string;
   supportLevel: string;
-  levelOfCourt: string;
+  levelOfCourt: string[];
   solutionType: string;
   solutionTypeIfOther: string;
-  roomFunction: string;
+  roomFunction: string[];
   roomFunctionIfOther: string;
   secondaryRoomFunctions: string;
   features: { id: string; feature: string }[];
