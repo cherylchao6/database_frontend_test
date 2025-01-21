@@ -1,7 +1,11 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { BuildingLibraryIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  BuildingLibraryIcon,
+  XMarkIcon,
+  EnvelopeIcon,
+} from "@heroicons/react/24/outline";
 import DynamicSearchPeopleListbox from "@/components/DynamicSearchPeopleListbox";
 import Modal from "@/components/Modal";
 import { Person } from "@/types/intakes/person";
@@ -574,18 +578,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         </div>
 
         {/* Location */}
-        <div className="sm:col-span-6">
-          {/* <LocationSearch
-            onLocationSelect={handleLocationSelect}
-            initialLocationName={selectedLocation ?? undefined}
-          /> */}
-          <h3 className="mb-2">Locaiton</h3>
-          <LocationSearch2
-            onLocationSelect={handleLocationSelect}
-            initialLocationName={selectedLocation ?? ""}
-            initialAddress={selectedAddress ?? ""}
-          />
+        <div className="sm:col-span-full">
+          <h3 className="mb-2">Location</h3>
+          <div className="flex items-center gap-2 w-full">
+            {/* 搜尋欄位 */}
+            <div className="flex-1">
+              <LocationSearch2
+                onLocationSelect={handleLocationSelect}
+                initialLocationName={selectedLocation ?? ""}
+                initialAddress={selectedAddress ?? ""}
+              />
+            </div>
+
+            <button className="flex items-center gap-2 whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              <EnvelopeIcon className="h-5 w-5" />
+              Add New Address/Room Request
+            </button>
+          </div>
         </div>
+
         {/* Rooms */}
         <div className="sm:col-span-6">
           <h3 className="">Rooms</h3>

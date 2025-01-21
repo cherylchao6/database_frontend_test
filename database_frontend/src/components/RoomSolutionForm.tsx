@@ -39,12 +39,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
   isEditMode = false,
   onSave,
 }) => {
-  const user = {
-    id: "1",
-    name: "John Doe",
-    role: "no",
-  };
-  const canAddFeature = user.role === "pm";
   const router = useRouter();
   const [roomData, setRoomData] = useState(initialRoomData);
   const [solutionData, setSolutionData] = useState(initialSolutionData);
@@ -353,7 +347,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             placeholder="Enter Site Alias"
           />
         </div>
-
         {/* Codec Alias */}
         <div className="sm:col-span-3">
           <FormInput
@@ -366,7 +359,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             placeholder="Enter Codec Alias"
           />
         </div>
-
         {/* System Name */}
         <div className="sm:col-span-3">
           <FormInput
@@ -379,7 +371,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             placeholder="Enter System Name"
           />
         </div>
-
         {/* Support Level */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -391,7 +382,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             options={supportLevel}
           />
         </div>
-
         {/* Level of Court */}
         <div className="sm:col-span-6">
           <FormMultipleCheckbox
@@ -401,7 +391,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             onChange={handleLevelOfCourtChange}
           />
         </div>
-
         {/* Solution Type */}
         <div className="sm:col-span-3">
           <FormSelect
@@ -413,7 +402,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             options={solutionType}
           />
         </div>
-
         {/* Solution Type If Other */}
         <div className="sm:col-span-3">
           <FormInput
@@ -426,7 +414,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             placeholder="Enter Solution Type If Other"
           />
         </div>
-
         {/* Room Function */}
         <div className="sm:col-span-6">
           {/* <FormMultipleCheckbox
@@ -493,7 +480,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             cancelLabel="Cancel"
           />
         </div>
-
         {/* Room Function If Other */}
         <div className="sm:col-span-3">
           <FormInput
@@ -506,19 +492,6 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             placeholder="Enter Room Function If Other"
           />
         </div>
-
-        {/* Secondary Room Functions */}
-        <div className="sm:col-span-3">
-          <FormSelect
-            id="secondaryRoomFunctions"
-            label="Secondary Room Functions"
-            name="secondaryRoomFunctions"
-            value={solutionData?.secondaryRoomFunctions || ""}
-            onChange={(e) => handleInputChange(e, "solution")}
-            options={roomFunction}
-          />
-        </div>
-
         <h2 className="col-span-6 text-lg font-semibold text-slate-900">
           Enabled System Functionality
         </h2>
@@ -530,31 +503,23 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
                 key={feature.id}
                 className="flex items-center text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
               >
-                {canAddFeature && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveFeature(feature.id)}
-                    className="ml-2 text-gray-500 hover:text-gray-700"
-                  >
-                    <XMarkIcon className="h-5 w-5" aria-hidden="true" />
-                  </button>
-                )}
-                <div className={`pr-3 py-1.5 ${!canAddFeature ? "pl-3" : ""}`}>
-                  {feature.feature}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveFeature(feature.id)}
+                  className="ml-2 text-gray-500 hover:text-gray-700"
+                >
+                  <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+                <div className="pr-3 py-1.5 pl-1">{feature.feature}</div>
               </div>
             ))}
-            {
-              // Add Feature Button
-              canAddFeature && (
-                <a
-                  className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
-                  onClick={() => setAddFeatureOpen(true)}
-                >
-                  + Add Feature
-                </a>
-              )
-            }
+
+            <a
+              className="flex items-center px-3 py-1.5 text-sm font-medium text-gray-900 bg-gray-100 rounded-lg hover:bg-gray-200"
+              onClick={() => setAddFeatureOpen(true)}
+            >
+              + Add Feature
+            </a>
 
             {/* Modal For Adding Features*/}
             <Modal
@@ -601,9 +566,8 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             options={systemControlType}
           />
         </div>
-
         {/* Audio Conference Phone Number */}
-        <div className="sm:col-span-3">
+        {/* <div className="sm:col-span-3">
           <FormInput
             id="audioConfePhoneNum"
             label="Audio Conference Phone Number [10 digits]"
@@ -613,10 +577,9 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             onChange={(e) => handleInputChange(e, "solution")}
             placeholder="Enter Audio Conference Phone Number"
           />
-        </div>
-
+        </div> */}
         {/* Privacy Number */}
-        <div className="sm:col-span-3">
+        {/* <div className="sm:col-span-3">
           <FormInput
             id="privacyNum"
             label="Privacy Number [10 digits]"
@@ -626,7 +589,7 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             onChange={(e) => handleInputChange(e, "solution")}
             placeholder="Enter Privacy Number"
           />
-        </div>
+        </div> */}
         <div className="sm:col-span-3"></div>
         {/* Local Connectivity Rooms */}
         <div className="sm:col-span-6">
