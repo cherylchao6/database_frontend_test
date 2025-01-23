@@ -21,9 +21,10 @@ import {
 import { useRouter } from "next/navigation";
 
 const versions = [
-  "archived-MAG-516-B+-67",
-  "archived-MAG-516-B+-68",
+  "production-MAG-516-B+-68",
   "planned-MAG-516-B+-69",
+  "archived-MAG-516-B+-67",
+  "cancelled-MAG-516-B+-68",
 ];
 
 interface RoomSolutionFormProps {

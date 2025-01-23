@@ -100,6 +100,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const [milestoneOpen, setMilestoneOpen] = useState(false);
   const [milestones, setMilestones] = useState<Record<string, any>>({}); // 用于保存 Milestones 数据
+  const [addRequestOpen, setAddRequestOpen] = useState(false);
+  const [newAddress, setNewAddress] = useState("");
+  const [newLocation, setNewLocation] = useState("");
+  const [newRoom, setNewRoom] = useState("");
+  const [newAddressMinistry, setNewAddressMinistry] = useState("");
+  const [newAddressDivision, setNewAddressDivision] = useState("");
 
   // available rooms for the location
   // TODO::should call api in the future
@@ -222,6 +228,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const handleBranchChange = (selectedBranch: string) => {
     setBranch(selectedBranch);
+  };
+
+  const handleNewMinistryChange = (selectedMinistry: string) => {
+    setNewAddressMinistry(selectedMinistry);
+  };
+
+  const handleNewDivisionChange = (selectedDivision: string) => {
+    setNewAddressDivision(selectedDivision);
   };
 
   const handleSaveCost = () => {
@@ -590,12 +604,89 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
               />
             </div>
 
-            <button className="flex items-center gap-2 whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button
+              className="flex items-center gap-2 whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => setAddRequestOpen(true)}
+            >
               <EnvelopeIcon className="h-5 w-5" />
               Add New Address/Room Request
             </button>
           </div>
         </div>
+
+        <Modal
+          open={addRequestOpen}
+          onClose={() => {
+            setAddRequestOpen(false);
+            setNewLocation("");
+            setNewAddress("");
+            setNewAddressMinistry("");
+            setNewAddressDivision("");
+            setNewRoom("");
+          }}
+          title="Add New Address/Room Request"
+          confirmLabel="Send Request"
+          confirmAction={() => {
+            // TODO:should send request to backend in the future
+            setAddRequestOpen(false);
+            setNewLocation("");
+            setNewAddress("");
+            setNewAddressMinistry("");
+            setNewAddressDivision("");
+            setNewRoom("");
+          }}
+          content={
+            <div className="space-y-4">
+              {/* Location Name */}
+              <div className="mt-4">
+                <FormInput
+                  id="newLocation"
+                  label="Location Name"
+                  name="newLocation"
+                  type="text"
+                  value={newLocation}
+                  onChange={(e) => setNewLocation(e.target.value)}
+                  placeholder="Enter location name"
+                />
+              </div>
+
+              {/* Address */}
+              <div className="mt-4">
+                <FormInput
+                  id="newAddress"
+                  label="Address"
+                  name="newAddress"
+                  type="text"
+                  value={newAddress}
+                  onChange={(e) => setNewAddress(e.target.value)}
+                  placeholder="Enter address"
+                />
+              </div>
+
+              {/* Ministry and Division*/}
+              <ResponsiveDropdowns
+                initialMinistry={newAddressMinistry}
+                initialDivision={newAddressDivision}
+                onChangeMinistry={handleNewMinistryChange}
+                onChangeDivision={handleNewDivisionChange}
+                displayBranch={false}
+              />
+
+              {/* Room */}
+              <div className="mt-4">
+                <FormInput
+                  id="newRoom"
+                  label="Room"
+                  name="newRoom"
+                  type="text"
+                  value={newRoom}
+                  onChange={(e) => setNewRoom(e.target.value)}
+                  placeholder="Enter room"
+                />
+              </div>
+            </div>
+          }
+        />
 
         {/* Rooms */}
         <div className="sm:col-span-6">
