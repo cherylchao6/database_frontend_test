@@ -12,6 +12,7 @@ interface ResponsiveDropdownsProps {
   onChangeMinistry?: (ministry: string) => void;
   onChangeDivision?: (division: string) => void;
   onChangeBranch?: (branch: string) => void;
+  displayBranch?: boolean;
 }
 
 export default function ResponsiveDropdowns({
@@ -21,6 +22,7 @@ export default function ResponsiveDropdowns({
   onChangeMinistry,
   onChangeDivision,
   onChangeBranch,
+  displayBranch = true,
 }: ResponsiveDropdownsProps) {
   const [divisions, setDivisions] = useState<string[]>([]);
   const [branches, setBranches] = useState<string[]>([]);
@@ -143,28 +145,30 @@ export default function ResponsiveDropdowns({
       </div>
 
       {/* Branch/Unit Dropdown */}
-      <div>
-        <label className="block font-medium leading-6 text-gray-900 mb-2">
-          Branch/Unit
-        </label>
-        <select
-          value={selectedBranch}
-          onChange={handleBranchChange}
-          className={baseClassName}
-          disabled={!selectedDivision}
-        >
-          <option value="" disabled>
-            {selectedDivision
-              ? "Select Branch/Unit"
-              : "Select a Division first"}
-          </option>
-          {branches.map((branch) => (
-            <option key={branch} value={branch}>
-              {branch}
+      {displayBranch && (
+        <div>
+          <label className="block font-medium leading-6 text-gray-900 mb-2">
+            Branch/Unit
+          </label>
+          <select
+            value={selectedBranch}
+            onChange={handleBranchChange}
+            className={baseClassName}
+            disabled={!selectedDivision}
+          >
+            <option value="" disabled>
+              {selectedDivision
+                ? "Select Branch/Unit"
+                : "Select a Division first"}
             </option>
-          ))}
-        </select>
-      </div>
+            {branches.map((branch) => (
+              <option key={branch} value={branch}>
+                {branch}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }
