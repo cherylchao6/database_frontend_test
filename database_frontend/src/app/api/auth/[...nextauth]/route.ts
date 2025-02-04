@@ -25,11 +25,7 @@ const handler = NextAuth({
       clientId: NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
       clientSecret: NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET,
       tenantId: NEXT_PUBLIC_AZURE_AD_TENANT_ID,
-      // For default directory, the permissions is User.Read
-      // authorization: {
-      //   params: { scope: "User.Read.All openid offline_access" },
-      // },
-      // authorization: { params: { scope: "openid profile User.Read email" } },
+      authorization: { params: { scope: "openid profile User.Read email" } },
       profile: (profile: AzureADProfile) => {
         console.log(profile);
         return {
