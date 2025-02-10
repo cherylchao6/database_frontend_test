@@ -6,12 +6,22 @@ import { useSession } from "next-auth/react";
 
 const DashBoardPage: React.FC = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const handleClick = (endPoint: string) => {
     router.push(`/dashboard/${endPoint}`);
   };
 
+  console.log("session in dashboard", session);
+
+  if (status === "loading") {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-xl font-semibold text-gray-700">Loading...</p>
+      </div>
+    );
+  }
+  
   return (
     <div className="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
       <div className="mx-auto max-w-2xl text-center">
