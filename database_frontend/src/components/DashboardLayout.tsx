@@ -1,6 +1,6 @@
 //components/DashboardLayout.tsx
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -38,25 +38,25 @@ function classNames(...classes: (string | boolean | undefined)[]) {
 }
 
 // Fetch profile image from Microsoft Graph API
-const fetchUserProfileImage = async (accessToken: string) => {
-  const response = await fetch(
-    "https://graph.microsoft.com/v1.0/me/photo/$value",
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+// const fetchUserProfileImage = async (accessToken: string) => {
+//   const response = await fetch(
+//     "https://graph.microsoft.com/v1.0/me/photo/$value",
+//     {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     }
+//   );
 
-  if (!response.ok) {
-    console.log("response", response);
-    console.error("Failed to fetch profile image");
-    return null;
-  }
+//   if (!response.ok) {
+//     console.log("response", response);
+//     console.error("Failed to fetch profile image");
+//     return null;
+//   }
 
-  const blob = await response.blob();
-  return URL.createObjectURL(blob); // Convert the image blob to a URL
-};
+//   const blob = await response.blob();
+//   return URL.createObjectURL(blob); // Convert the image blob to a URL
+// };
 
 // Define the layout component
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
@@ -66,9 +66,9 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const [teams, setTeams] = useState(initialTeams);
   const [selectedTeam, setSelectedTeam] = useState("");
   const { data: session, status } = useSession();
-  const [profileImage, setProfileImage] = useState<string | undefined>(
-    "/profile.jpg"
-  ); // Default image
+  // const [profileImage, setProfileImage] = useState<string | undefined>(
+  //   "/profile.jpg"
+  // ); // Default image
 
   // useEffect(() => {
   //   const getProfileImage = async () => {
