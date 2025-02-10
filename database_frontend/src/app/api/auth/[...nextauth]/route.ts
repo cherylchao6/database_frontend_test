@@ -3,6 +3,7 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import { AzureADProfile } from "next-auth/providers/azure-ad";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const testID = 10;
+const profilePhotoSize = 96;
 
 const {
   NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
@@ -25,9 +26,9 @@ const handler = NextAuth({
       clientId: NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
       clientSecret: NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET,
       tenantId: NEXT_PUBLIC_AZURE_AD_TENANT_ID,
-      authorization: { params: { scope: "openid profile User.Read email" } },
+      authorization: { params: { scope: "User.Read.All openid offline_access email profile" } },
       profile: (profile: AzureADProfile) => {
-        console.log(profile);
+        console.log("profile", profile);
         return {
           id: profile.sub,
           name: profile.name,
@@ -56,8 +57,8 @@ const handler = NextAuth({
         });
         // Optional: Check if the API request was successful
         if (!response.ok) {
-          console.log("response", response);
-          console.log("response", await response.json());
+          // console.log("response", response);
+          // console.log("response", await response.json());
           user.id = testID.toString();
           // throw new Error("Failed to save user data");
         }
@@ -78,6 +79,24 @@ const handler = NextAuth({
         if (user) {
           token.id = user.id; // Store the user id in the token
         }
+
+        try {
+          const profilePictureResponse = await fetch(
+            `https://graph.microsoft.com/v1.0/me/photos/${profilePhotoSize}x${profilePhotoSize}/$value`,
+            {
+              headers: {
+                Authorization: `Bearer ${account.access_token}`,
+              },
+            }
+          );
+
+          if (profilePictureResponse.ok) {
+            const pictureBuffer = await profilePictureResponse.arrayBuffer();
+            token.image = `data:image/jpeg;base64,${Buffer.from(pictureBuffer).toString("base64")}`;
+          }
+        } catch (error) {
+          console.error("Error fetching profile picture:", error);
+        }
       }
       return token;
     },
@@ -90,6 +109,7 @@ const handler = NextAuth({
           user: {
             ...session.user,
             id: token.id ?? testID,
+            image: token.image ?? (session.user ? session.user.image : undefined),
           },
         });
       }

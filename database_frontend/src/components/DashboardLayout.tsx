@@ -65,31 +65,31 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [teams, setTeams] = useState(initialTeams);
   const [selectedTeam, setSelectedTeam] = useState("");
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [profileImage, setProfileImage] = useState<string | undefined>(
     "/profile.jpg"
   ); // Default image
 
-  useEffect(() => {
-    const getProfileImage = async () => {
-      if (
-        session &&
-        session.user &&
-        !session.user.image &&
-        session.accessToken
-      ) {
-        console.log("Fetching profile image...");
-        console.log("session", session);
-        const imageUrl = await fetchUserProfileImage(
-          session.accessToken as string
-        );
-        if (imageUrl) {
-          setProfileImage(imageUrl);
-        }
-      }
-    };
-    getProfileImage();
-  }, [session]);
+  // useEffect(() => {
+  //   const getProfileImage = async () => {
+  //     if (
+  //       session &&
+  //       session.user &&
+  //       !session.user.image &&
+  //       session.accessToken
+  //     ) {
+  //       console.log("Fetching profile image...");
+  //       console.log("session", session);
+  //       const imageUrl = await fetchUserProfileImage(
+  //         session.accessToken as string
+  //       );
+  //       if (imageUrl) {
+  //         setProfileImage(imageUrl);
+  //       }
+  //     }
+  //   };
+  //   getProfileImage();
+  // }, [session]);
 
   const handleTeamClick = (id: number, teamName: string) => {
     setTeams((prevTeams) =>
@@ -110,6 +110,14 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
       console.error(error);
     }
   };
+
+  if (status === "loading") {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-xl font-semibold text-gray-700">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -213,7 +221,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({
               <span className="sr-only">Your profile</span>
               <img
                 alt=""
-                src={profileImage}
+                src={session?.user?.image || "/user.jpg"}
                 className="h-10 w-10 rounded-full bg-gray-800"
               />
             </a>
