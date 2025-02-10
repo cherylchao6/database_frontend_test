@@ -26,7 +26,7 @@ const handler = NextAuth({
       clientId: NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
       clientSecret: NEXT_PUBLIC_AZURE_AD_CLIENT_SECRET,
       tenantId: NEXT_PUBLIC_AZURE_AD_TENANT_ID,
-      authorization: { params: { scope: "User.Read.All openid offline_access email profile" } },
+      authorization: { params: { scope: "User.Read.All openid offline_access email profile ProfilePhoto.Read.All" } },
       profile: (profile: AzureADProfile) => {
         console.log("profile", profile);
         return {
@@ -81,6 +81,7 @@ const handler = NextAuth({
         }
 
         try {
+          console.log("Fetching profile picture...");
           const profilePictureResponse = await fetch(
             `https://graph.microsoft.com/v1.0/me/photos/${profilePhotoSize}x${profilePhotoSize}/$value`,
             {
@@ -93,6 +94,9 @@ const handler = NextAuth({
           if (profilePictureResponse.ok) {
             const pictureBuffer = await profilePictureResponse.arrayBuffer();
             token.image = `data:image/jpeg;base64,${Buffer.from(pictureBuffer).toString("base64")}`;
+          } else {
+            console.error("Failed to fetch profile picture");
+            console.error("profilePictureResponse", profilePictureResponse);
           }
         } catch (error) {
           console.error("Error fetching profile picture:", error);
