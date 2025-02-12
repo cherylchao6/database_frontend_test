@@ -1,10 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { statusOptions } from "@/constants/intake/dropDownOptions";
 import Link from "next/link";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 interface Project {
   projectId: string;
   projectName: string;
@@ -94,6 +93,27 @@ const ProjectListPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(""); // State to store error message
 
+  const [statusOptions, setStatusOptions] = useState<string[]>([]);
+  const [dropdownLoading, setDropdownLoading] = useState(true);
+  const [dropdownError, setDropdownError] = useState("");
+
+  useEffect(() => {
+    // Fetch dropdown options
+    const fetchDropdown = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=projectList`);
+        const data = await response.json();
+        console.log(data);
+        setStatusOptions(data["Intake Form Status"]);
+      } catch (error) {
+        setDropdownError(String(error));
+      } finally {
+        setDropdownLoading(false);
+      }
+    }
+    fetchDropdown();
+  }, []);
+
   const totalItems = 50;
   const itemsPerPage = 20;
 
@@ -152,6 +172,15 @@ const ProjectListPage = () => {
     // fetchData();
   };
 
+  if (dropdownLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (dropdownError) {
+    return <div>Error: {dropdownError
+    }</div>;
+  }
+  
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
