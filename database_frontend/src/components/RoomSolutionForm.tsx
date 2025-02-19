@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormInput from "@/components/FormInput";
 import FormSelect from "@/components/FormSelect";
 import FormMultipleCheckbox from "./FormMultipleCheckbox";
@@ -7,18 +7,9 @@ import Modal from "@/components/Modal";
 import { Room } from "@/types/intakes/room";
 import { Solution } from "@/types/intakes/solution";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import {
-  businessRegion,
-  buildingTypes,
-  hoursOfOperations,
-  supportLevel,
-  levelOfCourt,
-  solutionType,
-  roomFunction,
-  systemControlType,
-  features,
-} from "constants/intake/dropDownOptions";
+import { features } from "constants/intake/dropDownOptions";
 import { useRouter } from "next/navigation";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const versions = [
   "production-MAG-516-B+-68",
@@ -63,6 +54,44 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
   const [selectedLevelOfCourt, setSelectedLevelOfCourt] = useState<string[]>(
     initialSolutionData.levelOfCourt
   );
+
+  // dropdown options
+  const [businessRegion, setBusinessRegion] = useState<string[]>([]);
+  const [buildingTypes, setBuildingTypes] = useState<string[]>([]);
+  const [hoursOfOperations, setHoursOfOperations] = useState<string[]>([]);
+  const [supportLevel, setSupportLevel] = useState<string[]>([]);
+  const [levelOfCourt, setLevelOfCourt] = useState<string[]>([]);
+  const [solutionType, setSolutionType] = useState<string[]>([]);
+  const [roomFunctions, setRoomFunctions] = useState<string[]>([]);
+  const [systemControlType, setSystemControlType] = useState<string[]>([]);
+
+  const [dropdownLoading, setDropdownLoading] = useState(true);
+  const [dropdownError, setDropdownError] = useState("");
+
+  const fetchDropdown = async () => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/dropdowns?moduleId=101&pageType=solutionProfile`
+      );
+      const data = await response.json();
+      setBusinessRegion(data["Business Region"]);
+      setBuildingTypes(data["Building Type"]);
+      setHoursOfOperations(data["Hours of Operations"]);
+      setSupportLevel(data["Support Level"]);
+      setLevelOfCourt(data["Level of Court"]);
+      setSolutionType(data["Solution Type"]);
+      setRoomFunctions(data["Room Function"]);
+      setSystemControlType(data["System Control Type"]);
+    } catch (error) {
+      setDropdownError(String(error));
+    } finally {
+      setDropdownLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDropdown();
+  }, []);
 
   const handleLevelOfCourtChange = (selected: string[]) => {
     setSelectedLevelOfCourt(selected);
@@ -152,7 +181,7 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
   };
 
   const handleSaveFunctions = () => {
-    const updatedFunctions = roomFunction.filter((func) =>
+    const updatedFunctions = roomFunctions.filter((func) =>
       selectedFunctions.includes(func)
     );
 
@@ -168,6 +197,14 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
     const updatedFunctions = selectedFunctions.filter((f) => f !== func);
     setSelectedFunctions(updatedFunctions);
     setSolutionData((prev) => ({ ...prev, roomFunction: updatedFunctions }));
+  }
+
+  if (dropdownLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (dropdownError) {
+    return <div>Error: {dropdownError}</div>;
   }
 
   return (
@@ -189,6 +226,7 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             name="version"
             value={""}
             options={versions}
+            onChange={(e) => console.log(e.target.value)}
           />
         </div>
       </div>
@@ -461,7 +499,7 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
             title="Add Room Functions"
             content={
               <div>
-                {roomFunction.map((func) => (
+                {roomFunctions.map((func) => (
                   <div key={func} className="flex items-center">
                     <input
                       type="checkbox"

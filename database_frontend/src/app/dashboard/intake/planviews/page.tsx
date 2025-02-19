@@ -1,10 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 import Modal from "@/components/Modal";
 import Planview from "@/types/intakes/planview";
-import { planviewPhases, planviewStatuses } from "@/types/intakes/planview";
-import { ministries } from "@/types/organization";
 import { Note } from "@/types/intakes/note";
 import * as XLSX from "xlsx";
 import { useSession } from "next-auth/react";
@@ -14,7 +12,7 @@ import {
   TrashIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 type CustomUser = {
   id: string;
   email: string;
@@ -157,6 +155,31 @@ const PlanviewListPage = () => {
 
   const [planviews, setPlanviews] = useState(sortedPlanviews);
 
+  const [planviewPhases, setPlanviewPhases] = useState<string[]>([]);
+  const [planviewStatuses, setPlanviewStatuses] = useState<string[]>([]);
+  const [ministries, setMinistries] = useState<string[]>([]);
+  const [dropdownLoading, setDropdownLoading] = useState(true);
+  const [dropdownError, setDropdownError] = useState("");
+
+  // Fetch planview phases and statuses
+    useEffect(() => {
+      // Fetch dropdown options
+      const fetchDropdown = async () => {
+        try {
+          const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=planviewList`);
+          const data = await response.json();
+          setPlanviewStatuses(data["Project Status"]);
+          setPlanviewPhases(data["Project Phase"]);
+          setMinistries(data["Ministry"]);
+        } catch (error) {
+          setDropdownError(String(error));
+        } finally {
+          setDropdownLoading(false);
+        }
+      }
+      fetchDropdown();
+    }, []);
+
   // Handle checkbox change for each row
   const handleCheckboxChange = (projectId: string) => {
     setSelectedRows((prevSelected) =>
@@ -215,12 +238,7 @@ const PlanviewListPage = () => {
       [name]: value,
     }));
 
-    // if (formData.requestedStartDate > formData.requestedStartDate) {
-    //   console.log("Error");
-    //   setError("Finish date cannot be earlier than start date");
-    // } else {
-    //   setError("");
-    // }
+
   };
 
   const handleSearch = () => {
@@ -266,6 +284,16 @@ const PlanviewListPage = () => {
     // Generate a download link for the workbook
     XLSX.writeFile(workbook, "planview_data.xlsx");
   };
+
+  
+  if (dropdownLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (dropdownError) {
+    return <div>Error: {dropdownError
+    }</div>;
+  }
 
   return (
     <div>
