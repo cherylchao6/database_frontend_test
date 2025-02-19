@@ -108,6 +108,7 @@ const RoomSolutionForm: React.FC<RoomSolutionFormProps> = ({
         prev.filter((featureId) => featureId !== id)
       );
     } else {
+      console.log("id", id);
       setSelectedFeatures((prev) => [...prev, id]);
     }
   };
