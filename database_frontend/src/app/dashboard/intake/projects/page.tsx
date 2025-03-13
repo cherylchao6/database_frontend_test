@@ -3,68 +3,70 @@ import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { data } from "autoprefixer";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 interface Project {
   projectId: string;
-  projectName: string;
-  waitingOn: string;
-  waitingFor: string;
-  status: string;
-  priority: string;
-  intakesFormStatus: string;
-  onOpsList: boolean; // Ensure this is boolean
-  lastComm: string;
-  projectSponsor: string;
+  projectName?: string | null;
+  waitingOn?: string | null;
+  waitingFor?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  intakesFormStatus?: string | null;
+  onOpsList: boolean;
+  lastComm?: string | null;
+  projectSponsor?: string | null;
   dateAdded: string;
-  implemented: boolean; // Ensure this is boolean
+  implemented: boolean;
 }
 
-// Dummy data for projects (declared globally)
-const projectData: Project[] = [
-  {
-    projectId: "MAG-516-B+-67",
-    projectName: "STGC",
-    waitingOn: "Client",
-    waitingFor: "Response",
-    status: "100 - Intake compl. (to Implement'n)",
-    priority: "Moderate",
-    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
-    onOpsList: true,
-    lastComm: "11-Sep-22",
-    projectSponsor: "MAG",
-    dateAdded: "13-Sep-22",
-    implemented: true,
-  },
-  {
-    projectId: "MAG-516-B+-68",
-    projectName: "STGC",
-    waitingOn: "Client",
-    waitingFor: "Response",
-    status: "100 - Intake compl. (to Implement'n)",
-    priority: "Moderate",
-    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
-    onOpsList: true,
-    lastComm: "12-Sep-22",
-    projectSponsor: "MAG",
-    dateAdded: "12-Sep-22",
-    implemented: true,
-  },
-  {
-    projectId: "MAG-516-B+-69",
-    projectName: "STGC",
-    waitingOn: "Client",
-    waitingFor: "Response",
-    status: "100 - Intake compl. (to Implement'n)",
-    priority: "Moderate",
-    intakesFormStatus: "100-Approved (JVESC+JVDSC)",
-    onOpsList: false,
-    lastComm: "13-Sep-22",
-    projectSponsor: "MAG",
-    dateAdded: "11-Sep-22",
-    implemented: true,
-  },
-  // Add more dummy data objects here...
-];
+// // Dummy data for projects (declared globally)
+// const projectData: Project[] = [
+//   {
+//     projectId: "MAG-516-B+-67",
+//     projectName: "STGC",
+//     waitingOn: "Client",
+//     waitingFor: "Response",
+//     status: "100 - Intake compl. (to Implement'n)",
+//     priority: "Moderate",
+//     intakesFormStatus: "100-Approved (JVESC+JVDSC)",
+//     onOpsList: true,
+//     lastComm: "11-Sep-22",
+//     projectSponsor: "MAG",
+//     dateAdded: "13-Sep-22",
+//     implemented: true,
+//   },
+//   {
+//     projectId: "MAG-516-B+-68",
+//     projectName: "STGC",
+//     waitingOn: "Client",
+//     waitingFor: "Response",
+//     status: "100 - Intake compl. (to Implement'n)",
+//     priority: "Moderate",
+//     intakesFormStatus: "100-Approved (JVESC+JVDSC)",
+//     onOpsList: true,
+//     lastComm: "12-Sep-22",
+//     projectSponsor: "MAG",
+//     dateAdded: "12-Sep-22",
+//     implemented: true,
+//   },
+//   {
+//     projectId: "MAG-516-B+-69",
+//     projectName: "STGC",
+//     waitingOn: "Client",
+//     waitingFor: "Response",
+//     status: "100 - Intake compl. (to Implement'n)",
+//     priority: "Moderate",
+//     intakesFormStatus: "100-Approved (JVESC+JVDSC)",
+//     onOpsList: false,
+//     lastComm: "13-Sep-22",
+//     projectSponsor: "MAG",
+//     dateAdded: "11-Sep-22",
+//     implemented: true,
+//   },
+//   // Add more dummy data objects here...
+// ];
 
 // Column headers
 const tableColumns = [
@@ -82,8 +84,11 @@ const tableColumns = [
   { label: "In Implementation", key: "implemented" },
 ];
 
+const labelClassName = "block text-sm font-semibold text-gray-900";
+
 const ProjectListPage = () => {
-  const labelClassName = "block text-sm font-medium leading-6 text-gray-900";
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [dataloading, setDataLoading] = useState(true);
   const [projectId, setProjectId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -101,23 +106,42 @@ const ProjectListPage = () => {
     // Fetch dropdown options
     const fetchDropdown = async () => {
       try {
-        const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=projectList`);
+        const response = await fetch(
+          `${apiUrl}/dropdowns?moduleId=101&pageType=projectList`
+        );
         const data = await response.json();
-        console.log(data);
         setStatusOptions(data["Intake Form Status"]);
       } catch (error) {
         setDropdownError(String(error));
       } finally {
         setDropdownLoading(false);
       }
-    }
+    };
     fetchDropdown();
   }, []);
 
   const totalItems = 50;
   const itemsPerPage = 20;
-
   const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/projects`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setProjects(data.projects);
+      } catch (err) {
+        setError(String(err));
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -137,10 +161,10 @@ const ProjectListPage = () => {
   };
 
   // Sort the project data based on the current sort state
-  const sortedProjects = [...projectData].sort((a, b) => {
+  const sortedProjects = [...projects].sort((a, b) => {
     if (sortColumn) {
-      const aValue = a[sortColumn as keyof typeof a];
-      const bValue = b[sortColumn as keyof typeof b];
+      const aValue = a[sortColumn as keyof typeof a] ?? ""; // Use empty string if null
+      const bValue = b[sortColumn as keyof typeof b] ?? ""; // Use empty string if null
 
       if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
       if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
@@ -176,11 +200,16 @@ const ProjectListPage = () => {
     return <div>Loading...</div>;
   }
 
+  if (dataloading) return <div>Loading projects...</div>;
+
   if (dropdownError) {
-    return <div>Error: {dropdownError
-    }</div>;
+    return <div>Error: {dropdownError}</div>;
   }
-  
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
@@ -378,6 +407,14 @@ const ProjectListPage = () => {
                                 readOnly
                                 className="form-checkbox h-4 w-4 text-indigo-600"
                               />
+                            ) : column.key === "dateAdded" ? (
+                              project.dateAdded ? (
+                                new Date(project.dateAdded)
+                                  .toISOString()
+                                  .split("T")[0] // Convert to YYYY-MM-DD
+                              ) : (
+                                "N/A"
+                              )
                             ) : isLinkColumn ? (
                               <Link
                                 href={`/dashboard/intake/projects/${project.projectId}`}
@@ -386,7 +423,8 @@ const ProjectListPage = () => {
                                 {project[column.key as keyof typeof project]}
                               </Link>
                             ) : (
-                              project[column.key as keyof typeof project]
+                              project[column.key as keyof typeof project] ??
+                              "N/A"
                             )}
                           </td>
                         );
