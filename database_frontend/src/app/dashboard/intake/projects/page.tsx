@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { fetchData } from "next-auth/client/_utils";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const itemsPerPage = 10; // Adjustable limit
 
