@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { ministries } from "@/types/organization";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const baseClassName =
@@ -31,12 +32,6 @@ export default function ResponsiveDropdowns({
     useState<string>(initialDivision);
   const [selectedBranch, setSelectedBranch] = useState<string>(initialBranch);
 
-
-  const [ministryOptions, setMinistryOptions] = useState<string[]>([]);
-  const [dropdownLoading, setDropdownLoading] = useState(true);
-  const [dropdownError, setDropdownError] = useState("");
-
-
   // 當初始值改變時更新部門和分支數據
   useEffect(() => {
     if (initialMinistry) {
@@ -65,22 +60,6 @@ export default function ResponsiveDropdowns({
         .catch((err) => console.error("Failed to fetch divisions:", err));
     }
   }, [initialMinistry, initialDivision, initialBranch]);
-
-    const fetchDropdown = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=createProject`);
-        const data = await response.json();
-        setMinistryOptions(data["Ministry"]);
-      } catch (error) {
-        setDropdownError(String(error));
-      } finally {
-        setDropdownLoading(false);
-      }
-    }
-  
-    useEffect(() => {
-      fetchDropdown();
-    }, []);
 
   const handleMinistryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const ministry = e.target.value;
@@ -120,14 +99,6 @@ export default function ResponsiveDropdowns({
     if (onChangeBranch) onChangeBranch(branch);
   };
 
-  if (dropdownLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (dropdownError) {
-    return <div>Error: {dropdownError}</div>;
-  }
-
   return (
     <div className="space-y-4">
       {/* Ministry Dropdown */}
@@ -143,7 +114,7 @@ export default function ResponsiveDropdowns({
           <option value="" disabled>
             Select Ministry
           </option>
-          {ministryOptions.map((ministry) => (
+          {ministries.map((ministry) => (
             <option key={ministry} value={ministry}>
               {ministry}
             </option>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BuildingLibraryIcon,
@@ -19,7 +19,15 @@ import NotesTable from "@/components//NotesTable";
 
 import ResponsiveDropdowns from "@/components/OrgResponsiveDropdowns";
 import MilestonesComponent from "@/components/MilestonesComponent";
-
+import {
+  priorityOptions,
+  statusOptions,
+  waitingOnContactOptions,
+  waitingForOptions,
+  intakeFormStatusOptions,
+  clientMinistryOptions,
+  fundingSourceOptions,
+} from "constants/intake/dropDownOptions";
 
 import { Note, User } from "@/types/intakes/note";
 
@@ -99,24 +107,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [newAddressMinistry, setNewAddressMinistry] = useState("");
   const [newAddressDivision, setNewAddressDivision] = useState("");
 
-
-  // dropdown options
-  const [priorityOptions, setPriorityOptions] = useState<string[]>([]);
-  const [statusOptions, setStatusOptions] = useState<string[]>([]);
-  const [waitingOnContactOptions, setWaitingOnContactOptions] = useState<string[]>(
-    []
-  );
-  const [waitingForOptions, setWaitingForOptions] = useState<string[]>([]);
-  const [intakeFormStatusOptions, setIntakeFormStatusOptions] = useState<string[]>(
-    []
-  );
-  const [clientMinistryOptions, setClientMinistryOptions] = useState<string[]>([]);
-  const [fundingSourceOptions, setFundingSourceOptions] = useState<string[]>([]);
-
-  const [dropdownLoading, setDropdownLoading] = useState(true);
-  const [dropdownError, setDropdownError] = useState("");
-
-
   // available rooms for the location
   // TODO::should call api in the future
   const [selectedRoom, setSelectedRoom] = useState("");
@@ -136,28 +126,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     const response = await fetch(`${apiUrl}/users?name=${query}`);
     return await response.json(); // Returns the people data
   };
-
-  const fetchDropdown = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=createProject`);
-      const data = await response.json();
-      setPriorityOptions(data["Priority"]);
-      setStatusOptions(data["Status"]);
-      setWaitingOnContactOptions(data["Waiting On Contact(s)"]);
-      setWaitingForOptions(data["Waiting For"]);
-      setIntakeFormStatusOptions(data["Intake Form Status"]);
-      setClientMinistryOptions(data["Client Ministry"]);
-      setFundingSourceOptions(data["Funding Source"]);
-    } catch (error) {
-      setDropdownError(String(error));
-    } finally {
-      setDropdownLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchDropdown();
-  }, []);
 
   /* Handel Functions */
   const handleInputChange = (
@@ -344,15 +312,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     }));
   }
 
-  if (dropdownLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (dropdownError) {
-    return <div>Error: {dropdownError
-    }</div>;
-  }
-  
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
