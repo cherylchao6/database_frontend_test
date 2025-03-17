@@ -5,6 +5,16 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const testID = 10;
 const profilePhotoSize = 96;
 
+// work around
+// because we dont have a valid ssl certificate
+// we need to disable the ssl check
+// TODO: remove the agent when we have a valid ssl certificate
+import https from "https";
+import axios from 'axios';
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
+
 const {
   NEXT_PUBLIC_AZURE_AD_CLIENT_ID,
   NEXT_PUBLIC_AZURE_AD_TENANT_ID,
@@ -75,20 +85,18 @@ const handler = NextAuth({
         }
 
         // call api to save user data and get user id
+        // TODO: remove the agent when we have a valid ssl certificate
         try {
-          const response = await fetch(`${apiUrl}/users/login`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              azureId: user.id,
-              email: user.email,
-              image: base64Image,
-            }),
+          const response = await axios.post(`${apiUrl}/users/login`, {
+            azureId: user.id,
+            email: user.email,
+            image: base64Image,
+          }, {
+            httpsAgent,
+            headers: { "Content-Type": "application/json" }
           });
-          if (response.ok) {
-            const data = await response.json();
+          if (response.status === 200) {
+            const data = response.data;
             // overwrite the id with the one from the server
             token.id = data.id;
           }
