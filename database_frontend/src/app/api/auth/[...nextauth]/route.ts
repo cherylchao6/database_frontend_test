@@ -99,6 +99,7 @@ const handler = NextAuth({
             const data = response.data;
             // overwrite the id with the one from the server
             token.id = data.id;
+            token.apiToken = data.token;
           }
         } catch (error) {
           console.error("Error saving user data:", error);
@@ -115,6 +116,7 @@ const handler = NextAuth({
             id: token.id ?? testID,
             image: token.image ?? (session.user ? session.user.image : undefined),
           },
+          apiToken: token.apiToken,
         });
       }
       return session;
