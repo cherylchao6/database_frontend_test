@@ -108,7 +108,14 @@ const planviewData: Planview[] = [
 
 const PlanviewListPage = () => {
   // get user from session
-  const user = useSession().data?.user as CustomUser;
+  const sessionUser = useSession().data?.user;
+  const user: CustomUser | null = sessionUser
+    ? {
+        id: String(sessionUser.id),
+        email: sessionUser.email || "",
+        name: sessionUser.name || "",
+      }
+    : null;
   console.log(user);
   const [projectId, setProjectId] = useState("");
   const [status, setStatus] = useState("");
@@ -692,8 +699,8 @@ const PlanviewListPage = () => {
                 id: String(projectNotes.length + 1),
                 description: notes,
                 user: {
-                  id: user.id,
-                  name: user.name,
+                  id: user?.id || "",
+                  name: user?.name || "",
                 },
                 timestamp: new Date().toISOString(),
               },
