@@ -4,7 +4,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 interface Person {
   id: number;
   name: string;
-  avatar: string;
+  image: string;
 }
 
 interface DynamicSearchDropdownProps {
@@ -116,7 +116,7 @@ const DynamicSearchDropdown = ({
                 <div className="flex items-center">
                   <img
                     alt=""
-                    src={person.avatar}
+                    src={person.image}
                     className="h-5 w-5 flex-shrink-0 rounded-full"
                   />
                   <span className="ml-3 block truncate">{person.name}</span>
@@ -131,10 +131,10 @@ const DynamicSearchDropdown = ({
       <div className="mt-2 flex flex-wrap">
         {assignedTo.map((person) => (
           <div key={person.id} className="flex items-center mr-2">
-            {/* For each person in the array, display their avatar and name */}
+            {/* For each person in the array, display their image and name */}
             <img
               alt=""
-              src={person.avatar}
+              src={person.image}
               className="h-6 w-6 flex-shrink-0 rounded-full"
             />
             <span className="ml-2 text-gray-900">{person.name}</span>

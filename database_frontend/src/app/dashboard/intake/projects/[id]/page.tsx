@@ -19,20 +19,20 @@ const UpdateProjectPage = () => {
   const fakeData: Project = {
     projectId: projectId || "MAG-516-B+-67", // Use the project ID from the URL
     projectName: "Super Fun Project", // Project Name
-    projectDescription: "Brampton-7755 Hurontario St-Ctrm-401-SCJ",
+    description: "Brampton-7755 Hurontario St-Ctrm-401-SCJ",
     priority: "Low",
-    onOppList: true, // This is for the "On Opp List?" checkbox
+    onOpsList: true, // This is for the "On Opp List?" checkbox
     implemented: false, // This is for the "In Implementation Phase?" checkbox
     deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
     firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
     status: "100 - Intake compl. (to Implement'n)", // Status field
     alias: "5200073", // Alias field
-    waitingOnContact: "Client",
+    waitingOn: "Client",
     waitingFor: "Response",
     assignedTo: {
       id: 1,
       name: "Devesh Gupta",
-      avatar: "https://i.ibb.co/B6ygD2G/devesh.png",
+      image: "https://i.ibb.co/B6ygD2G/devesh.png",
     },
     clientMinistry: "MAG", // Client Ministry
     folderName: "Brampton-7755 Hurontario St-Ctrm-401-SCJ", // Folder Name if exists
@@ -42,19 +42,19 @@ const UpdateProjectPage = () => {
       {
         id: 3,
         name: "Anthony Permell",
-        avatar:
+        image:
           "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
       },
       {
         id: 4,
         name: "Tom Cook",
-        avatar:
+        image:
           "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       },
     ], // Client Contact field
-    assocReferenceNo: ["REF-2022-001"], // Associated Reference No. if exists
+    assocReferenceNos: ["REF-2022-001"], // Associated Reference No. if exists
     fundingSource: "VHH", // Funding Source
-    noteLog: [
+    noteLogs: [
       {
         id: "1",
         description: "Initial contact made",
@@ -96,17 +96,19 @@ const UpdateProjectPage = () => {
         timestamp: "2024-07-03T10:30:00Z",
       },
     ], // Note log array
-    locationName: "Brampton Courthouse", // Location Name
-    address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1", // Address field
+    location: {
+      id: 1,
+      name: "Brampton Courthouse",
+      address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1",
+    },
     rooms: [{ id: "000001", num: "Ctrm401" }], // Room numbers
     projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
     ministry: "MAG", // Ministry field
     division: "Court Services", // Division field
-    branchUnit: "Brampton (A. Grenville and William Davis) Courthouse", // Branch/Unit field
+    branch: "Brampton (A. Grenville and William Davis) Courthouse", // Branch/Unit field
     requestedCompletionDate: "2023-12-31", // Requested Completion Date
-    assignedToPM: "Michael Johnson", // Assigned to PM field
-    confirmed: true, // Confirmed checkbox
-    estimatedCost: [
+    assignedToPM: true,
+    estimatedCosts: [
       { cost: 5000, year: 2021 },
       { cost: 3000, year: 2022 },
       { cost: 600, year: 2023 },

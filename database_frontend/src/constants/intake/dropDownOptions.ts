@@ -22,7 +22,7 @@ export const statusOptions = [
   "999 - Archived",
 ];
 
-export const waitingOnContactOptions = [
+export const waitingOnOptions = [
   "3rd pty.",
   "Client",
   "JVN exec.",

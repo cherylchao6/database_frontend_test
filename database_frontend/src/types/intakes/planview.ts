@@ -34,7 +34,7 @@ interface Planview {
   projectId: string;
   projectMinistry: Ministry;
   projectName: string;
-  projectDescription: string;
+  description: string;
   projectNotes: Note[];
 }
 

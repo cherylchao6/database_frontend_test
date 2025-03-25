@@ -65,7 +65,7 @@ const NotesTable: React.FC<NotesTableProps> = ({
         {
           id: String(projectNotes.length + 1),
           description: notes,
-          user: { id: user.id, name: user.name },
+          user: { id: String(user.id), name: user.name },
           timestamp: new Date().toISOString(),
           attachedFile: uploadedFile,
         },
@@ -143,7 +143,7 @@ const NotesTable: React.FC<NotesTableProps> = ({
                     )}
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
-                    {user && note.user.id === user.id && (
+                    {user && Number(note.user.id) === user.id && (
                       <div className="flex space-x-2">
                         <button
                           onClick={() => {
