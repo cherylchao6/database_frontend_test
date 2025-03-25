@@ -42,7 +42,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   isEditMode,
   onSave,
 }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   // console.log("session in created", session);
   const router = useRouter();
   //We use protected route, so session should not be null

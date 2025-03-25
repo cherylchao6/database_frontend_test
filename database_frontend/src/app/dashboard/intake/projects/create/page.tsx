@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { cleanObject } from "@/utils/apiHelper";
 import { useSession } from "next-auth/react";
 
@@ -42,14 +42,14 @@ const initialProjectData: Project = {
 const CreateProjectPage = () => {
   const { data: session } = useSession();
   // console.log("session", session);
-  const router = useRouter();
+  // const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   const handleSave = async (newProjectData: Project) => {
     try {
       (newProjectData as any).locationId = newProjectData?.location?.id;
       (newProjectData as any).assignedTo = newProjectData?.assignedTo?.id;
-      let payload = cleanObject(newProjectData);
+      const payload = cleanObject(newProjectData);
 
       console.log("payload", payload);
 
