@@ -97,7 +97,7 @@ const UpdateProjectPage = () => {
       },
     ], // Note log array
     location: {
-      id: "000001",
+      id: 1,
       name: "Brampton Courthouse",
       address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1",
     },
