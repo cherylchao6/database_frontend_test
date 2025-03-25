@@ -1,5 +1,5 @@
 export interface Person {
   id: number;
   name: string;
-  avatar: string;
+  image: string;
 }

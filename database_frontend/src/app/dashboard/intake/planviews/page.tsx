@@ -24,7 +24,7 @@ const tableColumns = [
   { label: "Ministry", key: "projectMinistry" },
   { label: "Project ID", key: "projectId" },
   { label: "Project Name", key: "projectName" },
-  { label: "Project Description", key: "projectDescription" },
+  { label: "Project Description", key: "description" },
   { label: "Project Phase", key: "phase" },
   { label: "Project status", key: "status" },
   { label: "Requested Start", key: "requestedStartDate" },
@@ -85,7 +85,7 @@ const planviewData: Planview[] = [
     projectId: "MAG-402",
     projectMinistry: "MAG",
     projectName: "Phase ll- Bulk Order",
-    projectDescription: "A/V + VC Install",
+    description: "A/V + VC Install",
     phase: "Planning",
     status: "On Track",
     requestedStartDate: "2024-09-03T10:30:00Z",
@@ -97,7 +97,7 @@ const planviewData: Planview[] = [
     projectId: "MAG-449",
     projectMinistry: "MAG",
     projectName: "Phase ll- Network",
-    projectDescription: "Courthouse Video Solution",
+    description: "Courthouse Video Solution",
     phase: "Planning",
     status: "On Hold",
     requestedStartDate: "2024-08-03T10:30:00Z",
@@ -162,23 +162,25 @@ const PlanviewListPage = () => {
   const [dropdownError, setDropdownError] = useState("");
 
   // Fetch planview phases and statuses
-    useEffect(() => {
-      // Fetch dropdown options
-      const fetchDropdown = async () => {
-        try {
-          const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=planviewList`);
-          const data = await response.json();
-          setPlanviewStatuses(data["Project Status"]);
-          setPlanviewPhases(data["Project Phase"]);
-          setMinistries(data["Ministry"]);
-        } catch (error) {
-          setDropdownError(String(error));
-        } finally {
-          setDropdownLoading(false);
-        }
+  useEffect(() => {
+    // Fetch dropdown options
+    const fetchDropdown = async () => {
+      try {
+        const response = await fetch(
+          `${apiUrl}/dropdowns?moduleId=101&pageType=planviewList`
+        );
+        const data = await response.json();
+        setPlanviewStatuses(data["Project Status"]);
+        setPlanviewPhases(data["Project Phase"]);
+        setMinistries(data["Ministry"]);
+      } catch (error) {
+        setDropdownError(String(error));
+      } finally {
+        setDropdownLoading(false);
       }
-      fetchDropdown();
-    }, []);
+    };
+    fetchDropdown();
+  }, []);
 
   // Handle checkbox change for each row
   const handleCheckboxChange = (projectId: string) => {
@@ -237,8 +239,6 @@ const PlanviewListPage = () => {
       ...prev,
       [name]: value,
     }));
-
-
   };
 
   const handleSearch = () => {
@@ -285,14 +285,12 @@ const PlanviewListPage = () => {
     XLSX.writeFile(workbook, "planview_data.xlsx");
   };
 
-  
   if (dropdownLoading) {
     return <div>Loading...</div>;
   }
 
   if (dropdownError) {
-    return <div>Error: {dropdownError
-    }</div>;
+    return <div>Error: {dropdownError}</div>;
   }
 
   return (
@@ -778,7 +776,7 @@ const PlanviewListPage = () => {
                   Description
                 </label>
                 <p className="mt-1 text-sm text-gray-500">
-                  {selectedPlanview.projectDescription}
+                  {selectedPlanview.description}
                 </p>
               </div>
 

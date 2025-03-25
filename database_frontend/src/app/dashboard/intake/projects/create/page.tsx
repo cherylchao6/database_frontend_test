@@ -3,63 +3,75 @@ import { useState } from "react";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
 import { useRouter } from "next/navigation";
+import { cleanObject } from "@/utils/apiHelper";
+import { useSession } from "next-auth/react";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const initialProjectData: Project = {
   projectId: "",
   projectName: "",
-  projectDescription: "",
+  description: "",
   priority: "",
-  onOppList: false,
+  onOpsList: false,
   deadline: "",
   firstContactDate: "",
   status: "",
   alias: "",
   implemented: false,
-  waitingOnContact: "",
+  waitingOn: "",
   waitingFor: "",
   clientMinistry: "",
   folderName: "",
   intakeFormStatus: "",
   lastComm: "",
   clientContacts: [],
-  assocReferenceNo: [],
+  assocReferenceNos: [],
   fundingSource: "",
-  noteLog: [],
-  locationName: "",
-  address: "",
+  noteLogs: [],
   rooms: [],
   projectSponsor: "",
   ministry: "",
   division: "",
-  branchUnit: "",
+  branch: "",
   requestedCompletionDate: "",
-  assignedToPM: "",
-  confirmed: false,
-  estimatedCost: [],
+  assignedToPM: false,
+  estimatedCosts: [],
 };
 
 const CreateProjectPage = () => {
+  const { data: session } = useSession();
+  // console.log("session", session);
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
   const handleSave = async (newProjectData: Project) => {
     try {
-      // const response = await fetch(`${apiUrl}/projects`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(newProjectData),
-      // });
+      (newProjectData as any).locationId = newProjectData?.location?.id;
+      (newProjectData as any).assignedTo = newProjectData?.assignedTo?.id;
+      let payload = cleanObject(newProjectData);
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to create project");
-      // }
+      console.log("payload", payload);
 
-      console.log("newProjectData", newProjectData);
+      const response = await fetch(`${apiUrl}/projects`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.apiToken}`,
+        },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        const firstError = errorData?.errors?.[0]?.message || "Unknown error";
+        alert(firstError);
+        throw new Error(firstError);
+      }
 
       alert("Project created successfully!");
-      router.push("/dashboard/intake/projects");
+      // // router.push("/dashboard/intake/projects");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

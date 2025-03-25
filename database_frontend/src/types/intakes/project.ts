@@ -1,18 +1,24 @@
 import { Person } from "./person";
 import { Note } from "./note";
 
+interface Location {
+  id: number| null;
+  name: string;
+  address: string;
+}
+
 export interface Project {
   projectId: string;
   projectName: string;
-  projectDescription: string;
+  description: string;
   priority: string;
-  onOppList: boolean;
+  onOpsList: boolean;
   deadline: string;
   firstContactDate: string;
   alias?: string;
   status: string;
   implemented: boolean;
-  waitingOnContact: string;
+  waitingOn: string;
   waitingFor: string;
   assignedTo?: Person;
   clientMinistry: string;
@@ -20,18 +26,16 @@ export interface Project {
   intakeFormStatus: string;
   lastComm: string;
   clientContacts: Person[];
-  assocReferenceNo: string[];
+  assocReferenceNos: string[];
   fundingSource: string;
-  noteLog: Note[];
-  locationName?: string;
-  address?: string;
+  noteLogs: Note[];
+  location?: Location;
   rooms?: { id: string; num: string }[];
   projectSponsor?: string;
   ministry?: string;
   division?: string;
-  branchUnit?: string;
+  branch?: string;
   requestedCompletionDate?: string;
-  assignedToPM?: string;
-  confirmed?: boolean;
-  estimatedCost?: { cost: number; year: number }[];
+  assignedToPM?: boolean;
+  estimatedCosts?: { cost: number; year: number }[];
 }
