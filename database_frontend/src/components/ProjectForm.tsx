@@ -20,8 +20,8 @@ import NotesTable from "@/components//NotesTable";
 import ResponsiveDropdowns from "@/components/OrgResponsiveDropdowns";
 import MilestonesComponent from "@/components/MilestonesComponent";
 
-
 import { Note, User } from "@/types/intakes/note";
+import { useSession } from "next-auth/react";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -42,12 +42,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   isEditMode,
   onSave,
 }) => {
+  const { data: session, status } = useSession();
+  // console.log("session in created", session);
   const router = useRouter();
-  const user: User = { id: "8", name: "test user" };
+  //We use protected route, so session should not be null
+  const user: User = {
+    id: session!.user!.id ?? 0,
+    name: session!.user!.name ?? "test user",
+  };
   const projectId = isEditMode ? initialProjectData.projectId : "";
   const [projectData, setProjectData] = useState<Project>(initialProjectData);
   const [projectNotes, setProjectNotes] = useState<Note[]>(
-    initialProjectData.noteLog
+    initialProjectData.noteLogs
   );
   const [assignedTo, setAssignedTo] = useState<Person[]>(
     initialProjectData.assignedTo ? [initialProjectData.assignedTo] : []
@@ -56,15 +62,18 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     initialProjectData.clientContacts || []
   );
 
+  const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
+    null
+  );
   const [selectedLocation, setSelectedLocation] = useState(
-    initialProjectData.locationName || ""
+    initialProjectData?.location?.name ?? ""
   );
   const [selectedAddress, setSelectedAddress] = useState(
-    initialProjectData.address || ""
+    initialProjectData?.location?.address || ""
   );
 
-  const [assocReferenceNoTags, setAssocReferenceNoTags] = useState<string[]>(
-    initialProjectData.assocReferenceNo || []
+  const [assocReferenceNosTags, setAssocReferenceNoTags] = useState<string[]>(
+    initialProjectData.assocReferenceNos || []
   );
   const [referenceNoInput, setReferenceNoInput] = useState("");
 
@@ -76,9 +85,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [division, setDivision] = useState<string>(
     initialProjectData.division || ""
   );
-  const [branch, setBranch] = useState<string>(
-    initialProjectData.branchUnit || ""
-  );
+  const [branch, setBranch] = useState<string>(initialProjectData.branch || "");
 
   const [createCostOpen, setCreateCostOpen] = useState(false);
   const [cost, setCost] = useState<{
@@ -99,23 +106,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [newAddressMinistry, setNewAddressMinistry] = useState("");
   const [newAddressDivision, setNewAddressDivision] = useState("");
 
-
   // dropdown options
   const [priorityOptions, setPriorityOptions] = useState<string[]>([]);
   const [statusOptions, setStatusOptions] = useState<string[]>([]);
-  const [waitingOnContactOptions, setWaitingOnContactOptions] = useState<string[]>(
-    []
-  );
+  const [waitingOnOptions, setWaitingOnContactOptions] = useState<string[]>([]);
   const [waitingForOptions, setWaitingForOptions] = useState<string[]>([]);
-  const [intakeFormStatusOptions, setIntakeFormStatusOptions] = useState<string[]>(
+  const [intakeFormStatusOptions, setIntakeFormStatusOptions] = useState<
+    string[]
+  >([]);
+  const [clientMinistryOptions, setClientMinistryOptions] = useState<string[]>(
     []
   );
-  const [clientMinistryOptions, setClientMinistryOptions] = useState<string[]>([]);
-  const [fundingSourceOptions, setFundingSourceOptions] = useState<string[]>([]);
+  const [fundingSourceOptions, setFundingSourceOptions] = useState<string[]>(
+    []
+  );
 
   const [dropdownLoading, setDropdownLoading] = useState(true);
   const [dropdownError, setDropdownError] = useState("");
-
 
   // available rooms for the location
   // TODO::should call api in the future
@@ -139,7 +146,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const fetchDropdown = async () => {
     try {
-      const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=createProject`);
+      const response = await fetch(
+        `${apiUrl}/dropdowns?moduleId=101&pageType=createProject`
+      );
       const data = await response.json();
       setPriorityOptions(data["Priority"]);
       setStatusOptions(data["Status"]);
@@ -153,7 +162,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     } finally {
       setDropdownLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchDropdown();
@@ -180,14 +189,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       setProjectData((prevState) => {
         return {
           ...prevState,
-          noteLog: [
+          noteLogs: [
             {
               id: `${Date.now()}`, // Add a unique id for the note
               description: value,
               user: { id: user.id.toString(), name: user.name },
               timestamp: new Date().toISOString(),
             },
-            ...prevState.noteLog,
+            ...prevState.noteLogs,
           ],
         };
       });
@@ -205,20 +214,25 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       ...projectData,
       assignedTo: assignedTo[0],
       clientContacts,
-      locationName: selectedLocation,
-      address: selectedAddress,
+      location: {
+        id: selectedLocationId ?? null,
+        name: selectedLocation,
+        address: selectedAddress,
+      },
+      assocReferenceNos: assocReferenceNosTags,
+      ministry,
+      division,
+      branch,
     });
-
-    router.push("/dashboard/intake/projects");
   };
 
   const addReferenceNoTag = () => {
     if (
       referenceNoInput.trim() &&
-      !assocReferenceNoTags.includes(referenceNoInput.trim())
+      !assocReferenceNosTags.includes(referenceNoInput.trim())
     ) {
       setAssocReferenceNoTags([
-        ...assocReferenceNoTags,
+        ...assocReferenceNosTags,
         referenceNoInput.trim(),
       ]);
     }
@@ -227,7 +241,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const removeReferenceNoTag = (tagToRemove: string) => {
     setAssocReferenceNoTags(
-      assocReferenceNoTags.filter((tag) => tag !== tagToRemove)
+      assocReferenceNosTags.filter((tag) => tag !== tagToRemove)
     );
   };
 
@@ -240,14 +254,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const handleLocationSelect = (location: Location | null) => {
     if (location) {
+      setSelectedLocationId(location.id);
       setSelectedLocation(location.name);
       setSelectedAddress(location.address);
     } else {
+      setSelectedLocationId(null);
       setSelectedLocation("");
       setSelectedAddress("");
     }
-    // work around, need to figure out where to use addrerss variable
-    // console.log(address);
   };
 
   const handleMinistryChange = (selectedMinistry: string) => {
@@ -292,9 +306,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       setProjectData((prevState) => {
         return {
           ...prevState,
-          estimatedCost: [
+          estimatedCosts: [
             { cost: parsedCost, year: parsedYear },
-            ...(prevState.estimatedCost || []),
+            ...(prevState.estimatedCosts || []),
           ],
         };
       });
@@ -349,15 +363,14 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   }
 
   if (dropdownError) {
-    return <div>Error: {dropdownError
-    }</div>;
+    return <div>Error: {dropdownError}</div>;
   }
-  
+
   return (
     <div>
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="text-4xl font-semibold text-slate-900">
-          Project Intake Update
+          {isEditMode ? "Project Intake Update" : "Create New Project"}
         </h1>
       </div>
       <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -388,11 +401,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         {/* Project Short Description */}
         <div className="sm:col-span-6">
           <FormInput
-            id="projectDescription"
+            id="description"
             label="Project Short Description"
-            name="projectDescription"
+            name="description"
             type="text"
-            value={projectData?.projectDescription || ""}
+            value={projectData?.description || ""}
             onChange={handleInputChange}
             placeholder="Enter project short description"
           />
@@ -411,10 +424,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         {/* On Opp. List? */}
         <div className="mt-8 flex items-center sm:col-span-3">
           <FormCheckbox
-            id="onOppList"
-            name="onOppList"
+            id="onOpsList"
+            name="onOpsList"
             label="On Opp. List ?"
-            checked={projectData?.onOppList || false}
+            checked={projectData?.onOpsList || false}
             onChange={handleInputChange}
           />
         </div>
@@ -477,12 +490,12 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         {/* Waiting On Contact(s) */}
         <div className="sm:col-span-3">
           <FormSelect
-            id="waitingOnContact"
-            name="waitingOnContact"
+            id="waitingOn"
+            name="waitingOn"
             label="Waiting on Contact(s)"
-            value={projectData?.waitingOnContact || ""}
+            value={projectData?.waitingOn || ""}
             onChange={handleInputChange}
-            options={waitingOnContactOptions}
+            options={waitingOnOptions}
           />
         </div>
         {/* Waiting For */}
@@ -562,7 +575,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         </div>
         <div className="sm:col-span-3">
           <label
-            htmlFor="assocReferenceNo"
+            htmlFor="assocReferenceNos"
             className="block font-medium leading-6 text-gray-900 mb-2"
           >
             Assoc Reference No.
@@ -586,7 +599,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             </button>
           </div>
           <div className="mt-2 flex flex-wrap gap-2 ">
-            {assocReferenceNoTags.map((tag, index) => (
+            {assocReferenceNosTags.map((tag, index) => (
               <span
                 key={index}
                 className="px-3 py-1.5 flex items-center text-gray-900 bg-gray-100 rounded hover:bg-gray-200"
@@ -859,9 +872,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {projectData?.estimatedCost &&
-                projectData.estimatedCost.length > 0 ? (
-                  projectData.estimatedCost.map((data, index) => (
+                {projectData?.estimatedCosts &&
+                projectData.estimatedCosts.length > 0 ? (
+                  projectData.estimatedCosts.map((data, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900 text-center">
                         {data.year}
