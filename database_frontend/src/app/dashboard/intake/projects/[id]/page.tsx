@@ -11,12 +11,9 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const UpdateProjectPage = () => {
   const { data: session } = useSession();
-  if (!session) {
-    return <div>Access Denied, Please Log in</div>;
-  }
   const pathname = usePathname();
   const router = useRouter();
-  const projectId = pathname.split("/").pop();
+  const projectId = pathname?.split("/").pop();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [projectData, setProjectData] = useState<Project | null>(null);
@@ -122,6 +119,9 @@ const UpdateProjectPage = () => {
   //   ], // Estimated cost
   // };
 
+  if (!session) {
+    return <div>Access Denied, Please Log in</div>;
+  }
   // Fetch project data based on the project ID from the URL
   useEffect(() => {
     if (projectId) {
