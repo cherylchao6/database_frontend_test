@@ -73,7 +73,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   );
 
   const [assocReferenceNosTags, setAssocReferenceNoTags] = useState<string[]>(
-    initialProjectData.assocReferenceNos || []
+    initialProjectData.assocReferenceNos?.map(
+      (item) => item.assocReferenceNo
+    ) || []
   );
   const [referenceNoInput, setReferenceNoInput] = useState("");
 
@@ -219,7 +221,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         name: selectedLocation,
         address: selectedAddress,
       },
-      assocReferenceNos: assocReferenceNosTags,
+      assocReferenceNos: assocReferenceNosTags.map((tag) => ({
+        assocReferenceNo: tag,
+      })),
       ministry,
       division,
       branch,
