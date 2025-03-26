@@ -100,7 +100,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [costInputError, setCostInputError] = useState<string | null>(null);
 
   const [milestoneOpen, setMilestoneOpen] = useState(false);
-  const [milestones, setMilestones] = useState<Record<string, any>>({}); // 用于保存 Milestones 数据
+  const [milestones, setMilestones] = useState<Record<string, any>>({});
   const [addRequestOpen, setAddRequestOpen] = useState(false);
   const [newAddress, setNewAddress] = useState("");
   const [newLocation, setNewLocation] = useState("");
