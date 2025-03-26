@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import Pagination from "@/components/Pagination";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const itemsPerPage = 10; // Adjustable limit
 
@@ -40,6 +42,8 @@ const tableColumns = [
 const labelClassName = "block text-sm font-semibold text-gray-900";
 
 const ProjectListPage = () => {
+  const { data: session } = useSession();
+
   const [projects, setProjects] = useState<Project[]>([]);
   const [dataloading, setDataLoading] = useState(true);
   const [projectId, setProjectId] = useState("");
@@ -89,7 +93,11 @@ const ProjectListPage = () => {
       // because there are special characters in the status query param
       if (status) params.append("status", encodeURIComponent(status));
 
-      const response = await fetch(`${apiUrl}/projects?${params.toString()}`);
+      const response = await fetch(`${apiUrl}/projects?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${session?.apiToken}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch: ${response.statusText}`);
