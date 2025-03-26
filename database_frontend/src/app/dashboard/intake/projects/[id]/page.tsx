@@ -118,9 +118,6 @@ const UpdateProjectPage = () => {
   //   ], // Estimated cost
   // };
 
-  if (!session) {
-    return <div>Access Denied, Please Log in</div>;
-  }
   // Fetch project data based on the project ID from the URL
   useEffect(() => {
     if (projectId) {
@@ -175,6 +172,10 @@ const UpdateProjectPage = () => {
       }
     }
   };
+
+  if (!session) {
+    return <div>Access Denied, Please Log in</div>;
+  }
 
   if (loading) {
     return (
