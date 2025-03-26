@@ -130,7 +130,7 @@ const UpdateProjectPage = () => {
       // fetch with token
       const response = await fetch(`${apiUrl}/projects/${projectId}`, {
         headers: {
-          Authorization: `Bearer ${session.apiToken}`,
+          Authorization: `Bearer ${session?.apiToken || ""}`,
         },
       });
       if (!response.ok) {
