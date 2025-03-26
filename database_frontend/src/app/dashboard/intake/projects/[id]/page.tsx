@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Hourglass } from "react-loader-spinner";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
@@ -12,7 +12,6 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const UpdateProjectPage = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
   const projectId = pathname?.split("/").pop();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,7 +167,6 @@ const UpdateProjectPage = () => {
       // }
       console.log("updatedProjectData", updatedProjectData);
       alert("Project updated successfully!");
-      router.push("/dashboard/intake/projects");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
