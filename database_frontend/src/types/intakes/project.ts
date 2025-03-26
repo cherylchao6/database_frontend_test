@@ -2,7 +2,7 @@ import { Person } from "./person";
 import { Note } from "./note";
 
 interface Location {
-  id: number| null;
+  id: number | null;
   name: string;
   address: string;
 }
@@ -26,7 +26,7 @@ export interface Project {
   intakeFormStatus: string;
   lastComm: string;
   clientContacts: Person[];
-  assocReferenceNos: string[];
+  assocReferenceNos: { id?: number; assocReferenceNo: string }[];
   fundingSource: string;
   noteLogs: Note[];
   location?: Location;
@@ -37,5 +37,5 @@ export interface Project {
   branch?: string;
   requestedCompletionDate?: string;
   assignedToPM?: boolean;
-  estimatedCosts?: { cost: number; year: number }[];
+  estimatedCosts?: { id?: number; cost: number; year: number }[];
 }

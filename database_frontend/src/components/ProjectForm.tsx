@@ -73,7 +73,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   );
 
   const [assocReferenceNosTags, setAssocReferenceNoTags] = useState<string[]>(
-    initialProjectData.assocReferenceNos || []
+    initialProjectData.assocReferenceNos?.map(
+      (item) => item.assocReferenceNo
+    ) || []
   );
   const [referenceNoInput, setReferenceNoInput] = useState("");
 
@@ -98,7 +100,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   const [costInputError, setCostInputError] = useState<string | null>(null);
 
   const [milestoneOpen, setMilestoneOpen] = useState(false);
-  const [milestones, setMilestones] = useState<Record<string, any>>({}); // 用于保存 Milestones 数据
+  const [milestones, setMilestones] = useState<Record<string, any>>({});
   const [addRequestOpen, setAddRequestOpen] = useState(false);
   const [newAddress, setNewAddress] = useState("");
   const [newLocation, setNewLocation] = useState("");
@@ -219,7 +221,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         name: selectedLocation,
         address: selectedAddress,
       },
-      assocReferenceNos: assocReferenceNosTags,
+      assocReferenceNos: assocReferenceNosTags.map((tag) => ({
+        assocReferenceNo: tag,
+      })),
       ministry,
       division,
       branch,

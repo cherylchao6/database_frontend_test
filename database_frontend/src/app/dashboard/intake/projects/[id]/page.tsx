@@ -1,121 +1,122 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Hourglass } from "react-loader-spinner";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
+import { useSession } from "next-auth/react";
 
-// const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const UpdateProjectPage = () => {
+  const { data: session } = useSession();
   const pathname = usePathname();
-  const router = useRouter();
-  const projectId = pathname.split("/").pop();
+  const projectId = pathname?.split("/").pop();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [projectData, setProjectData] = useState<Project | null>(null);
 
-  const fakeData: Project = {
-    projectId: projectId || "MAG-516-B+-67", // Use the project ID from the URL
-    projectName: "Super Fun Project", // Project Name
-    description: "Brampton-7755 Hurontario St-Ctrm-401-SCJ",
-    priority: "Low",
-    onOpsList: true, // This is for the "On Opp List?" checkbox
-    implemented: false, // This is for the "In Implementation Phase?" checkbox
-    deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
-    firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
-    status: "100 - Intake compl. (to Implement'n)", // Status field
-    alias: "5200073", // Alias field
-    waitingOn: "Client",
-    waitingFor: "Response",
-    assignedTo: {
-      id: 1,
-      name: "Devesh Gupta",
-      image: "https://i.ibb.co/B6ygD2G/devesh.png",
-    },
-    clientMinistry: "MAG", // Client Ministry
-    folderName: "Brampton-7755 Hurontario St-Ctrm-401-SCJ", // Folder Name if exists
-    intakeFormStatus: "100-Approved (JVESC+JVDSC)", // Intake from Status
-    lastComm: "2024-11-03T10:30:00Z", // Last Communication (Out Bound)
-    clientContacts: [
-      {
-        id: 3,
-        name: "Anthony Permell",
-        image:
-          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-      },
-      {
-        id: 4,
-        name: "Tom Cook",
-        image:
-          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-      },
-    ], // Client Contact field
-    assocReferenceNos: ["REF-2022-001"], // Associated Reference No. if exists
-    fundingSource: "VHH", // Funding Source
-    noteLogs: [
-      {
-        id: "1",
-        description: "Initial contact made",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-12-03T10:30:00Z",
-        attachedFile: {
-          name: "Email Copy Demo.msg",
-          url: "https://example.com/initial-contact.pdf",
-        },
-      },
-      {
-        id: "2",
-        description: "Follow-up email sent",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-11-03T10:30:00Z",
-      },
-      {
-        id: "3",
-        description: "Follow-up email sent",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-10-03T10:30:00Z",
-      },
-      {
-        id: "4",
-        description: "Follow-up email sent",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-09-03T10:30:00Z",
-      },
-      {
-        id: "5",
-        description: "Follow-up email sent",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-08-03T10:30:00Z",
-      },
-      {
-        id: "6",
-        description: "Follow-up email sent",
-        user: { id: "1", name: "Derek Pert" },
-        timestamp: "2024-07-03T10:30:00Z",
-      },
-    ], // Note log array
-    location: {
-      id: 1,
-      name: "Brampton Courthouse",
-      address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1",
-    },
-    rooms: [{ id: "000001", num: "Ctrm401" }], // Room numbers
-    projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
-    ministry: "MAG", // Ministry field
-    division: "Court Services", // Division field
-    branch: "Brampton (A. Grenville and William Davis) Courthouse", // Branch/Unit field
-    requestedCompletionDate: "2023-12-31", // Requested Completion Date
-    assignedToPM: true,
-    estimatedCosts: [
-      { cost: 5000, year: 2021 },
-      { cost: 3000, year: 2022 },
-      { cost: 600, year: 2023 },
-      { cost: 44000, year: 2024 },
-      { cost: 33300, year: 2025 },
-    ], // Estimated cost
-  };
+  // const fakeData: Project = {
+  //   projectId: projectId || "MAG-516-B+-67", // Use the project ID from the URL
+  //   projectName: "Super Fun Project", // Project Name
+  //   description: "Brampton-7755 Hurontario St-Ctrm-401-SCJ",
+  //   priority: "Low",
+  //   onOpsList: true, // This is for the "On Opp List?" checkbox
+  //   implemented: false, // This is for the "In Implementation Phase?" checkbox
+  //   deadline: "2024-12-03T10:30:00Z", // As seen in your screenshot
+  //   firstContactDate: "2024-10-03T10:30:00Z", // First Contact Date
+  //   status: "100 - Intake compl. (to Implement'n)", // Status field
+  //   alias: "5200073", // Alias field
+  //   waitingOn: "Client",
+  //   waitingFor: "Response",
+  //   assignedTo: {
+  //     id: 1,
+  //     name: "Devesh Gupta",
+  //     image: "https://i.ibb.co/B6ygD2G/devesh.png",
+  //   },
+  //   clientMinistry: "MAG", // Client Ministry
+  //   folderName: "Brampton-7755 Hurontario St-Ctrm-401-SCJ", // Folder Name if exists
+  //   intakeFormStatus: "100-Approved (JVESC+JVDSC)", // Intake from Status
+  //   lastComm: "2024-11-03T10:30:00Z", // Last Communication (Out Bound)
+  //   clientContacts: [
+  //     {
+  //       id: 3,
+  //       name: "Anthony Permell",
+  //       image:
+  //         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
+  //     },
+  //     {
+  //       id: 4,
+  //       name: "Tom Cook",
+  //       image:
+  //         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+  //     },
+  //   ], // Client Contact field
+  //   assocReferenceNos: [{ id: 16, assocReferenceNo: "qqq" }], // Associated Reference No. if exists
+  //   fundingSource: "VHH", // Funding Source
+  //   noteLogs: [
+  //     {
+  //       id: "1",
+  //       description: "Initial contact made",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-12-03T10:30:00Z",
+  //       attachedFile: {
+  //         name: "Email Copy Demo.msg",
+  //         url: "https://example.com/initial-contact.pdf",
+  //       },
+  //     },
+  //     {
+  //       id: "2",
+  //       description: "Follow-up email sent",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-11-03T10:30:00Z",
+  //     },
+  //     {
+  //       id: "3",
+  //       description: "Follow-up email sent",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-10-03T10:30:00Z",
+  //     },
+  //     {
+  //       id: "4",
+  //       description: "Follow-up email sent",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-09-03T10:30:00Z",
+  //     },
+  //     {
+  //       id: "5",
+  //       description: "Follow-up email sent",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-08-03T10:30:00Z",
+  //     },
+  //     {
+  //       id: "6",
+  //       description: "Follow-up email sent",
+  //       user: { id: "1", name: "Derek Pert" },
+  //       timestamp: "2024-07-03T10:30:00Z",
+  //     },
+  //   ], // Note log array
+  //   location: {
+  //     id: 1,
+  //     name: "Brampton Courthouse",
+  //     address: "7755 Hurontario Street, Brampton, Ontario L6W 4T1",
+  //   },
+  //   rooms: [{ id: "000001", num: "Ctrm401" }], // Room numbers
+  //   projectSponsor: "Arizona Department of Infrastructure", // Project Sponsor
+  //   ministry: "MAG", // Ministry field
+  //   division: "Court Services", // Division field
+  //   branch: "Brampton (A. Grenville and William Davis) Courthouse", // Branch/Unit field
+  //   requestedCompletionDate: "2023-12-31", // Requested Completion Date
+  //   assignedToPM: true,
+  //   estimatedCosts: [
+  //     { cost: 5000, year: 2021 },
+  //     { cost: 3000, year: 2022 },
+  //     { cost: 600, year: 2023 },
+  //     { cost: 44000, year: 2024 },
+  //     { cost: 33300, year: 2025 },
+  //   ], // Estimated cost
+  // };
 
   // Fetch project data based on the project ID from the URL
   useEffect(() => {
@@ -126,14 +127,17 @@ const UpdateProjectPage = () => {
 
   const fetchProjectData = async (projectId: string) => {
     try {
-      // const response = await fetch(`${apiUrl}/projects/${projectId}`);
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch project data");
-      // }
-      // const data: Project = await response.json();
-      // setProjectData(data);
-      console.log("projectId", projectId);
-      setProjectData(fakeData);
+      // fetch with token
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+        headers: {
+          Authorization: `Bearer ${session?.apiToken || ""}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch project data");
+      }
+      const data: Project = await response.json();
+      setProjectData(data);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -160,7 +164,6 @@ const UpdateProjectPage = () => {
       // }
       console.log("updatedProjectData", updatedProjectData);
       alert("Project updated successfully!");
-      router.push("/dashboard/intake/projects");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -169,6 +172,10 @@ const UpdateProjectPage = () => {
       }
     }
   };
+
+  if (!session) {
+    return <div>Access Denied, Please Log in</div>;
+  }
 
   if (loading) {
     return (

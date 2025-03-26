@@ -103,9 +103,13 @@ const DynamicSearchDropdown = ({
       {dropdownOpen && (
         <div className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
           {loading ? (
-            <div className="py-2 px-3 text-gray-500">Loading...</div>
+            <div key="loading" className="py-2 px-3 text-gray-500">
+              Loading...
+            </div>
           ) : showNoResults ? (
-            <div className="py-2 px-3 text-gray-500">No results found</div>
+            <div key="no-results" className="py-2 px-3 text-gray-500">
+              No results found
+            </div>
           ) : (
             people.map((person) => (
               <div
@@ -116,7 +120,7 @@ const DynamicSearchDropdown = ({
                 <div className="flex items-center">
                   <img
                     alt=""
-                    src={person.image}
+                    src={person.image || "/user.jpg"}
                     className="h-5 w-5 flex-shrink-0 rounded-full"
                   />
                   <span className="ml-3 block truncate">{person.name}</span>
@@ -134,7 +138,7 @@ const DynamicSearchDropdown = ({
             {/* For each person in the array, display their image and name */}
             <img
               alt=""
-              src={person.image}
+              src={person.image || "/user.jpg"}
               className="h-6 w-6 flex-shrink-0 rounded-full"
             />
             <span className="ml-2 text-gray-900">{person.name}</span>
