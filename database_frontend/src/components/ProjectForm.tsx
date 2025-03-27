@@ -147,7 +147,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   /*Fetch Functions*/
   const fetchUsersFromApi = async (query: string) => {
-    const response = await fetch(`${apiUrl}/users?name=${query}`);
+    const response = await fetch(`${apiUrl}/users/searchNames?prefix=${query}`);
+
     return await response.json(); // Returns the people data
   };
 
