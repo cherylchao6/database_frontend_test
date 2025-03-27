@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Hourglass } from "react-loader-spinner";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
@@ -16,6 +16,7 @@ const UpdateProjectPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [projectData, setProjectData] = useState<Project | null>(null);
+  const router = useRouter();
 
   // const fakeData: Project = {
   //   projectId: projectId || "MAG-516-B+-67", // Use the project ID from the URL
@@ -151,19 +152,22 @@ const UpdateProjectPage = () => {
 
   const handleSave = async (updatedProjectData: Project) => {
     try {
-      // const response = await fetch(`${apiUrl}/projects/${projectId}`, {
-      //   method: "PUT",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(updatedProjectData),
-      // });
+      // put with token
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.apiToken || ""}`,
+        },
+        body: JSON.stringify(updatedProjectData),
+      });
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to update project");
-      // }
-      console.log("updatedProjectData", updatedProjectData);
+      if (!response.ok) {
+        throw new Error("Failed to update project");
+      }
+
       alert("Project updated successfully!");
+      router.push(`/dashboard/intake/projects/${projectId}`);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

@@ -31,6 +31,11 @@ interface Location {
   address: string;
 }
 
+type AssocReferenceNo = {
+  id?: number | null;
+  assocReferenceNo: string;
+};
+
 interface ProjectFormProps {
   initialProjectData: Project;
   isEditMode: boolean;
@@ -43,6 +48,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   onSave,
 }) => {
   const { data: session } = useSession();
+  console.log("initialProjectData", initialProjectData);
   // console.log("session in created", session);
   const router = useRouter();
   //We use protected route, so session should not be null
@@ -63,7 +69,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   );
 
   const [selectedLocationId, setSelectedLocationId] = useState<number | null>(
-    null
+    initialProjectData?.location?.id ?? null
   );
   const [selectedLocation, setSelectedLocation] = useState(
     initialProjectData?.location?.name ?? ""
@@ -72,11 +78,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     initialProjectData?.location?.address || ""
   );
 
-  const [assocReferenceNosTags, setAssocReferenceNoTags] = useState<string[]>(
-    initialProjectData.assocReferenceNos?.map(
-      (item) => item.assocReferenceNo
-    ) || []
-  );
+  const [assocReferenceNosTags, setAssocReferenceNoTags] = useState<
+    AssocReferenceNo[]
+  >(initialProjectData.assocReferenceNos || []);
+
   const [referenceNoInput, setReferenceNoInput] = useState("");
 
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
@@ -222,7 +227,8 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         address: selectedAddress,
       },
       assocReferenceNos: assocReferenceNosTags.map((tag) => ({
-        assocReferenceNo: tag,
+        id: tag.id ? tag.id : undefined, // id: null for new tag
+        assocReferenceNo: tag.assocReferenceNo,
       })),
       ministry,
       division,
@@ -231,21 +237,28 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   const addReferenceNoTag = () => {
-    if (
-      referenceNoInput.trim() &&
-      !assocReferenceNosTags.includes(referenceNoInput.trim())
-    ) {
+    const trimmed = referenceNoInput.trim();
+
+    // Prevent duplicates by checking assocReferenceNo only
+    const alreadyExists = assocReferenceNosTags.some(
+      (item) => item.assocReferenceNo === trimmed
+    );
+
+    if (trimmed && !alreadyExists) {
       setAssocReferenceNoTags([
         ...assocReferenceNosTags,
-        referenceNoInput.trim(),
+        { assocReferenceNo: trimmed }, // id: undefined for new tag
       ]);
     }
+
     setReferenceNoInput(""); // Clear the input field
   };
 
   const removeReferenceNoTag = (tagToRemove: string) => {
     setAssocReferenceNoTags(
-      assocReferenceNosTags.filter((tag) => tag !== tagToRemove)
+      assocReferenceNosTags.filter(
+        (tag) => tag.assocReferenceNo !== tagToRemove
+      )
     );
   };
 
@@ -388,6 +401,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             value={projectData?.projectId || ""}
             onChange={handleInputChange}
             placeholder="Enter project ID"
+            required={true}
           />
         </div>
         {/* Project Name */}
@@ -608,10 +622,10 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
                 key={index}
                 className="px-3 py-1.5 flex items-center text-gray-900 bg-gray-100 rounded hover:bg-gray-200"
               >
-                {tag}
+                {tag.assocReferenceNo}
                 <button
                   type="button"
-                  onClick={() => removeReferenceNoTag(tag)}
+                  onClick={() => removeReferenceNoTag(tag.assocReferenceNo)}
                   className="ml-2 text-gray-900 hover:bg-gray-200 font-bold"
                 >
                   ✕
