@@ -84,13 +84,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
 
-  const [ministry, setMinistry] = useState<string>(
-    initialProjectData.ministry || ""
-  );
-  const [division, setDivision] = useState<string>(
-    initialProjectData.division || ""
-  );
-  const [branch, setBranch] = useState<string>(initialProjectData.branch || "");
+  const [ministry] = useState<string>(initialProjectData.ministry || "");
+  const [division] = useState<string>(initialProjectData.division || "");
+  const [branch] = useState<string>(initialProjectData.branch || "");
 
   const [createCostOpen, setCreateCostOpen] = useState(false);
   const [cost, setCost] = useState<{
