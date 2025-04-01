@@ -84,9 +84,13 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
 
-  const [ministry] = useState<string>(initialProjectData.ministry || "");
-  const [division] = useState<string>(initialProjectData.division || "");
-  const [branch] = useState<string>(initialProjectData.branch || "");
+  const [ministry, setMinistry] = useState<string>(
+    initialProjectData.ministry || ""
+  );
+  const [division, setDivision] = useState<string>(
+    initialProjectData.division || ""
+  );
+  const [branch, setBranch] = useState<string>(initialProjectData.branch || "");
 
   const [createCostOpen, setCreateCostOpen] = useState(false);
   const [cost, setCost] = useState<{
@@ -275,6 +279,21 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       setSelectedLocation("");
       setSelectedAddress("");
     }
+  };
+
+  const handleMinistryChange = (selectedMinistry: string) => {
+    setMinistry(selectedMinistry);
+    setDivision(""); // Reset division when ministry changes
+    setBranch(""); // Reset branch when ministry changes
+  };
+
+  const handleDivisionChange = (selectedDivision: string) => {
+    setDivision(selectedDivision);
+    setBranch(""); // Reset branch when division changes
+  };
+
+  const handleBranchChange = (selectedBranch: string) => {
+    setBranch(selectedBranch);
   };
 
   const handleNewMinistryChange = (selectedMinistry: string) => {
@@ -832,6 +851,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             initialMinistry={ministry}
             initialDivision={division}
             initialBranch={branch}
+            onChangeMinistry={handleMinistryChange}
+            onChangeDivision={handleDivisionChange}
+            onChangeBranch={handleBranchChange}
           />
         </div>
         {/* Requested Completion Date */}
