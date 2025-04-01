@@ -48,8 +48,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   onSave,
 }) => {
   const { data: session } = useSession();
-  console.log("initialProjectData", initialProjectData);
-  // console.log("session in created", session);
   const router = useRouter();
   //We use protected route, so session should not be null
   const user: User = {
@@ -86,13 +84,9 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
 
   const [createNoteOpen, setCreateNoteOpen] = useState(false);
 
-  const [ministry, setMinistry] = useState<string>(
-    initialProjectData.ministry || ""
-  );
-  const [division, setDivision] = useState<string>(
-    initialProjectData.division || ""
-  );
-  const [branch, setBranch] = useState<string>(initialProjectData.branch || "");
+  const [ministry] = useState<string>(initialProjectData.ministry || "");
+  const [division] = useState<string>(initialProjectData.division || "");
+  const [branch] = useState<string>(initialProjectData.branch || "");
 
   const [createCostOpen, setCreateCostOpen] = useState(false);
   const [cost, setCost] = useState<{
@@ -158,6 +152,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         `${apiUrl}/dropdowns?moduleId=101&pageType=createProject`
       );
       const data = await response.json();
+
       setPriorityOptions(data["Priority"]);
       setStatusOptions(data["Status"]);
       setWaitingOnContactOptions(data["Waiting On Contact(s)"]);
@@ -280,18 +275,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       setSelectedLocation("");
       setSelectedAddress("");
     }
-  };
-
-  const handleMinistryChange = (selectedMinistry: string) => {
-    setMinistry(selectedMinistry);
-  };
-
-  const handleDivisionChange = (selectedDivision: string) => {
-    setDivision(selectedDivision);
-  };
-
-  const handleBranchChange = (selectedBranch: string) => {
-    setBranch(selectedBranch);
   };
 
   const handleNewMinistryChange = (selectedMinistry: string) => {
@@ -849,9 +832,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             initialMinistry={ministry}
             initialDivision={division}
             initialBranch={branch}
-            onChangeMinistry={handleMinistryChange}
-            onChangeDivision={handleDivisionChange}
-            onChangeBranch={handleBranchChange}
           />
         </div>
         {/* Requested Completion Date */}
