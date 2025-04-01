@@ -281,18 +281,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     }
   };
 
-  const handleMinistryChange = (selectedMinistry: string) => {
-    setMinistry(selectedMinistry);
-  };
-
-  const handleDivisionChange = (selectedDivision: string) => {
-    setDivision(selectedDivision);
-  };
-
-  const handleBranchChange = (selectedBranch: string) => {
-    setBranch(selectedBranch);
-  };
-
   const handleNewMinistryChange = (selectedMinistry: string) => {
     setNewAddressMinistry(selectedMinistry);
   };
