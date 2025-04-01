@@ -30,19 +30,15 @@ export default function ResponsiveDropdowns({
   const [selectedDivision, setSelectedDivision] =
     useState<string>(initialDivision);
   const [selectedBranch, setSelectedBranch] = useState<string>(initialBranch);
-
-
   const [ministryOptions, setMinistryOptions] = useState<string[]>([]);
   const [dropdownLoading, setDropdownLoading] = useState(true);
   const [dropdownError, setDropdownError] = useState("");
-
 
   // 當初始值改變時更新部門和分支數據
   useEffect(() => {
     if (initialMinistry) {
       setSelectedMinistry(initialMinistry);
 
-      // Fetch divisions for the initial ministry
       fetch(`${apiUrl}/organizations?ministry=${initialMinistry}`)
         .then((res) => res.json())
         .then((data) => {
@@ -50,68 +46,77 @@ export default function ResponsiveDropdowns({
           if (initialDivision) {
             setSelectedDivision(initialDivision);
 
-            // Fetch branches for the initial division
             fetch(`${apiUrl}/organizations?division=${initialDivision}`)
               .then((res) => res.json())
               .then((branchData) => {
                 setBranches(branchData);
-                if (initialBranch) {
-                  setSelectedBranch(initialBranch);
-                }
-              })
-              .catch((err) => console.error("Failed to fetch branches:", err));
+                // ✅ Only set initialBranch if selectedBranch hasn't been manually updated
+                setSelectedBranch((prev) =>
+                  prev ? prev : initialBranch || ""
+                );
+              });
           }
-        })
-        .catch((err) => console.error("Failed to fetch divisions:", err));
+        });
     }
   }, [initialMinistry, initialDivision, initialBranch]);
 
-    const fetchDropdown = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/dropdowns?moduleId=101&pageType=createProject`);
-        const data = await response.json();
-        setMinistryOptions(data["Ministry"]);
-      } catch (error) {
-        setDropdownError(String(error));
-      } finally {
-        setDropdownLoading(false);
-      }
+  const fetchDropdown = async () => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/dropdowns?moduleId=101&pageType=createProject`
+      );
+      const data = await response.json();
+      setMinistryOptions(data["Ministry"]);
+    } catch (error) {
+      setDropdownError(String(error));
+    } finally {
+      setDropdownLoading(false);
     }
-  
-    useEffect(() => {
-      fetchDropdown();
-    }, []);
+  };
 
-  const handleMinistryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  useEffect(() => {
+    fetchDropdown();
+  }, []);
+
+  const handleMinistryChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const ministry = e.target.value;
+
     setSelectedMinistry(ministry);
     setSelectedDivision("");
-    setSelectedBranch("");
     setDivisions([]);
-    setBranches([]);
+    setSelectedBranch("");
+    setBranches([]); // <- this line is key
 
     if (onChangeMinistry) onChangeMinistry(ministry);
 
-    // Fetch divisions based on selected ministry
-    fetch(`${apiUrl}/organizations?ministry=${ministry}`)
-      .then((res) => res.json())
-      .then((data) => setDivisions(data))
-      .catch((err) => console.error("Failed to fetch divisions:", err));
+    try {
+      const res = await fetch(`${apiUrl}/organizations?ministry=${ministry}`);
+      const divisionsData = await res.json();
+      setDivisions(divisionsData);
+    } catch (err) {
+      console.error("Failed to fetch divisions:", err);
+    }
   };
 
-  const handleDivisionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDivisionChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const division = e.target.value;
     setSelectedDivision(division);
-    setSelectedBranch("");
+    setSelectedBranch(""); // Reset branch
     setBranches([]);
 
     if (onChangeDivision) onChangeDivision(division);
 
-    // Fetch branches based on selected division
-    fetch(`${apiUrl}/organizations?division=${division}`)
-      .then((res) => res.json())
-      .then((data) => setBranches(data))
-      .catch((err) => console.error("Failed to fetch branches:", err));
+    try {
+      const res = await fetch(`${apiUrl}/organizations?division=${division}`);
+      const branchesData = await res.json();
+      setBranches(branchesData);
+    } catch (err) {
+      console.error("Failed to fetch branches:", err);
+    }
   };
 
   const handleBranchChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

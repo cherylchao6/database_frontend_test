@@ -48,8 +48,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   onSave,
 }) => {
   const { data: session } = useSession();
-  console.log("initialProjectData", initialProjectData);
-  // console.log("session in created", session);
   const router = useRouter();
   //We use protected route, so session should not be null
   const user: User = {
@@ -158,6 +156,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         `${apiUrl}/dropdowns?moduleId=101&pageType=createProject`
       );
       const data = await response.json();
+
       setPriorityOptions(data["Priority"]);
       setStatusOptions(data["Status"]);
       setWaitingOnContactOptions(data["Waiting On Contact(s)"]);
@@ -849,9 +848,6 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             initialMinistry={ministry}
             initialDivision={division}
             initialBranch={branch}
-            onChangeMinistry={handleMinistryChange}
-            onChangeDivision={handleDivisionChange}
-            onChangeBranch={handleBranchChange}
           />
         </div>
         {/* Requested Completion Date */}
