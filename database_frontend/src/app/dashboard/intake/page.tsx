@@ -17,7 +17,7 @@ const IntakePage: React.FC = () => {
     const value = e.target.value;
     setQuery(value);
 
-    if (value.length < 2) {
+    if (value.length < 3) {
       setResults([]); // Clear results if query is too short
       setNoResults(false);
       return;
