@@ -6,6 +6,7 @@ import { XCircleIcon } from "@heroicons/react/24/outline";
 import { Project } from "@/types/intakes/project";
 import ProjectForm from "@/components/ProjectForm";
 import { useSession } from "next-auth/react";
+import toast from "react-hot-toast"; 
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -134,6 +135,13 @@ const UpdateProjectPage = () => {
           Authorization: `Bearer ${session?.apiToken || ""}`,
         },
       });
+
+      if (response.status === 500) {
+        toast.error("Project ID not found in the system.");
+        router.push("/dashboard/intake"); // Redirect to main screen
+        return;
+      }
+
       if (!response.ok) {
         throw new Error("Failed to fetch project data");
       }
